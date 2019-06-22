@@ -1,0 +1,112 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('nspr')
+pkgver=4.21
+pkgrel=1
+pkgdesc='Netscape Portable Runtime'
+url='https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR'
+license=('MPL' 'GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'sh'
+)
+makedepends=('zip')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$pkgver/src/nspr-$pkgver.tar.gz")
+sha256sums=('15ea32c7b100217b6e3193bc03e77f485d9bf7504051443ba9ce86d1c17c6b5a')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver/$pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver/$pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-optimize'
+		'--enable-mdupdate'
+		'--enable-strip'
+		'--enable-ipv6'
+		'--enable-64bit'
+		'--disable-x32'
+		'--disable-debug'
+		'--disable-debug-symbols'
+		'--with-mozilla'
+		'--with-pthreads'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver/$pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Set pkg-config file for 'mozilla-nspr'
+	ln -s nspr.pc $pkgdir/usr/lib/pkgconfig/mozilla-nspr.pc
+
+	# Remove non required files
+	rm -f $pkgdir/usr/bin/{compile-et.pl,prerr.properties}
+	rm -fr $pkgdir/usr/include/nspr/md
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
