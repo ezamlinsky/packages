@@ -1,0 +1,97 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('openjpeg2')
+pkgver=2.3.1
+pkgrel=1
+pkgdesc='An open source JPEG 2000 codec'
+url='https://github.com/uclouvain/openjpeg'
+license=('custom: BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'lcms2'
+	'libpng'
+	'libtiff'
+	'zlib'
+)
+makedepends=(
+	'cmake'
+	'doxygen'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("$pkgname-$pkgver.tar.gz::https://github.com/uclouvain/openjpeg/archive/v$pkgver.tar.gz")
+sha256sums=('63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd openjpeg-$pkgver
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DBUILD_PKGCONFIG_FILES=ON'
+		'-DBUILD_STATIC_LIBS=OFF'
+		'-DBUILD_SHARED_LIBS=ON'
+		'-DBUILD_DOC=ON'
+		'-DBUILD_CODEC=ON'
+		'-DBUILD_JPIP=OFF'
+		'-DBUILD_JPWL=OFF'
+		'-DBUILD_MJ2=OFF'
+		'-DOPJ_USE_THREAD=ON'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	options=(!emptydirs)
+
+	# Change directory to source directory
+	cd openjpeg-$pkgver/build
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 LICENSE.txt $pkgdir/usr/share/licenses/openjpeg2/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
