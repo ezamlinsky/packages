@@ -1,0 +1,119 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('alsa-lib')
+pkgver=1.1.9
+pkgrel=1
+pkgdesc='An alternative implementation of Linux sound support'
+url='http://www.alsa-project.org'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	#'python2'
+)
+makedepends=('python2')
+optdepends=('python2: for python smixer plugin')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("ftp://ftp.alsa-project.org/pub/lib/alsa-lib-$pkgver.tar.bz2")
+sha512sums=('402e39cca82d17555e3e52ef06b8ed9dcf58531da393809a7b5cf18658299fa90ee8a60bfc5213482d7a02b13140c441f1333b144556f44ab4adb786a2fb3c49')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-old-symbols'
+		'--without-debug'
+		'--with-versioned'
+		'--with-libdl'
+		'--with-pthread'
+		'--with-librt'
+		'--with-pcm-plugins=all'
+		'--with-ctl-plugins=all'
+
+	# 'python2' related options
+		#'--enable-python2'
+		#'--with-pythonincludes=-I/usr/include/python2.7'
+		#'--with-pythonlibs=-lpthread -lm -ldl -lpython2.7'
+		#'--enable-mixer-pymods'
+		'--disable-python'
+		'--with-pythonlibs='
+	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-lto'
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
