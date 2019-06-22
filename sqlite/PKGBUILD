@@ -1,0 +1,232 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase="sqlite"
+pkgname=('sqlite' 'sqlite-tcl' 'sqlite-analyzer' 'sqlite-doc')
+pkgver=3.28.0
+pkgrel=1
+pkgdesc='A C library that implements an SQL database engine'
+url='http://www.sqlite.org/'
+license=('custom:Public Domain')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'tcl'
+	'readline'
+	'zlib'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_srcver=3280000
+source=(
+	"https://www.sqlite.org/2019/sqlite-src-$_srcver.zip"
+	"https://www.sqlite.org/2019/sqlite-doc-$_srcver.zip"
+	'license.txt'
+)
+sha1sums=(
+	'21c391f177ac39750e5a8ac61d07550bf6befb4a'
+	'f3242cf186a4e194e7d1a5e00384dd4aa66ec16b'
+	'f34f6daa4ab3073d74e774aad21d66878cf26853'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd sqlite-src-$_srcver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd sqlite-src-$_srcver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-amalgamation'
+		'--disable-debug'
+		'--enable-memsys3'
+		'--enable-memsys5'
+		'--enable-fts3'
+		'--enable-fts4'
+		'--enable-fts5'
+		'--enable-json1'
+		'--enable-update-limit'
+		'--enable-geopoly'
+		'--enable-rtree'
+		'--enable-session'
+		'--enable-releasemode'
+		'--enable-tempstore=yes'
+
+	# 'libedit' related options
+		#'--enable-editline'
+		'--disable-editline'
+
+	# 'readline' related options
+		'--enable-readline'
+		#'--disable-readline'
+
+	# 'tcl' related options
+		'--enable-tcl'
+		#'--disable-tcl'
+	)
+
+	# Change compile flags
+	export CPPFLAGS+=" -DSQLITE_ENABLE_COLUMN_METADATA=1 \
+	-DSQLITE_ENABLE_UNLOCK_NOTIFY \
+	-DSQLITE_ENABLE_DBSTAT_VTAB=1 \
+	-DSQLITE_ENABLE_FTS3_TOKENIZER=1 \
+	-DSQLITE_SECURE_DELETE \
+	-DSQLITE_MAX_VARIABLE_NUMBER=250000 \
+	-DSQLITE_MAX_EXPR_DEPTH=10000"
+
+	# Run package configuration script
+	TCLLIBDIR=/usr/lib/sqlite$pkgver ./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+
+	# Build additional tools
+	make showdb showjournal showstat4 showwal sqldiff
+
+	# Build 'sqlite3_analyzer' if required
+	if check_rule 'tcl'; then
+		make sqlite3_analyzer
+	fi
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Sqlite                                                                 #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_sqlite() {
+	pkgdesc='A C library that implements an SQL database engine'
+	depends=(
+		'glibc'
+		'zlib'
+		#'libedit'
+		'readline'
+	)
+	provides=("sqlite3=$pkgver")
+	replaces=('sqlite3')
+
+	# Change directory to source directory
+	cd sqlite-src-$_srcver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install additional tools
+	install -m755 showdb showjournal showstat4 showwal sqldiff $pkgdir/usr/bin/
+
+	# Install manpage
+	install -Dm644 sqlite3.1 $pkgdir/usr/share/man/man1/sqlite3.1
+
+	# Install license file
+	install -Dm644 $srcdir/license.txt $pkgdir/usr/share/licenses/sqlite/license.txt
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'sqlite-tcl' package
+	mkdir -p $srcdir/sqlite-tcl/usr/lib
+	mv usr/lib/sqlite* $srcdir/sqlite-tcl/usr/lib
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Sqlite-tcl                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_sqlite-tcl() {
+	pkgdesc='Sqlite Tcl Extension Architecture (TEA)'
+	depends=('glibc' 'sqlite')
+	provides=("sqlite3-tcl=$pkgver")
+	replaces=('sqlite3-tcl')
+
+	# Copy files
+	mv $srcdir/sqlite-tcl/* $pkgdir
+
+	# Install manpage
+	install -Dm644 $srcdir/sqlite-src-$_srcver/autoconf/tea/doc/sqlite3.n \
+	$pkgdir/usr/share/man/mann/sqlite3.n
+
+	# Install license file
+	install -Dm644 $srcdir/license.txt $pkgdir/usr/share/licenses/sqlite-tcl/license.txt
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Sqlite-analyzer                                                        #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_sqlite-analyzer() {
+	pkgdesc='An analysis program for sqlite3 database files'
+	depends=(
+		'glibc'
+		'sqlite'
+		'tcl'
+	)
+
+	# Install sqlite-analyzer
+	install -Dm755 sqlite-src-$_srcver/sqlite3_analyzer \
+	$pkgdir/usr/bin/sqlite3_analyzer || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Sqlite-doc                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_sqlite-doc() {
+	pkgdesc='Sqlite documentation'
+	depends=('sqlite')
+	provides=("sqlite3-doc=$pkgver")
+	replaces=('sqlite3-doc')
+
+	# Create documentation directory
+	mkdir -p $pkgdir/usr/share/doc/sqlite
+
+	# Copy all docs
+	cp -r $srcdir/sqlite-doc-$_srcver/* $pkgdir/usr/share/doc/sqlite/
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
