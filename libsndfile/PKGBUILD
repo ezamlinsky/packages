@@ -1,0 +1,124 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libsndfile')
+pkgver=1.0.28
+pkgrel=2
+pkgdesc='A C library for reading and writing files containing sampled sound'
+url='http://www.mega-nerd.com/libsndfile'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'alsa-lib'
+	'flac'
+	'glibc'
+	'libogg'
+	'libvorbis'
+	'sqlite'
+)
+checkdepends=('python2')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://www.mega-nerd.com/libsndfile/files/libsndfile-$pkgver.tar.gz")
+sha256sums=('1ff33929f042fa333aed1e8923aa628c3ee9e1eb85512686c55092d1e5a9dfa9')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-external-libs'
+		'--enable-stack-smash-protection'
+
+	# 'alsa-lib' related options
+		'--enable-alsa'
+		#'--disable-alsa'
+
+	# 'sqlite' related options
+		'--enable-sqlite'
+		#'--disable-sqlite'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
