@@ -1,0 +1,124 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libpng')
+pkgver=1.6.37
+pkgrel=1
+pkgdesc='A collection of routines used to create PNG format graphics files'
+url='http://www.libpng.org/pub/png/libpng.html'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'sh'
+	'zlib'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://downloads.sourceforge.net/sourceforge/libpng/libpng-$pkgver.tar.xz"
+	"https://downloads.sourceforge.net/sourceforge/libpng-apng/libpng-$pkgver-apng.patch.gz"
+)
+sha256sums=(
+	'505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca'
+	'823bb2d1f09dc7dae4f91ff56d6c22b4b533e912cbd6c64e8762255e411100b6'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/libpng-$pkgver-apng.patch
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-hardware-optimizations'
+		'--enable-intel-sse'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/libpng/LICENSE
+
+	# Instal portable anymap utils
+	cd contrib/pngminus
+	make PNGLIB_SHARED="-L $pkgdir/usr/lib -lpng" png2pnm pnm2png
+	install -m755 png2pnm pnm2png $pkgdir/usr/bin/
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
