@@ -1,0 +1,130 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libssh2')
+pkgver=1.8.2
+pkgrel=1
+pkgdesc='A library implementing the SSH2 protocol as defined by Internet Drafts'
+url='https://www.libssh2.org/'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	#'libgcrypt'
+	#'mbedtls'
+	'openssl'
+	'zlib'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libssh2.so')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.libssh2.org/download/libssh2-$pkgver.tar.gz"
+	"https://www.libssh2.org/download/libssh2-$pkgver.tar.gz.asc"
+)
+md5sums=(
+	'616efd99af3d9ef731a26bed6cee9593'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-hidden-symbols'
+		'--disable-examples-build'
+
+	# 'libgcrypt' related options
+		#'--with-libgcrypt'
+
+	# 'mbedtls' related options
+		#'--with-mbedtls'
+
+	# 'openssl' related options
+		'--with-openssl'
+
+	# 'zlib' related options
+		'--with-libz'
+		#'--with-libz=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libssh2/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
