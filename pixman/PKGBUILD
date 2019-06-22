@@ -1,0 +1,115 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('pixman')
+pkgver=0.38.4
+pkgrel=1
+pkgdesc='The pixel-manipulation library for X and cairo'
+url='https://cgit.freedesktop.org/pixman/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('glibc')
+makedepends=(
+	'meson'
+	'libpng'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://xorg.freedesktop.org/releases/individual/lib/pixman-$pkgver.tar.bz2")
+sha1sums=('87e1abc91ac4e5dfcc275f744f1d0ec3277ee7cd')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'-Dloongson-mmi=disabled'
+		'-Dvmx=disabled'
+		'-Darm-simd=disabled'
+		'-Dneon=disabled'
+		'-Diwmmxt=disabled'
+		'-Diwmmxt2=false'
+		'-Dmips-dspr2=disabled'
+		'-Dmmx=enabled'
+		'-Dsse2=enabled'
+		'-Dssse3=enabled'
+		'-Dgnu-inline-asm=enabled'
+		'-Dopenmp=enabled'
+		'-Dgnuplot=true'
+		'-Dgtk=disabled'
+
+	# 'libpng' related options
+		'-Dlibpng=enabled'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/pixman/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
