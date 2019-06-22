@@ -1,0 +1,117 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libjpeg-turbo')
+pkgver=2.0.2
+pkgrel=1
+pkgdesc='JPEG image codec with accelerated baseline compression and decompression'
+url='https://libjpeg-turbo.org/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('glibc')
+makedepends=(
+	'cmake'
+	'nasm'
+	'jdk8-openjdk'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libjpeg=8.2.2')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://downloads.sourceforge.net/project/libjpeg-turbo/${pkgver}/libjpeg-turbo-${pkgver}.tar.gz"
+	"https://downloads.sourceforge.net/project/libjpeg-turbo/${pkgver}/libjpeg-turbo-${pkgver}.tar.gz.sig"
+)
+sha256sums=(
+	'acb8599fe5399af114287ee5907aea4456f8f2c1cc96d26c28aebfdf5ee82fed'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DFLOATTEST=sse'
+		'-DENABLE_SHARED=ON'
+		'-DENABLE_STATIC=OFF'
+		'-DREQUIRE_SIMD=ON'
+		'-DFORCE_INLINE=ON'
+		'-DWITH_12BIT=OFF'
+		'-DWITH_ARITH_DEC=ON'
+		'-DWITH_ARITH_ENC=ON'
+		'-DWITH_JAVA=ON'
+		'-DWITH_JPEG8=ON'
+		'-DWITH_MEM_SRCDST=ON'
+		'-DWITH_SIMD=ON'
+		'-DWITH_TURBOJPEG=ON'
+	)
+
+	# Run package configuration script
+	cmake "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install additional header files (required by other software)
+	install -m644 jpegint.h $pkgdir/usr/include
+
+	# Install license file
+	install -Dm644 LICENSE.md $pkgdir/usr/share/licenses/libjpeg-turbo/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
