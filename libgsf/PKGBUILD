@@ -1,0 +1,134 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libgsf')
+pkgver=1.14.46
+pkgrel=1
+pkgdesc='An extensible I/O abstraction library for dealing with structured file formats'
+url='https://gitlab.gnome.org/GNOME/libgsf.git'
+license=('GPL' 'LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glib2'
+	'glibc'
+	'libxml2'
+	'zlib'
+	'bzip2'
+	'gdk-pixbuf2'
+)
+makedepends=(
+	'git'
+	'gtk-doc'
+	'autoconf-archive'
+	'intltool'
+)
+checkdepends=(
+	'perl-xml-parser'
+	'unzip'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit='a753a22f85601fd212afc52cb54d50c577951d91'  # tags/LIBGSF_1_14_46^0
+source=("git+https://gitlab.gnome.org/GNOME/libgsf.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-gtk-doc'
+		'--enable-introspection=no'
+
+		# 'bzip2' related options
+			'--with-bz2'
+			#'--without-bz2'
+
+		# 'gdk-pixbuf2' related options
+			'--with-gdk-pixbuf'
+			#'--without-gdk-pixbuf'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
