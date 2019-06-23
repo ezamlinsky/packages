@@ -1,0 +1,159 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('p11-kit')
+pkgver=0.23.16.1
+pkgrel=1
+pkgdesc='Provides a way to load and enumerate PKCS#11 modules'
+url='https://p11-glue.freedesktop.org'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libffi'
+	'libtasn1'
+	'nss'
+	'systemd-libs'
+)
+makedepends=(
+	'git'
+	'gtk-doc'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+install='p11-kit.install'
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"git+https://github.com/p11-glue/p11-kit?signed#tag=$pkgver"
+	'0001-Build-and-install-libnssckbi-p11-kit.so.patch'
+)
+sha256sums=(
+	'SKIP'
+	'a2222e092b2c9ae2d2c344b3268f8f86e7b424973433d49653f72e6c51fa54cf'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Apply patches
+	patch -Np1 -i $srcdir/0001-Build-and-install-libnssckbi-p11-kit.so.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-doc'
+		'--enable-debug=no'
+		'--with-module-path=/usr/lib/pkcs11'
+		'--with-trust-paths=/etc/ca-certificates/trust-source:/usr/share/ca-certificates/trust-source'
+
+		# 'libffi' related options
+			'--with-libffi'
+			#'--without-libffi'
+
+		# 'libtasn1' related options
+			'--with-libtasn1'
+			#'--without-libtasn1'
+
+		# 'nss' related options
+			'--with-hash-impl=freebl'
+			#'--with-hash-impl=internal'
+
+		# 'systemd' related options
+			'--with-systemd'
+			#'--without-systemd'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/p11-kit/LICENSE
+
+	# Set correct symlink for 'trust-extract-compat'
+	ln -srf $pkgdir/usr/bin/update-ca-trust $pkgdir/usr/lib/p11-kit/trust-extract-compat
+
+	# Enable 'pkcs11.conf' config file
+	mv $pkgdir/etc/pkcs11/{pkcs11.conf.example,pkcs11.conf}
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
