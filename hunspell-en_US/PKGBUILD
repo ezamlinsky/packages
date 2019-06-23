@@ -1,0 +1,56 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='hunspell-en_US'
+pkgver=2018.04.16
+pkgrel=5
+pkgdesc='US English hunspell dictionaries'
+url='http://wordlist.aspell.net/dicts/'
+license=('LGPL' 'custom:scowl')
+arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('hunspell')
+optdepends=('hunspell: the spell checking libraries and apps')
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+replaces=('hunspell-en')
+conflicts=('hunspell-en')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://downloads.sourceforge.net/project/wordlist/speller/$pkgver/hunspell-en_US-$pkgver.zip")
+sha1sums=('d947ee3ab052fd908009b160fcaba0e01259186c')
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Install files
+	mkdir -p $pkgdir/usr/share/myspell/dicts
+	install -Dm644 en_US.dic $pkgdir/usr/share/hunspell/en_US.dic
+	install -Dm644 en_US.aff $pkgdir/usr/share/hunspell/en_US.aff
+
+	# Create symlinks to dictionary files
+	ln -s ../../hunspell/en_US.dic $pkgdir/usr/share/myspell/dicts/en_US.dic
+	ln -s ../../hunspell/en_US.aff $pkgdir/usr/share/myspell/dicts/en_US.aff
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
