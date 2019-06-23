@@ -1,0 +1,108 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libxcomposite')
+pkgver=0.4.5
+pkgrel=1
+pkgdesc='X11 Composite extension library'
+url='https://xorg.freedesktop.org/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'compositeproto'
+	'glibc'
+	'libx11'
+)
+makedepends=('xorg-util-macros')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/releases/individual/lib/libXcomposite-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/releases/individual/lib/libXcomposite-$pkgver.tar.bz2.sig"
+)
+sha512sums=(
+	'502fd51fd9097bb3ca72174ac5b25b9d3b1ff240d32c4765199df03d89337d94b4ddea49e90b177b370862430089d966ce9c38988337156352cfeae911c2d3d5'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd libXcomposite-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd libXcomposite-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd libXcomposite-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libxcomposite/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
