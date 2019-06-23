@@ -1,0 +1,157 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libxcb')
+pkgver=1.13.1
+pkgrel=1
+pkgdesc='X11 client-side library'
+url='https://xcb.freedesktop.org/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libxau'
+	'libxdmcp'
+	'xcb-proto>=1.12'
+)
+makedepends=(
+	'libxslt'
+	'python'
+	'xorg-util-macros'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xcb.freedesktop.org/dist/libxcb-$pkgver.tar.bz2"
+	'libxcb-1.1-no-pthread-stubs.patch'
+)
+sha256sums=(
+	'a89fb7af7a11f43d2ce84a844a4b38df688c092bf4b67683aef179cdf2a647c4'
+	'21bf86a40e4038c52c2a8c57f76b5f10e211e27562cce7526b4bb6fd025dd0c3'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -Np1 -i ../libxcb-1.1-no-pthread-stubs.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-static'
+		'--disable-devel-docs'
+		'--enable-composite'
+		'--enable-damage'
+		'--enable-dpms'
+		'--enable-dri2'
+		'--enable-dri3'
+		'--enable-ge'
+		'--enable-glx'
+		'--enable-present'
+		'--enable-randr'
+		'--enable-record'
+		'--enable-render'
+		'--enable-resource'
+		'--enable-screensaver'
+		'--enable-shape'
+		'--enable-shm'
+		'--enable-sync'
+		'--enable-xevie'
+		'--enable-xfixes'
+		'--enable-xfree86-dri'
+		'--enable-xinerama'
+		'--enable-xinput'
+		'--enable-xkb'
+		'--enable-xprint'
+		'--enable-selinux'
+		'--enable-xtest'
+		'--enable-xv'
+		'--enable-xvmc'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libxcb/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
