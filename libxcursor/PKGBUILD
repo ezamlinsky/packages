@@ -1,0 +1,120 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libxcursor')
+pkgver=1.2.0
+pkgrel=1
+pkgdesc='X cursor management library'
+url='https://xorg.freedesktop.org/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libx11'
+	'libxfixes'
+	'libxrender'
+)
+makedepends=('xorg-util-macros')
+optdepends=('gnome-themes-standard: fallback icon theme')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=('usr/share/icons/default/index.theme')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/releases/individual/lib/libXcursor-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/releases/individual/lib/libXcursor-$pkgver.tar.bz2.sig"
+	'index.theme'
+)
+sha512sums=(
+	'2b12d0fd17e311ce269dbba58588698885815eb07aa44d48525ed5cd9e5f379bb90138a792a191e2f74888ab10b3ca9a4f507f21de0984ed79748973ab927a03'
+	'SKIP'
+	'489a07b5c9c50b9ddbd10093c79a07d34f2f1c9b4f053ecd68a9f300e201f7b92890b92f0bb4963dfeaa1b158f43149d615b07d1e70523de41565eff7dd5fccb'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd libXcursor-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd libXcursor-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd libXcursor-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install 'index.theme' file
+	install -Dm644 $srcdir/index.theme $pkgdir/usr/share/icons/default/index.theme
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libxcursor/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
