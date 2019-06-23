@@ -1,0 +1,125 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libid3tag')
+pkgver=0.15.1b
+pkgrel=9
+pkgdesc='Library for id3 tagging'
+url='http://www.underbit.com/products/mad/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'zlib'
+)
+makedepends=('gperf')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"ftp://ftp.mars.org/pub/mpeg/${pkgname}-${pkgver}.tar.gz"
+	'id3tag.pc'
+	'10_utf16.diff'
+	'11_unknown_encoding.diff'
+	'CVE-2008-2109.patch'
+	'libid3tag-gperf.patch'
+)
+md5sums=(
+	'e5808ad997ba32c498803822078748c3'
+	'8bb41fd814fafcc37ec8bc88f5545a4a'
+	'4f9df4011e6a8c23240fff5de2d05f6e'
+	'3ca856b97924d48a0fdfeff0bd83ce7d'
+	'c51822ea6301b1ca469975f0c9ee8e34'
+	'85502349069e61eaeea4610b1ea6cb56'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i ${srcdir}/10_utf16.diff
+	patch -p1 -i ${srcdir}/11_unknown_encoding.diff
+	patch -Np0 -i ${srcdir}/CVE-2008-2109.patch
+	patch -p1 -i ../libid3tag-gperf.patch
+
+	# Remove these files (will be regenerated from gperf sources)
+	rm compat.c frametype.c
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debugging'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install 'id3tag.pc' file
+	install -Dm644 $srcdir/id3tag.pc $pkgdir/usr/lib/pkgconfig/id3tag.pc
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
