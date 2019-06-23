@@ -1,0 +1,78 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('mkinitcpio-busybox')
+pkgver=1.30.1
+pkgrel=1
+pkgdesc='Base initramfs tools'
+url='http://www.busybox.net/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('glibc')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://busybox.net/downloads/busybox-$pkgver.tar.bz2"
+	"https://busybox.net/downloads/busybox-$pkgver.tar.bz2.sig"
+	'config'
+)
+sha256sums=(
+	'3d1d04a4dbd34048f4794815a5c48ebb9eb53c5277e09ffffc060323b95dfbdc'
+	'SKIP'
+	'e35b09565b87d0a35c8085b4d34477d8795d23fb969a674b5d7f9579279dd7d4'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd busybox-$pkgver
+
+	# Change config file
+	sed 's|^\(CONFIG_EXTRA_CFLAGS\)=.*|\1="'"$CFLAGS"'"|' "$srcdir/config" > .config
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd busybox-$pkgver
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd busybox-$pkgver
+
+	# Install files
+	install -Dm755 busybox $pkgdir/usr/lib/initcpio/busybox
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
