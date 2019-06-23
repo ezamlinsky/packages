@@ -1,0 +1,130 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libsoup')
+pkgver=2.66.2
+pkgrel=1
+pkgdesc='HTTP client/server library for GNOME'
+url='https://wiki.gnome.org/Projects/libsoup'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glib2'
+	#'glib-networking'
+	'glibc'
+	'libpsl'
+	'libxml2'
+	'sqlite'
+	#'krb5'
+)
+makedepends=(
+	'git'
+	'gtk-doc'
+	'intltool'
+	'python'
+	'vala'
+	'meson'
+)
+checkdepends=(
+	'apache'
+	'php-apache'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=716acf96c8368ad17c6a257890387659def591e5  # tags/2.67.1~20
+source=("git+https://gitlab.gnome.org/GNOME/libsoup.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'-Dntlm=false'
+		'-Dgnome=true'
+		'-Dgtk_doc=true'
+		'-Dtests=false'
+		'-Dintrospection=false'
+
+
+	# 'glib-networking' related options
+		#'-Dtls_check=true'
+		'-Dtls_check=false'
+
+	# 'krb5' related options
+		#'-Dgssapi=true'
+		'-Dgssapi=false'
+
+	# 'vala' related options
+		#'-Dvapi=true'
+		'-Dvapi=false'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal tests
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
