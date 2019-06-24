@@ -28,7 +28,6 @@ depends=(
 )
 makedepends=(
 	'git'
-	#'gnome-common'
 	'gtk3'
 	'intltool'
 )
