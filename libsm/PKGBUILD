@@ -72,8 +72,8 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-unix-transport'
-		'--enable-tcp-transport'
-		'--enable-ipv6'
+		'--disable-tcp-transport'
+		'--disable-ipv6'
 		'--enable-docs'
 		'--with-libuuid'
 	)
