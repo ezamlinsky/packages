@@ -1,0 +1,113 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#makedepends=('perl-extutils-depends' 'perl-extutils-pkgconfig' 'glib-perl'
+#             'intltool' 'chrpath')
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfconf')
+pkgver=4.12.1
+pkgrel=7
+pkgdesc='A simple client-server configuration storage and query system'
+url='http://www.xfce.org/'
+license=('GPL2')
+arch=('x86_64')
+groups=('xfce4')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'dbus'
+	'dbus-glib'
+	'glib2'
+	'glibc'
+	'libxfce4util'
+)
+makedepends=(
+	'gtk-doc'
+	'intltool'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://archive.xfce.org/src/xfce/xfconf/${pkgver%.*}/xfconf-$pkgver.tar.bz2")
+sha256sums=('35f48564e5694faa54fdc180cd3268e16fc2352946a89a3c2fc12cbe400ada36')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-checks'
+		'--disable-debug'
+		'--disable-perl-bindings'
+		'--enable-gtk-doc'
+		'--enable-debug=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
