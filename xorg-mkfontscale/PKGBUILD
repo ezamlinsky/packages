@@ -129,8 +129,8 @@ package() {
 	install -Dm644 COPYING $pkgdir/usr/share/licenses/xorg-mkfontscale/COPYING
 
 	# install scripts
-#	install -Dm644 ../xorg-mkfontscale.hook "$pkgdir/usr/share/libalpm/hooks/xorg-mkfontscale.hook"
-#	install -D ../xorg-mkfontscale.script "$pkgdir/usr/share/libalpm/scripts/xorg-mkfontscale"
+	install -Dm644 $srcdir/xorg-mkfontscale.hook $pkgdir/usr/share/libalpm/hooks/xorg-mkfontscale.hook
+	install -D $srcdir/xorg-mkfontscale.script $pkgdir/usr/share/libalpm/scripts/xorg-mkfontscale
 }
 
 ################################################################################
