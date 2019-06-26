@@ -1,0 +1,83 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libnotify')
+pkgver=0.7.8
+pkgrel=1
+pkgdesc='Library for sending desktop notifications'
+url='https://developer.gnome.org/notification-spec/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+)
+makedepends=(
+	'docbook-xsl'
+	'git'
+	'gnome-common'
+	'gobject-introspection'
+	'gtk-doc'
+	'gtk3'
+	'meson'
+	'xmlto'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=44f92222124b12987406d0768e760ecf9f7e27f8  # tags/0.7.8^0
+source=("git+https://gitlab.gnome.org/GNOME/libnotify.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'-Dintrospection=disabled'
+		'-Ddocbook_docs=disabled'
+		'-Dgtk_doc=true'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
