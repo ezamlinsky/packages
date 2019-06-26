@@ -1,0 +1,108 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xorg-xmodmap')
+pkgver=1.0.10
+pkgrel=1
+pkgdesc='Utility for modifying keymaps and button mappings'
+url='https://xorg.freedesktop.org/'
+license=('custom')
+arch=('x86_64')
+groups=('xorg-apps' 'xorg')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libx11'
+)
+makedepends=('xorg-util-macros')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/archive/individual/app/xmodmap-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/archive/individual/app/xmodmap-$pkgver.tar.bz2.sig"
+)
+sha512sums=(
+	'324c7dcef843186088f16b3bc47485eb3c9b4331e56ce43b692deb4bb3d4f4f27512480e91a379cceac8383df920dc5e37cd825246b50b6343291cec48134c04'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd xmodmap-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd xmodmap-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd xmodmap-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/xorg-xmodmap/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
