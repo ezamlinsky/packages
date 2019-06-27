@@ -1,0 +1,114 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xorg-fonts-encodings')
+pkgver=1.0.5
+pkgrel=1
+pkgdesc='X.org font encoding files'
+url='https://xorg.freedesktop.org/'
+license=('custom')
+arch=('any')
+groups=('xorg' 'xorg-fonts')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'xorg-font-util'
+	'xorg-mkfontscale'
+	'xorg-util-macros'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/releases/individual/font/encodings-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/releases/individual/font/encodings-$pkgver.tar.bz2.sig"
+)
+sha512sums=(
+	'920e49f0b3545f181a1574ca3280ac9adef1e68fe27566c195dd7013f728d355c0d759132789357fcf8fa7391fcbe1e17edf2bd85aa5611df5a4d99740011008'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd encodings-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd encodings-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd encodings-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/xorg-fonts-encodings/COPYING
+
+	# Regenerate encoding files not to include non-compressed versions
+	cd $pkgdir/usr/share/fonts/encodings/large
+	mkfontscale -b -s -l -n -r -p /usr/share/fonts/encodings/large -e . .
+	cd $pkgdir/usr/share/fonts/encodings/
+	mkfontscale -b -s -l -n -r -p /usr/share/fonts/encodings -e . -e large .
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
