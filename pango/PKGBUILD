@@ -1,0 +1,115 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('pango')
+pkgver=1.43.0
+pkgrel=2
+epoch=1
+pkgdesc='A library for layout and rendering of text'
+url='https://www.pango.org/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	'fontconfig'
+	'freetype2'
+	'fribidi'
+	'glib2'
+	'glibc'
+	'harfbuzz'
+	'libx11'
+	'libxft'
+	'libxrender'
+)
+makedepends=(
+	'git'
+	'gobject-introspection'
+	'gtk-doc'
+	'help2man'
+	'meson'
+)
+checkdepends=(
+	'ttf-dejavu'
+	'cantarell-fonts'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=26f1135f374f3ad5eb963dcdf016542fbbda361b  # tags/1.43.0^0
+source=("git+https://gitlab.gnome.org/GNOME/pango.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Fix .pc
+	git cherry-pick -n d0cb6be7431d1a3c711bd45bcf05b34601604037
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'-Denable_docs=false'
+		'-Dgir=false'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal tests
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
