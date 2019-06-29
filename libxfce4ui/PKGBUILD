@@ -1,0 +1,139 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libxfce4ui')
+pkgver=4.13.5
+pkgrel=1
+pkgdesc='Commonly used Xfce widgets among Xfce applications'
+url='http://www.xfce.org/'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'atk'
+	'cairo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk2'
+	'gtk3'
+	'hicolor-icon-theme'
+	'libice'
+	'libsm'
+	'libx11'
+	'libxfce4util'
+	'pango'
+	'xfconf'
+	'startup-notification'
+)
+makedepends=(
+	'gobject-introspection'
+	'gtk-doc'
+	'intltool'
+	'vala'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://archive.xfce.org/src/xfce/libxfce4ui/${pkgver%.*}/libxfce4ui-$pkgver.tar.bz2")
+sha256sums=('3c38b065796a1cb2c2f2e9a28edaa6b37a3728c1c0b7a4297af9ecd82a8ab66d')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--enable-keyboard-library'
+		'--disable-static'
+		'--disable-tests'
+		'--disable-gtk-doc'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--with-x'
+		'--with-vendor-info=Arch_Linux'
+
+	# 'gtk2' related options
+		'--enable-gtk2'
+		#'--disable-gtk2'
+
+	# 'startup-notification' related options
+		'--enable-startup-notification'
+		#'--disable-startup-notification'
+
+	# 'gobject-introspection' related options
+		#'--enable-introspection=yes'
+		'--enable-introspection=no'
+
+	# 'vala' related options
+		#'--enable-vala=yes'
+		'--enable-vala=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
