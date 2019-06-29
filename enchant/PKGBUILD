@@ -1,0 +1,118 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('enchant')
+pkgver=2.2.3
+pkgrel=2
+pkgdesc='A wrapper library for generic spell checking'
+url='https://abiword.github.io/enchant/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glib2'
+	'glibc'
+	#'aspell'
+	#'hspell'
+	'hunspell'
+	#'libvoikko'
+)
+makedepends=('git')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("$pkgname-$pkgver.tar.gz::https://github.com/AbiWord/enchant/archive/v$pkgver.tar.gz")
+sha512sums=('a80bb41e5012eb16fd8c266f8a4c34f73e1ae90092377fb28859d2435269deeb6f673e6c1cbf9716a95a7103121a9e67fb88499b4affd83bfe513d7c149eb89c')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run bootstrap script
+	./bootstrap
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-valgrind-tests'
+
+	# 'aspell' related options
+		#'--with-aspell'
+		'--without-aspell'
+
+	# 'hspell' related options
+		#'--with-hspell'
+		'--without-hspell'
+
+	# 'hunspell' related options
+		'--with-hunspell'
+		#'--without-hunspell'
+
+	# 'libvoikko' related options
+		#'--with-voikko'
+		'--without-voikko'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
