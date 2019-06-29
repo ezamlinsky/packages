@@ -1,0 +1,76 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('sshfs')
+pkgver=3.5.2
+pkgrel=1
+pkgdesc='FUSE client based on the SSH File Transfer Protocol'
+url='http://github.com/libfuse/sshfs'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'fuse3'
+	'glib2'
+	'glibc'
+	'openssh'
+)
+makedepends=(
+	'meson'
+	'python-docutils'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://github.com/libfuse/sshfs/releases/download/sshfs-$pkgver/sshfs-$pkgver.tar.xz"
+	"https://github.com/libfuse/sshfs/releases/download/sshfs-$pkgver/sshfs-$pkgver.tar.xz.asc"
+)
+sha256sums=(
+	'841be1594b6fb76b23e4b5700ce235e86a64324f2483d67130ce07c2330ff0b2'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run package configuration script
+	arch-meson build
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
