@@ -1,0 +1,83 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('glew')
+pkgver=2.1.0
+pkgrel=1
+pkgdesc='The OpenGL Extension Wrangler Library'
+url='http://glew.sourceforge.net'
+license=('BSD' 'MIT' 'GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libglvnd'
+	'libx11'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://downloads.sourceforge.net/glew/glew-$pkgver.tgz")
+sha1sums=('18eca05460d0b61709fc115e632b6fe320718b44')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Set correct library directory
+	sed  's/lib64/lib/' -i config/Makefile.linux
+
+	# Set correct CFLAGS
+	sed -e "s/-O2/$CFLAGS/" -i config/Makefile.linux
+
+	# Set correct LDFLAGS
+	sed -e "s/-shared/$LDFLAGS -shared/" -i config/Makefile.linux
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install.all
+
+	# Install license file
+	install -Dm644 LICENSE.txt $pkgdir/usr/share/licenses/glew/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
