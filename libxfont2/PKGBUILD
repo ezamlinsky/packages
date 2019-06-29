@@ -1,0 +1,134 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#depends=(  )
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libxfont2')
+pkgver=2.0.3
+pkgrel=1
+pkgdesc='X11 font rasterisation library'
+url='https://xorg.freedesktop.org/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'fontsproto'
+	'glibc'
+	'libfontenc'
+	'xproto'
+	'zlib'
+	'bzip2'
+	'freetype2'
+)
+makedepends=(
+	'xorg-util-macros'
+	'xtrans'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/archive/individual/lib/libXfont2-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/archive/individual/lib/libXfont2-$pkgver.tar.bz2.sig"
+)
+sha256sums=(
+	'0e8ab7fd737ccdfe87e1f02b55f221f0bd4503a1c5f28be4ed6a54586bac9c4e'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd libXfont2-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd libXfont2-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-devel-docs'
+		'--disable-ipv6'
+		'--disable-tcp-transport'
+		'--enable-unix-transport'
+		'--enable-fc'
+		'--enable-builtins'
+		'--enable-pcfformat'
+		'--enable-bdfformat'
+		'--enable-snfformat'
+
+	# 'bzip2' related options
+		'--with-bzip2'
+		#'--without-bzip2'
+
+	# 'freetype2' related options
+		'--enable-freetype'
+		#'--disable-freetype'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd libXfont2-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libxfont2/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
