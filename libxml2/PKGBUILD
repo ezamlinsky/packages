@@ -1,0 +1,158 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='libxml2'
+pkgver=2.9.9
+pkgrel=2
+pkgdesc='XML parsing library, version 2'
+url='http://www.xmlsoft.org/'
+license=('MIT')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'icu'
+	'readline'
+	'xz'
+	'zlib'
+)
+makedepends=(
+	'python2'
+	'python'
+	'git'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=f8a8c1f59db355b46962577e7b74f1a1e8149dc6  # tags/v2.9.9^0
+source=(
+	"git+https://git.gnome.org/browse/libxml2#commit=$_commit"
+	'https://www.w3.org/XML/Test/xmlts20130923.tar.gz'
+)
+sha256sums=(
+	'SKIP'
+	'9b61db9f5dbffa545f4b8d78422167083a8568c59bd1129f94138f936cf6fc1f'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-static'
+		'--disable-ipv6'
+		'--with-threads'
+		'--with-history'
+		'--without-debug'
+		'--without-mem-debug'
+		'--without-run-debug'
+
+	# 'icu' related options
+		'--with-icu'
+		#'--without-icu'
+
+	# 'python2' related options
+		#'--with-python=/usr/bin/python2'
+		'--without-python'
+
+	# 'python' related options
+		#'--with-python=/usr/bin/python3'
+		'--without-python'
+
+	# 'readline' related options
+		'--with-readline'
+		#'--without-readline'
+
+	# 'xz' related options
+		'--with-lzma'
+		#'--without-lzma'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libxml2/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
