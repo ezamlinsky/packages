@@ -1,0 +1,146 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('polkit')
+pkgver=0.116
+pkgrel=2
+pkgdesc='Application development toolkit for controlling system-wide privileges'
+url='https://www.freedesktop.org/wiki/Software/polkit/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'expat'
+	'gcc-libs'
+	'glib2'
+	'glibc'
+	'js60'
+	'pam'
+	'systemd-libs'
+)
+makedepends=(
+	'autoconf-archive'
+	'git'
+	'gobject-introspection'
+	'gtk-doc'
+	'intltool'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=941e9329f8d3d43ace8335d206365b212824e686  # tags/0.116
+source=("git+https://gitlab.freedesktop.org/polkit/polkit.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-test'
+		'--enable-man-pages'
+		'--disable-gtk-doc'
+		'--disable-examples'
+		'--enable-introspection=no'
+		'--with-os-type=redhat'
+
+	# 'systemd' related options
+		'--enable-libsystemd-login=yes'
+		#'--enable-libsystemd-login=no'
+
+	# 'pam' related options
+		'--with-authfw=pam'
+		#'--with-authfw=shadow'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Create 'polkit.conf' file
+	mkdir -p $pkgdir/usr/lib/sysusers.d
+	echo -e 'u polkitd 102 "PolicyKit daemon"\nm polkitd proc' \
+	> $pkgdir/usr/lib/sysusers.d/polkit.conf
+	chmod 644 $pkgdir/usr/lib/sysusers.d/polkit.conf
+
+	# Change file permissions, owner and group
+	chown root:polkitd $pkgdir/{etc,usr/share}/polkit-1/rules.d
+	chmod 750 $pkgdir/{etc,usr/share}/polkit-1/rules.d
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
