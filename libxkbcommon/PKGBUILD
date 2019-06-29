@@ -1,0 +1,158 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='libxkbcommon'
+pkgname=('libxkbcommon' 'libxkbcommon-x11' 'libxkbcommon-doc')
+pkgver=0.8.4
+pkgrel=1
+url='https://xkbcommon.org/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'doxygen'
+	'git'
+	'graphviz'
+	'libxcb'
+	'meson'
+	'wayland'
+	'wayland-protocols'
+)
+checkdepends=(
+	'libgl'
+	'xorg-server-xvfb'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=d40b368b2f4c4cd130f63ac41e4a9d53b684c712  # tags/xkbcommon-0.8.4^0
+source=("git+https://github.com/xkbcommon/libxkbcommon#commit=$_commit")
+md5sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Default configure options
+	config_opts=(
+		'-Denable-docs=true'
+		'-Denable-x11=true'
+		'-Denable-wayland=true'
+		'-Ddefault-rules=evdev'
+		'-Ddefault-model=pc105'
+		'-Ddefault-layout=us,ru(winkeys)'
+		'-Ddefault-variant=base'
+		'-Ddefault-options=grp:lwin_toggle,grp_led:scroll,caps:capslock,altwin:meta_alt,terminate:ctrl_alt_bksp'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Invoke xvfb-run
+	xvfb-run -a
+
+	# Run internal tests
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libxkbcommon                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libxkbcommon() {
+	pkgdesc='Keymap handling library for toolkits and window systems'
+	depends=(
+		'glibc'
+		'xkeyboard-config'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/libxkbcommon/LICENSE
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'libxkbcommon-x11' package
+	mkdir -p $srcdir/libxkbcommon-x11/usr/{include/xkbcommon,lib/pkgconfig}
+	mv usr/lib/*x11* $srcdir/libxkbcommon-x11/usr/lib
+	mv usr/lib/pkgconfig/*x11* $srcdir/libxkbcommon-x11/usr/lib/pkgconfig
+	mv usr/include/xkbcommon/*x11* $srcdir/libxkbcommon-x11/usr/include/xkbcommon
+
+	# Split 'libxkbcommon-doc' package
+	mkdir -p $srcdir/libxkbcommon-doc/usr/share
+	mv usr/share/doc $srcdir/libxkbcommon-doc/usr/share
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libxkbcommon-x11                                                       #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libxkbcommon-x11() {
+	pkgdesc='Keyboard handling library using XKB data for X11 XCB clients'
+	depends=(
+		'glibc'
+		'libxcb'
+		'libxkbcommon'
+	)
+
+	# Copy files
+	mv $srcdir/libxkbcommon-x11/* $pkgdir
+
+	# Install license file
+	install -Dm644 $pkgbase/LICENSE $pkgdir/usr/share/licenses/libxkbcommon-x11/LICENSE
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libxkbcommon-doc                                                       #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libxkbcommon-doc() {
+	pkgdesc='API documentation for libxkbcommon'
+	depends=('libxkbcommon')
+
+	# Copy files
+	mv $srcdir/libxkbcommon-doc/* $pkgdir
+
+	# Install license file
+	install -Dm644 $pkgbase/LICENSE $pkgdir/usr/share/licenses/libxkbcommon-doc/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
