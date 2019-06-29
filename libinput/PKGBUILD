@@ -1,0 +1,100 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libinput')
+pkgver=1.13.4
+pkgrel=1
+pkgdesc='Input device management and event handling library'
+url='https://www.freedesktop.org/wiki/Software/libinput/'
+license=('custom:X11')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libevdev'
+	'libudev.so'
+	'mtdev'
+	#'gtk3'
+	#'libwacom'
+)
+makedepends=(
+	'meson'
+)
+optdepends=(
+	'gtk3: libinput debug-gui'
+	'python-pyudev: libinput measure'
+	'python-evdev: libinput measure'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://freedesktop.org/software/libinput/libinput-$pkgver.tar.xz"
+	"https://freedesktop.org/software/libinput/libinput-$pkgver.tar.xz.sig"
+)
+sha512sums=(
+	'ccfdfc704dab9ea19a503399ecd4ce3a95b8d9480b8dfddeb80be01236c34c6f2f472be0e12e04dddd68092611470d303351e092141bc7491729639bcf7e64d7'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'-Ddocumentation=false'
+		'-Dinstall-tests=false'
+		'-Dtests=false'
+
+	# 'libwacom' related options
+		#'-Dlibwacom=true'
+		'-Dlibwacom=false'
+
+	# 'gtk3' related options
+		#'-Ddebug-gui=true'
+		'-Ddebug-gui=false'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libinput/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
