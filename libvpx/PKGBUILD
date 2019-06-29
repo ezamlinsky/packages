@@ -1,0 +1,110 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libvpx')
+pkgver=1.8.0
+pkgrel=1
+pkgdesc='VP8 and VP9 codec'
+url='https://www.webmproject.org/'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('glibc')
+makedepends=(
+	'git'
+	'nasm'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libvpx.so')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://codeload.github.com/webmproject/libvpx/zip/v${pkgver}")
+sha256sums=('e8577a6acf5a168b13fc6f64d829e8ea86e917bcddf75f452bd46c69d2a6445f')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd libvpx-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--libdir=/usr/lib'
+		'--target=x86_64-linux-gcc'
+		'--cpu=native'
+		'--enable-optimizations'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--disable-examples'
+		'--disable-docs'
+		'--enable-pic'
+		'--enable-multithread'
+		'--enable-runtime-cpu-detect'
+		'--enable-better-hw-compatibility'
+		'--enable-vp8'
+		'--enable-postproc'
+		'--enable-temporal-denoising'
+		'--enable-vp9'
+		'--enable-vp9-postproc'
+		'--enable-vp9-temporal-denoising'
+		'--enable-vp9-highbitdepth'
+		'--enable-multi-res-encoding'
+		'--enable-webm-io'
+		'--enable-libyuv'
+	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-lto'
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd libvpx-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/libvpx/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
