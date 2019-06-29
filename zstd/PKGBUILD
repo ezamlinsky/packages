@@ -1,0 +1,83 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='zstd'
+pkgver=1.4.0
+pkgrel=1
+pkgdesc='Zstandard - Fast real-time compression algorithm'
+url='https://www.zstd.net/'
+license=('BSD' 'GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	'lz4'
+	'xz'
+	'zlib'
+)
+makedepends=('gtest')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("$pkgname-$pkgver.tar.gz::https://github.com/facebook/zstd/archive/v${pkgver}.tar.gz")
+sha256sums=('63be339137d2b683c6d19a9e34f4fb684790e864fee13c7dd40e197a64c705c1')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Build package
+	make && make -C contrib/pzstd
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check && make -C contrib/pzstd test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make PREFIX=/usr DESTDIR=$pkgdir install
+
+	# Install 'pzstd' binary file
+	install -Dm755 contrib/pzstd/pzstd $pkgdir/usr/bin/pzstd
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/package_name/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
