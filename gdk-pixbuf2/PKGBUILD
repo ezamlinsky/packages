@@ -1,0 +1,138 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('gdk-pixbuf2')
+pkgver=2.38.1
+pkgrel=1
+pkgdesc='An image loading library'
+url='https://wiki.gnome.org/Projects/GdkPixbuf'
+license=('LGPL2.1')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glib2'
+	'glibc'
+	'shared-mime-info'
+	'jasper'
+	'libjpeg'
+	'libpng'
+	'libtiff'
+	'libx11'
+)
+makedepends=(
+	'gobject-introspection'
+	'docbook-xsl'
+	'git'
+	'gtk-doc'
+	'meson'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+install='gdk-pixbuf2.install'
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=2bb565093b8a93b35a2be61d6f4a01352fe94af6  # tags/2.38.1^0
+source=(
+	"git+https://gitlab.gnome.org/GNOME/gdk-pixbuf.git#commit=$_commit"
+	'gdk-pixbuf-query-loaders.hook'
+)
+sha256sums=(
+	'SKIP'
+	'963afcfacde9fd36031d93c8aa4c94a669ab1dbe9ba0d2cf17599b7d358e54c2'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd gdk-pixbuf
+
+	# Default configure options
+	config_opts=(
+		'-Dbuiltin_loaders=all'
+		'-Dgio_sniffing=true'
+		'-Dinstalled_tests=false'
+		'-Dman=true'
+		'-Ddocs=false'
+		'-Dgir=false'
+
+	# 'jasper' related options
+		'-Djasper=true'
+		#'-Djasper=false'
+
+	# 'libjpeg' related options
+		'-Djpeg=true'
+		#'-Djpeg=false'
+
+	# 'libpng' related options
+		'-Dpng=true'
+		#'-Dpng=false'
+
+	# 'libtiff' related options
+		'-Dtiff=true'
+		#'-Dtiff=false'
+
+	# 'libx11' related options
+		'-Dx11=true'
+		#'-Dx11=false'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd gdk-pixbuf
+
+	# Run internal tests
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd gdk-pixbuf
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Install vendor's hooks
+	install -Dm644 $srcdir/gdk-pixbuf-query-loaders.hook \
+	$pkgdir/usr/share/libalpm/hooks/gdk-pixbuf-query-loaders.hook
+
+	# Remove installed tests
+	rm -rf $pkgdir/usr/{lib,share}/installed-tests
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
