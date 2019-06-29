@@ -1,0 +1,147 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('groff')
+pkgver=1.22.4
+pkgrel=1
+pkgdesc='GNU troff text-formatting system'
+url='http://www.gnu.org/software/groff/groff.html'
+license=('GPL')
+arch=('x86_64')
+groups=('base-devel')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	'perl'
+	'libx11'
+	'libxaw'
+	'libxmu'
+	'libxt'
+)
+makedepends=(
+	'netpbm'
+	'psutils'
+)
+optdepends=(
+	'netpbm: for use together with man -H command interaction in browsers'
+	'psutils: for use together with man -H command interaction in browsers'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"ftp://ftp.gnu.org/gnu/groff/groff-$pkgver.tar.gz"
+	"ftp://ftp.gnu.org/gnu/groff/groff-$pkgver.tar.gz.sig"
+	'site.tmac'
+)
+md5sums=(
+	'08fb04335e2f5e73f23ea4c3adbf0c5f'
+	'SKIP'
+	'a1fedafd7863b37968d32ad9ae1d8c13'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--with-doc=no'
+
+	# 'libx11' related options
+		'--with-x'
+		'--with-appresdir=/usr/share/X11/app-defaults'
+		#'--without-x'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Add compatibility symlinks
+	ln -s eqn $pkgdir/usr/bin/geqn
+	ln -s tbl $pkgdir/usr/bin/gtbl
+	ln -s soelim $pkgdir/usr/bin/zsoelim
+
+	# FS33760 - TERMCAP variables not followed
+	# TODO: everyone is doing this - find out why upstream does not...
+	cat $srcdir/site.tmac >> $pkgdir/usr/share/groff/site-tmac/man.local
+	cat $srcdir/site.tmac >> $pkgdir/usr/share/groff/site-tmac/mdoc.local
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
