@@ -1,0 +1,86 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('at-spi2-core')
+pkgver=2.32.1
+pkgrel=1
+pkgdesc='Protocol definitions and daemon for D-Bus at-spi'
+url='https://gitlab.gnome.org/GNOME/at-spi2-core'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'dbus'
+	'glib2'
+	'glibc'
+	'libx11'
+	'libxtst'
+)
+makedepends=(
+	'dbus-broker'
+	'git'
+	'gobject-introspection'
+	'gtk-doc'
+	'meson'
+)
+optdepends=('dbus-broker: Alternative bus implementation')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=89001a86a037cfabf27e912b902929b5daeb3c55  # tags/AT_SPI2_CORE_2_32_1^0
+source=("git+https://gitlab.gnome.org/GNOME/at-spi2-core.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'-Denable_docs=false'
+		'-Denable-introspection=no'
+
+	# 'libx11' and 'libxtst' related options
+		'-Denable-x11=yes'
+		#'-Denable-x11=no'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
