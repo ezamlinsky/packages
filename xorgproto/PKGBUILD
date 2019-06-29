@@ -1,0 +1,193 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xorgproto')
+pkgver=2019.1
+pkgrel=1
+pkgdesc='Combined X.Org X11 Protocol headers'
+url='https://xorg.freedesktop.org/'
+license=('custom')
+arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'meson'
+	'xorg-util-macros'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'bigreqsproto'
+	'compositeproto'
+	'damageproto'
+	'dmxproto'
+	'dri2proto'
+	'dri3proto'
+	'fixesproto'
+	'fontsproto'
+	'glproto'
+	'inputproto'
+	'kbproto'
+	'presentproto'
+	'printproto'
+	'randrproto'
+	'recordproto'
+	'renderproto'
+	'resourceproto'
+	'scrnsaverproto'
+	'videoproto'
+	'xcmiscproto'
+	'xextproto'
+	'xf86dgaproto'
+	'xf86driproto'
+	'xf86miscproto'
+	'xf86vidmodeproto'
+	'xineramaproto'
+	'xproto'
+)
+conflicts=(
+	'bigreqsproto'
+	'compositeproto'
+	'damageproto'
+	'dmxproto'
+	'dri2proto'
+	'dri3proto'
+	'fixesproto'
+	'fontsproto'
+	'glproto'
+	'inputproto'
+	'kbproto'
+	'presentproto'
+	'printproto'
+	'randrproto'
+	'recordproto'
+	'renderproto'
+	'resourceproto'
+	'scrnsaverproto'
+	'videoproto'
+	'xcmiscproto'
+	'xextproto'
+	'xf86dgaproto'
+	'xf86driproto'
+	'xf86miscproto'
+	'xf86vidmodeproto'
+	'xineramaproto'
+	'xproto'
+)
+replaces=(
+	'bigreqsproto'
+	'compositeproto'
+	'damageproto'
+	'dmxproto'
+	'dri2proto'
+	'dri3proto'
+	'fixesproto'
+	'fontsproto'
+	'glproto'
+	'inputproto'
+	'kbproto'
+	'presentproto'
+	'printproto'
+	'randrproto'
+	'recordproto'
+	'renderproto'
+	'resourceproto'
+	'scrnsaverproto'
+	'videoproto'
+	'xcmiscproto'
+	'xextproto'
+	'xf86dgaproto'
+	'xf86driproto'
+	'xf86miscproto'
+	'xf86vidmodeproto'
+	'xineramaproto'
+	'xproto'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/archive/individual/proto/xorgproto-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/archive/individual/proto/xorgproto-$pkgver.tar.bz2.sig"
+)
+sha512sums=(
+	'f26c17f4a027acdc799b532fa65c3ea1b0e8c30794c7b7293060ee9d9dec84b4878966cd2dcda43584849232e73a208abd4213374f89b05c10e5aae92bdc00be'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'-Dlegacy=true'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal tests
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Install docs
+	mkdir -p $pkgdir/usr/share/doc/xorgproto
+	install -m644 *.txt $pkgdir/usr/share/doc/xorgproto
+	install -m644 PM_spec $pkgdir/usr/share/doc/xorgproto
+
+	# Install license files
+	mkdir -p $pkgdir/usr/share/licenses/xorgproto
+	install -m644 COPYING* $pkgdir/usr/share/licenses/xorgproto
+
+	# Remove non required files
+	rm -f $pkgdir/usr/include/X11/extensions/{apple,windows}*
+	rm -f $pkgdir/usr/share/licenses/xorgproto/COPYING-{apple,windows}wmproto
+	rm -f $pkgdir/usr/share/pkgconfig/{apple,windows}wmproto.pc
+	rm -f $pkgdir/usr/share/doc/xorgproto/meson_options.txt
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
