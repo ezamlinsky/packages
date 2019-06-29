@@ -1,0 +1,122 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='fuse3'
+pkgname=('fuse3' 'fuse-common')
+pkgver=3.6.1
+pkgrel=1
+url='https://github.com/libfuse/libfuse'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'pkgconfig'
+	'meson'
+	'udev'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://github.com/libfuse/libfuse/releases/download/fuse-$pkgver/fuse-$pkgver.tar.xz"
+	"https://github.com/libfuse/libfuse/releases/download/fuse-$pkgver/fuse-$pkgver.tar.xz.asc"
+	'fuse.conf'
+)
+sha1sums=(
+	'ca1618e0312ab480a903654688516f4a3e5040a9'
+	'SKIP'
+	'3b42e37a741d4651099225987dc40e7f02a716ad'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd fuse-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'-Ddisable-mtab=false'
+		'-Dutils=true'
+		'-Dexamples=false'
+	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-lto'
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Fuse3                                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_fuse3() {
+	pkgdesc='A library that makes it possible to implement a filesystem in a userspace program.'
+	depends=(
+		'glibc'
+		'fuse-common'
+	)
+
+	# Change directory to source directory
+	cd fuse-$pkgver
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Remove static devices
+	rm -fr dev
+
+	# Split 'fuse-common' package
+	mkdir -p $srcdir/fuse-common/{etc,usr/{bin,lib,share/man}}
+	mv etc/fuse.conf $srcdir/fuse-common/etc
+	mv usr/bin/mount.fuse3 $srcdir/fuse-common/usr/bin/mount.fuse
+	mv usr/lib/udev $srcdir/fuse-common/usr/lib
+	mv usr/share/man/man8 $srcdir/fuse-common/usr/share/man
+	rm -fr etc
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Fuse-common                                                            #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_fuse-common() {
+	pkgdesc='Common files for fuse2/3 packages'
+	depends=(
+		'glibc'
+		'fuse3'
+	)
+	backup=('etc/fuse.conf')
+
+	# Copy files
+	mv $srcdir/fuse-common/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
