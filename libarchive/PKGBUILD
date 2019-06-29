@@ -1,0 +1,184 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libarchive')
+pkgver=3.4.0
+pkgrel=2
+pkgdesc='Multi-format archive and compression library'
+url='http://libarchive.org/'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'acl'
+#	'attr'
+	'bzip2'
+	'expat'
+	#'libxml2'
+	'lz4'
+	'lzo'
+	#'nettle'
+	'openssl'
+	'xz'
+	'zlib'
+	'zstd'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libarchive.so')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://github.com/libarchive/libarchive/releases/download/v${pkgver}/libarchive-${pkgver}.tar.gz"
+	"https://github.com/libarchive/libarchive/releases/download/v${pkgver}/libarchive-${pkgver}.tar.gz.asc"
+)
+sha256sums=(
+	'8643d50ed40c759f5412a3af4e353cffbce4fdf3b5cf321cb72cacf06b2d825e'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Create configure script
+	autoreconf -fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-bsdtar'
+		'--enable-bsdcat'
+		'--enable-bsdcpio'
+		'--enable-posix-regex-lib'
+
+	# 'acl' related options
+		'--enable-acl'
+		#'--disable-acl'
+
+	# 'attr' related options
+		'--enable-xattr'
+		#'--disable-xattr'
+
+	# 'bzip2' related options
+		'--with-bz2lib'
+		#'--without-bz2lib'
+
+	# 'expat' related options
+		'--with-expat'
+		#'--without-expat'
+
+	# 'libxml2' related options
+		#'--with-xml2'
+		'--without-xml2'
+
+	# 'lz4' related options
+		'--with-lz4'
+		#'--without-lz4'
+
+	# 'lzo' related options
+		'--with-lzo2'
+		#'--without-lzo2'
+
+	# 'nettle' related options
+		#'--with-nettle'
+		'--without-nettle'
+
+	# 'openssl' related options
+		'--with-openssl'
+		#'--without-openssl'
+
+	# 'xz' related options
+		'--with-lzma'
+		#'--without-lzma'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
+
+	# 'zstd' related options
+		'--with-zstd'
+		#'--without-zstd'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libarchive/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
