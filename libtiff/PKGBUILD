@@ -1,0 +1,167 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libtiff')
+pkgver=4.0.10
+pkgrel=1
+pkgdesc='Library for manipulation of TIFF images'
+url='http://www.simplesystems.org/libtiff/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	'libglvnd'
+	'libjpeg'
+	'libwebp'
+	'xz'
+	'zlib'
+	'zstd'
+)
+makedepends=(
+	'freeglut'
+	'glu'
+	'jbigkit'
+	'mesa'
+)
+optdepends=('freeglut: for using tiffgt')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"http://download.osgeo.org/libtiff/tiff-$pkgver.tar.gz"
+	"http://download.osgeo.org/libtiff/tiff-$pkgver.tar.gz.sig"
+)
+sha256sums=(
+	'2c52d11ccaf767457db0c46795d9c7d1a8d8f76f68b0b800a3dfe45786b996e4'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd tiff-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd tiff-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+
+	# 'gcc-libs' related options
+		'--enable-cxx'
+		#'--disable-cxx'
+
+	# 'glut' related options
+		'--with-x'
+		#'--without-x'
+
+	# 'jbigkit' related options
+		'--enable-jbig'
+		#'--disable-jbig'
+
+	# 'libjpeg' related options
+		'--enable-jpeg'
+		#'--disable-jpeg'
+		'--enable-old-jpeg'
+		#'--disable-old-jpeg'
+
+	# 'libwebp' related options
+		'--enable-webp'
+		#'--disable-webp'
+
+	# 'xz' related options
+		'--enable-lzma'
+		#'--disable-lzma'
+
+	# 'zlib' related options
+		'--enable-zlib'
+		#'--disable-zlib'
+		'--enable-pixarlog'
+		#'--disable-pixarlog'
+
+	# 'zstd' related options
+		'--enable-zstd'
+		#'--disable-zstd'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd tiff-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd tiff-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYRIGHT $pkgdir/usr/share/licenses/libtiff/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
