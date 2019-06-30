@@ -1,0 +1,124 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('upower')
+pkgver=0.99.10
+pkgrel=1
+pkgdesc='Abstraction for enumerating power devices, listening to device events and querying history and statistics'
+url='http://upower.freedesktop.org'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glib2'
+	'glibc'
+	'libgudev'
+	#'libimobiledevice'
+	'libusb'
+	'systemd'
+)
+makedepends=(
+	'docbook-xsl'
+	'git'
+	'gobject-introspection'
+	'gtk-doc'
+	'intltool'
+	'python'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=('etc/UPower/UPower.conf')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=215049e7b80c5f24cb35cd229a445c6cf19bd381	# tags/UPOWER_0_99_10^0
+source=("git+https://gitlab.freedesktop.org/upower/upower.git#commit=$_commit")
+md5sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib/upower'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-tests'
+		'--enable-man-pages'
+		'--enable-gtk-doc'
+		'--enable-introspection=no'
+		'--with-backend=linux'
+
+	# 'libimobiledevice' related options
+		#'--with-idevice'
+		'--without-idevice'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
