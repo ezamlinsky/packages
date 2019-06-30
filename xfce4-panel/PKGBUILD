@@ -1,0 +1,129 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfce4-panel')
+pkgver=4.12.2
+pkgrel=1
+pkgdesc='Panel for the Xfce desktop environment'
+url='http://www.xfce.org/'
+license=('GPL2')
+arch=('x86_64')
+groups=('xfce4')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'atk'
+	'cairo'
+	'dbus'
+	'dbus-glib'
+	'desktop-file-utils'
+	'exo'
+	'garcon'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk2'
+	'gtk3'
+	'hicolor-icon-theme'
+	'libwnck'
+	'libx11'
+	'libxext'
+	'libxfce4ui'
+	'libxfce4util'
+	'pango'
+	'xfconf'
+)
+makedepends=(
+	'intltool'
+	'gtk-doc'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://archive.xfce.org/src/xfce/xfce4-panel/${pkgver%.*}/xfce4-panel-$pkgver.tar.bz2")
+sha256sums=('42058abb81b8f87691d3999627447de71c3285bcf055f308aab5cefab2de0ce9')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-gio-unix'
+		'--disable-gtk-doc'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--with-x'
+
+	# 'gtk3' related options
+		'--enable-gtk3'
+		#'--disable-gtk3'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
