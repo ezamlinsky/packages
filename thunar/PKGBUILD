@@ -1,0 +1,169 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('thunar')
+pkgver=1.8.7
+pkgrel=1
+pkgdesc='Modern file manager for Xfce'
+url='https://docs.xfce.org/xfce/thunar/start'
+license=('GPL2' 'LGPL2.1')
+arch=('x86_64')
+groups=('xfce4')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'atk'
+	'cairo'
+	'dbus-glib'
+	'desktop-file-utils'
+	'exo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk3'
+	'hicolor-icon-theme'
+	'libexif'
+	'libgudev'
+	'libice'
+	'libnotify'
+	'libsm'
+	'libx11'
+	'libxfce4ui'
+	'libxfce4util'
+	'pango'
+	'pcre'
+	'xfce4-panel'
+	'xfconf'
+)
+makedepends=('intltool')
+optdepends=(
+	'gvfs: for trash support, mounting with udisk and remote filesystems'
+	'thunar-archive-plugin: create and deflate archives'
+	'thunar-media-tags-plugin: view/edit id3/ogg tags'
+	'thunar-volman: manages removable devices'
+	'tumbler: for thumbnail previews'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/Thunar-$pkgver.tar.bz2"
+	'bz15352-revert-deactivate-move-to-trash.patch'
+)
+sha256sums=(
+	'3e033af06751beee23e73cf16cbd97513d3c0adf358d8a42158af38a44b9d329'
+	'c531416c79bb7b196e649e36f032d7e257eeff0e7e455dcefc7c174268c24345'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd Thunar-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/bz15352-revert-deactivate-move-to-trash.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd Thunar-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-gtk-doc'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--enable-introspection=no'
+		'--enable-gio-unix'
+		'--enable-apr-plugin'
+		'--enable-sbr-plugin'
+		'--enable-tpa-plugin'
+		'--enable-uca-plugin'
+		'--with-x'
+
+	# 'dbus-glib' related options
+		'--enable-dbus'
+		#'--disable-dbus'
+
+	# 'libexif' related options
+		'--enable-exif'
+		#'--disable-exif'
+
+	# 'libgudev' related options
+		'--enable-gudev'
+		#'--disable-gudev'
+
+	# 'libnotify' related options
+		'--enable-notifications'
+		#'--disable-notifications'
+
+	# 'libx11' related options
+		'--enable-wallpaper-plugin'
+		#'--disable-wallpaper-plugin'
+
+	# 'pcre' related options
+		'--enable-pcre'
+		#'--disable-pcre'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd Thunar-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
