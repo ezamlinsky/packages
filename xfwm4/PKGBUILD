@@ -1,0 +1,139 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfwm4')
+pkgver=4.12.5
+pkgrel=1
+pkgdesc='Xfce window manager'
+url='http://www.xfce.org/'
+license=('GPL2')
+arch=('x86_64')
+groups=('xfce4')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	'dbus-glib'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk2'
+	'hicolor-icon-theme'
+	'libwnck'
+	'libx11'
+	'libxcomposite'
+	'libxdamage'
+	'libxext'
+	'libxfce4ui'
+	'libxfce4util'
+	'libxfixes'
+	'libxinerama'
+	'libxrandr'
+	'libxrender'
+	'pango'
+	'startup-notification'
+	'xfconf'
+)
+makedepends=('intltool' 'libdrm')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://archive.xfce.org/src/xfce/xfwm4/${pkgver%.*}/xfwm4-$pkgver.tar.bz2")
+sha256sums=('7775c02216666c2d023275e7ed6d85e57d965e5cc1407bb6a05c53cc38d8caca')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-libdrm'
+		'--enable-xsync'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--with-x'
+
+	# 'libxcomposite' related options
+		'--enable-compositor'
+		#'--disable-compositor'
+
+	# 'libxrandr' related options
+		'--enable-randr'
+		#'--disable-randr'
+
+	# 'libxrender' related options
+		'--enable-render'
+		#'--disable-render'
+
+	# 'startup-notification' related options
+		'--enable-startup-notification'
+		#'--disable-startup-notification'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
