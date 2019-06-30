@@ -1,0 +1,122 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfce4-mailwatch-plugin')
+pkgver=1.2.0
+pkgrel=8
+pkgdesc='Multi-protocol, multi-mailbox mail watcher for the Xfce4 panel'
+url='http://goodies.xfce.org/projects/panel-plugins/xfce4-mailwatch-plugin'
+license=('GPL2')
+arch=('x86_64')
+groups=('xfce4-goodies')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'exo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gnutls'
+	'gtk2'
+	'libgcrypt'
+	'libxfce4ui'
+	'libxfce4util'
+	'xfce4-panel'
+)
+makedepends=('intltool')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://archive.xfce.org/src/panel-plugins/xfce4-mailwatch-plugin/${pkgver%.*}/xfce4-mailwatch-plugin-$pkgver.tar.bz2")
+sha256sums=('624acc8229a8593c0dfeb28f883f4958119a715cc81cecdbaf29efc8ab1edcad')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-ipv6'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--with-x'
+
+	# 'gnutls & libgcrypt' related option
+		'--enable-ssl'
+		#'--disable-ssl'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install 'new-email' script
+	mkdir -p $pkgdir/usr/lib/xfce4/session
+	echo '#!/bin/bash' >> $pkgdir/usr/lib/xfce4/session/new-email
+	echo 'DISPLAY=:0 notify-send --urgency=low --expire-time=10000 --icon=mail-notification "Incoming mail" "Check the mailbox. You have a new messages."' >> $pkgdir/usr/lib/xfce4/session/new-email
+	echo 'canberra-gtk-play --display=:0 --id=message-new-email --description="Mail notification"' >> $pkgdir/usr/lib/xfce4/session/new-email
+	chmod +x $pkgdir/usr/lib/xfce4/session/new-email
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
