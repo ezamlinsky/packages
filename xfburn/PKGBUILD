@@ -1,0 +1,120 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfburn')
+pkgver=0.5.5
+pkgrel=1
+pkgdesc='A simple CD/DVD burning tool based on libburnia libraries'
+url='http://goodies.xfce.org/projects/applications/xfburn'
+license=('GPL')
+arch=('x86_64')
+groups=('xfce4-goodies')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'desktop-file-utils'
+	'exo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	#'gst-plugins-base-libs'
+	'gtk2'
+	'libburn'
+	'libgudev'
+	'libisofs'
+	'libxfce4ui'
+	'libxfce4util'
+)
+makedepends=('intltool')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://archive.xfce.org/src/apps/xfburn/${pkgver%.*}/xfburn-$pkgver.tar.bz2")
+sha256sums=('aa173aa8a6c0887a4b236aee3753760e943f3e2be99af1f2d5343a6df345ade1')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-debug=no'
+
+	# 'libgudev' related options
+		'--enable-gudev'
+		#'--disable-gudev'
+
+	# 'gst-plugins-base-libs' related options
+		#'--enable-gstreamer'
+		'--disable-gstreamer'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
