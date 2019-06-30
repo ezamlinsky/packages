@@ -1,0 +1,143 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xarchiver')
+pkgver=0.5.4.14
+pkgrel=1
+pkgdesc='GTK+ frontend to various command line archivers'
+url='https://github.com/ib/xarchiver'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	#'gtk2'
+	'gtk3'
+)
+makedepends=(
+	'docbook-xsl'
+	'intltool'
+	'xmlto'
+)
+optdepends=(
+	'arj: ARJ support'
+	'binutils: deb support'
+	'bzip2: bzip2 support'
+	'cpio: RPM support'
+	'gzip: gzip support'
+	'lha: LHA support'
+	'lrzip: lrzip support'
+	'lz4: LZ4 support'
+	'lzip: lzip support'
+	'lzop: LZOP support'
+	'p7zip: 7z support'
+	'tar: tar support'
+	'unarj: ARJ support'
+	'unrar: RAR support'
+	'unzip: ZIP support'
+	'xz: xz support'
+	'zip: ZIP support'
+	'zstd: zstd support'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"xarchiver-$pkgver.tar.gz::https://github.com/ib/xarchiver/archive/$pkgver.tar.gz"
+	'xarchiver.appdata.xml'
+)
+sha256sums=(
+	'335bed86e10a1428d54196edf5c828e79ceed05049e83896114aa46f0a950a2f'
+	'55f41aa0e5569b446933a34ac0585443fa5bd92f03f47e1fd53daf19905cc97e'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--enable-doc'
+		'--enable-icons'
+		'--enable-plugin'
+
+	# 'gtk2' related types
+		#'--enable-gtk2'
+		'--disable-gtk2'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install file 'xarchiver.appdata.xml'
+	install -Dm644 $srcdir/$pkgname.appdata.xml $pkgdir/usr/share/metainfo/$pkgname.appdata.xml
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
