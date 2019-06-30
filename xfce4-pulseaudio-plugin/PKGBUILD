@@ -1,0 +1,134 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfce4-pulseaudio-plugin')
+pkgver=0.4.1
+pkgrel=1
+pkgdesc='Pulseaudio plugin for Xfce4 panel'
+url='https://goodies.xfce.org/projects/panel-plugins/xfce4-pulseaudio-plugin'
+license=('GPL2')
+arch=('x86_64')
+groups=('xfce4-goodies')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glib2'
+	'glibc'
+	'gtk-update-icon-cache'
+	'gtk3'
+	'libkeybinder3'
+	'libnotify'
+	'libpulse'
+	#'libwnck3'
+	'libxfce4ui'
+	'libxfce4util'
+	'xfce4-panel'
+	'xfconf'
+)
+makedepends=(
+	'dbus-glib'
+	'git'
+	'intltool'
+	'xfce4-dev-tools'
+)
+optdepends=('pavucontrol: default pulseaudio mixer')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=66231b3503a74faea7bdbb925f08d7967016df6a  # tags/xfce4-pulseaudio-plugin-0.4.1^0
+source=("git+https://git.xfce.org/panel-plugins/xfce4-pulseaudio-plugin/#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-maintainer-mode'
+		'--enable-mpris2'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--with-x'
+		'--with-mixer-command=pavucontrol'
+
+	# 'libkeybinder3' related options
+		'--enable-keybinder'
+		#'--disable-keybinder'
+
+	# 'libnotify' related options
+		'--enable-libnotify'
+		#'--disable-libnotify'
+
+	# 'libwnck3' related options
+		#'--enable-wnck'
+		'--disable-wnck'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
