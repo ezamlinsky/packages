@@ -1,0 +1,140 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfdesktop')
+pkgver=4.13.4
+pkgrel=1
+pkgdesc='A desktop manager for Xfce'
+url='http://www.xfce.org/'
+license=('GPL2')
+arch=('x86_64')
+groups=('xfce4')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	'dbus'
+	'dbus-glib'
+	'exo'
+	'garcon'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk3'
+	'hicolor-icon-theme'
+	'libnotify'
+	'libwnck3'
+	'libx11'
+	'libxfce4ui'
+	'libxfce4util'
+	'pango'
+	'thunar'
+	'xfconf'
+)
+makedepends=('intltool')
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+conflicts=('xfce4-menueditor')
+replaces=('xfce4-menueditor')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://archive.xfce.org/src/xfce/xfdesktop/${pkgver%.*}/xfdesktop-$pkgver.tar.bz2")
+sha256sums=('f4f7fa5162512971c25066eb04ef78f0d075656da79b6f7425ffb619a5119ca0')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-gio-unix'
+		'--enable-thunarx'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--with-x'
+
+	# 'garcon' related options
+		'--enable-desktop-menu'
+		#'--disable-desktop-menu'
+
+	# 'libnotify' related options
+		'--enable-notifications'
+		#'--disable-notifications'
+
+	# 'pango' related options
+		'--enable-desktop-icons'
+		#'--disable-desktop-icons'
+		'--enable-file-icons'
+		#'--disable-file-icons'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
