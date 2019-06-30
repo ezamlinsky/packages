@@ -1,0 +1,127 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfce4-taskmanager')
+pkgver=1.2.2
+pkgrel=1
+pkgdesc='Easy to use task manager'
+url='http://goodies.xfce.org/projects/applications/xfce4-taskmanager'
+license=('GPL2')
+arch=('x86_64')
+groups=('xfce4-goodies')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	#'gtk2'
+	'gtk3'
+	#'libgksu'
+	#'libwnck'
+	'libwnck3'
+	'libx11'
+	'libxmu'
+)
+makedepends=('intltool')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://archive.xfce.org/src/apps/xfce4-taskmanager/${pkgver%.*}/xfce4-taskmanager-$pkgver.tar.bz2")
+sha256sums=('e49a61c819a4fd9286a65ae61605984f327c8b26cf939289f644e656bfa20e13')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-debug=no'
+		'--with-x'
+
+	# 'gtk2' related options
+		#'--enable-gtk2'
+		'--disable-gtk2'
+
+	# 'libwnck3' related options
+		'--enable-wnck3'
+		#'--disable-wnck3'
+
+	# 'libwnck' related options
+		#'--enable-wnck'
+		'--disable-wnck'
+
+	# 'libgksu' related options
+		'--enable-gksu'
+		#'--disable-gksu'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
