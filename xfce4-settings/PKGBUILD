@@ -1,0 +1,171 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xfce4-settings')
+pkgver=4.12.4
+pkgrel=2
+pkgdesc='Settings manager for xfce'
+url='http://www.xfce.org/'
+license=('GPL2')
+arch=('x86_64')
+groups=('xfce4')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'adwaita-icon-theme'
+	'cairo'
+	'dbus'
+	'dbus-glib'
+	'exo'
+	'fontconfig'
+	'garcon'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gnome-icon-theme'
+	'gnome-themes-standard'
+	'gtk2'
+	'libnotify'
+	'libx11'
+	'libxcursor'
+	'libxfce4ui'
+	'libxfce4util'
+	'libxi'
+	'libxklavier'
+	'libxrandr'
+	'pango'
+	'upower'
+	'xfconf'
+)
+makedepends=(
+	'intltool'
+	'libcanberra'
+	'xf86-input-libinput'
+)
+optdepends=('libcanberra: for sound control')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://archive.xfce.org/src/xfce/xfce4-settings/${pkgver%.*}/xfce4-settings-$pkgver.tar.bz2"
+	"default-xsettings-xml.patch"
+)
+sha256sums=(
+	'e2a04cad48bf9e951409d0c841829fa3b4ce632cd799082ef82d0506618b6f9b'
+	'8e9a6c70ab0ceb5d91b637dc290768f8a47edb5d7b6e2eebc4459dbc4ee040d7'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/default-xsettings-xml.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-gio-unix'
+		'--enable-pluggable-dialogs'
+		'--disable-debug'
+		'--enable-debug=no'
+
+	# 'libx11' related option
+		'--with-x'
+		#'--without-x'
+
+	# 'libxrandr' related option
+		'--enable-xrandr'
+		#'--disable-xrandr'
+
+	# 'upower' related option
+		'--enable-upower-glib'
+		#'--disable-upower-glib'
+
+	# 'libnotify' related option
+		'--enable-libnotify'
+		#'--disable-libnotify'
+
+	# 'libxcursor' related option
+		'--enable-xcursor'
+		#'--disable-xcursor'
+
+	# 'libxi' related option
+		'--enable-xorg-libinput'
+		#'--disable-xorg-libinput'
+
+	# 'libxklavier' related option
+		'--enable-libxklavier'
+		#'--disable-libxklavier'
+
+	# 'libcanberra' related option
+		'--enable-sound-settings'
+		#'--disable-sound-settings'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
