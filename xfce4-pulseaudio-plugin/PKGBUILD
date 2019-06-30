@@ -30,7 +30,7 @@ depends=(
 	'libkeybinder3'
 	'libnotify'
 	'libpulse'
-	#'libwnck3'
+	'libwnck3'
 	'libxfce4ui'
 	'libxfce4util'
 	'xfce4-panel'
@@ -101,8 +101,8 @@ build() {
 		#'--disable-libnotify'
 
 	# 'libwnck3' related options
-		#'--enable-wnck'
-		'--disable-wnck'
+		'--enable-wnck'
+		#'--disable-wnck'
 	)
 
 	# Run package configuration script
