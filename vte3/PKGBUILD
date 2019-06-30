@@ -1,0 +1,149 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='vte3'
+pkgname=('vte3' 'vte-common')
+pkgver=0.56.3
+pkgrel=1
+url='https://wiki.gnome.org/Apps/Terminal/VTE'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'git'
+	'glade'
+	'gobject-introspection'
+	'gperf'
+	'gtk-doc'
+	'intltool'
+	'vala'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=14fac9f56d923cbb23b0c114ddf630fe36c5163c  # tags/0.56.3^0
+source=("git+https://gitlab.gnome.org/GNOME/vte.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd vte
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd vte
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--disable-glade'
+		'--disable-gtk-doc'
+		'--enable-introspection=no'
+		'--enable-vala=no'
+
+	# 'gnutls' related options
+		'--with-gnutls'
+		#'--without-gnutls'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Vte3                                                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_vte3() {
+	pkgdesc='Virtual Terminal Emulator widget for use with GTK3'
+	depends=(
+		'atk'
+		'cairo'
+		'gcc-libs'
+		'gdk-pixbuf2'
+		'glib2'
+		'glibc'
+		'gtk3'
+		'pango'
+		'pcre2'
+		'vte-common'
+		'zlib'
+		'gnutls'
+	)
+
+	# Change directory to source directory
+	cd vte
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'vte-common' package
+	mkdir -p $srcdir/vte-common
+	mv etc $srcdir/vte-common || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Vte-common                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_vte-common() {
+	pkgdesc='Common files used by vte and vte3'
+	depends=('sh')
+
+	# Copy files
+	mv $srcdir/vte-common/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
