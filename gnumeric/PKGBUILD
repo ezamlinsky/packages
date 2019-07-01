@@ -1,0 +1,162 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('gnumeric')
+pkgver=1.12.45
+pkgrel=2
+pkgdesc='A GNOME Spreadsheet Program'
+url='http://www.gnome.org/projects/gnumeric/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'atk'
+	'cairo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'goffice'
+	'gtk3'
+	#'libgda'
+	'libgsf'
+	'libxml2'
+	'pango'
+	#'psiconv'
+	#'python2'
+	'zlib'
+)
+makedepends=(
+	'autoconf-archive'
+	'docbook-xml'
+	'git'
+	'gobject-introspection'
+	'gtk-doc'
+	'intltool'
+	'pygobject-devel'
+	'python2-gobject'
+	'yelp-tools'
+)
+optdepends=(
+	'perl: for perl plugin support'
+	'yelp: for viewing the help manual'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=fd8eedb30acc50c1096bf6d6a126d265e35bada3  # tags/GNUMERIC_1_12_45^0
+source=(
+	"git+https://gitlab.gnome.org/GNOME/gnumeric.git#commit=$_commit"
+	'revert-warnings.patch'
+)
+sha256sums=(
+	'SKIP'
+	'bcafca016b809000c2a5bf911e2e3dfa4de28f9e541d9964574cac5c7ce09e53'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Apply patches
+	patch -Np0 -i $srcdir/revert-warnings.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-schemas-compile'
+		'--enable-component'
+		'--enable-gtk-doc'
+		'--enable-introspection=no'
+
+	# 'gtk3' related options
+		'--with-gtk'
+		#'--without-gtk'
+
+	# 'libgda' related options
+		#'--with-gda'
+		'--without-gda'
+
+	# 'psiconv' related options
+		#'--with-psiconv'
+		'--without-psiconv'
+
+	# 'perl' related options
+		'--with-perl'
+		#'--without-perl'
+
+	# 'python2' related options
+		#'--with-python'
+		'--without-python'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
+	)
+
+	# Run package configuration script
+	PYTHON=/usr/bin/python2 ./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
