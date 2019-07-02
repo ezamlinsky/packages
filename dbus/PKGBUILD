@@ -1,0 +1,206 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='dbus'
+pkgname=('dbus' 'dbus-docs')
+pkgver=1.12.16
+pkgrel=1
+url='https://wiki.freedesktop.org/www/Software/dbus/'
+license=('GPL custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'autoconf-archive'
+	'docbook-xsl'
+	'doxygen'
+	'git'
+	'glib2'
+	'graphviz'
+	'python'
+	'systemd'
+	'xmlto'
+	'yelp-tools'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=23cc709db8fab94f11fa48772bff396b20aea8b0  # tags/dbus-1.12.16^0
+source=("git+https://gitlab.freedesktop.org/dbus/dbus.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-debug=no'
+		'--disable-verbose-mode'
+		'--disable-asserts'
+		'--disable-launchd'
+		'--disable-checks'
+		'--disable-tests'
+		'--enable-inotify'
+		'--enable-epoll'
+		'--enable-stats'
+		'--enable-xml-docs'
+		'--enable-doxygen-docs'
+		'--with-dbus-user=dbus'
+		'--with-system-pid-file=/run/dbus/pid'
+		'--with-system-socket=/run/dbus/system_bus_socket'
+		'--with-console-auth-dir=/run/console/'
+
+	# 'apparmor' related options
+		#'--enable-apparmor'
+		'--disable-apparmor'
+
+	# 'libselinux' related options
+		#'--enable-selinux'
+		'--disable-selinux'
+		#'--enable-libaudit'
+		'--disable-libaudit'
+
+	# 'libsystemd' related options
+		'--enable-systemd'
+		#'--disable-systemd'
+		'--enable-user-session'
+		#'--disable-user-session'
+
+	# 'libx11' related options
+		'--with-x'
+		#'--without-x'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Dbus                                                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_dbus() {
+	pkgdesc='Freedesktop.org message bus system'
+	depends=(
+		#'apparmor'
+		'expat'
+		'glibc'
+		#'libselinux'
+		'libx11'
+		'systemd-libs'
+	)
+	provides=('libdbus')
+	conflicts=('libdbus')
+	replaces=('libdbus')
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/dbus/COPYING
+
+	# We have a pre-assigned uid (81)
+	echo 'u dbus 81 "System Message Bus"' | install -Dm644 /dev/stdin $pkgdir/usr/lib/sysusers.d/dbus.conf
+
+	# Remove old configuration files
+	rm -f $pkgdir/etc/dbus-1/{system.conf,session.conf}
+
+	# Remove directory '/var/run'
+	rm -r $pkgdir/var/run
+
+	# Split 'dbus-docs' package
+	mkdir -p $srcdir/dbus-docs/usr/share/doc
+	if [ -d usr/share/doc ]; then
+		mv usr/share/doc/* $srcdir/dbus-docs/usr/share/doc
+		rm -fr usr/share/doc
+	fi
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Dbus-docs                                                              #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_dbus-docs() {
+	pkgdesc='Freedesktop.org message bus system (documentation)'
+	depends=('dbus')
+	options=('docs')
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Copy files
+	mv $srcdir/dbus-docs/* $pkgdir
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/dbus-docs/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################}
