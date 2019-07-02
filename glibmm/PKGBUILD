@@ -1,0 +1,131 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='glibmm'
+pkgname=('glibmm' 'glibmm-docs')
+pkgver=2.60.0
+pkgrel=1
+url='http://www.gtkmm.org/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'git'
+	'mm-common'
+	'perl-xml-parser'
+	'clang'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=021bfe1ea539e136c170526563697970ebc318b8  # tags/2.60.0^0
+source=("git+https://gitlab.gnome.org/GNOME/glibmm.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-maintainer-mode'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Glibmm                                                                #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_glibmm() {
+	pkgdesc='C++ bindings for GLib'
+	depends=(
+		'gcc-libs'
+		'glib2'
+		'glibc'
+		'libsigc++'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'glibmm-docs' package
+	mkdir -p $srcdir/glibmm-docs/usr
+	mv usr/share $srcdir/glibmm-docs/usr || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Glibmm-docs                                                            #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_glibmm-docs() {
+	pkgdesc='C++ bindings for GLib (documentation)'
+	depends=()
+	options=('docs')
+
+	# Copy files
+	mv $srcdir/glibmm-docs/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
