@@ -1,0 +1,138 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='libsigc++'
+pkgname=('libsigc++' 'libsigc++-docs')
+pkgver=2.10.2
+pkgrel=1
+url='http://libsigc.sourceforge.net/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'doxygen'
+	'gcc-libs'
+	'git'
+	'graphviz'
+	'libxslt'
+	'mm-common'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=06fabac512bf81164d5b01f877927cb39e9db864  # tags/2.10.2^0
+source=("git+https://github.com/libsigcplusplus/libsigcplusplus#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd libsigcplusplus
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd libsigcplusplus
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-deprecated-api'
+		'--enable-documentation'
+		'--enable-benchmark=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libsigc++                                                              #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libsigc++ () {
+	pkgdesc='Libsigc++ implements a full callback system for use in widget libraries - V2'
+	depends=(
+		'gcc-libs'
+		'glibc'
+	)
+	provides=("libsigc++2.0=$pkgver")
+	conflicts=('libsigc++2.0')
+	replaces=('libsigc++2.0')
+
+	# Change directory to source directory
+	cd libsigcplusplus
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'libsystemd' package
+	mkdir -p $srcdir/libsig-docs/usr
+	mv usr/share $srcdir/libsig-docs/usr || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libsigc++-docs                                                         #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libsigc++-docs() {
+	pkgdesc='Developer documentation for libsigc++'
+	depends=('libsigc++')
+	provides=("libsigc++2.0-docs=$pkgver")
+	conflicts=('libsigc++2.0-docs')
+	replaces=('libsigc++2.0-docs')
+
+	# Copy files
+	mv $srcdir/libsig-docs/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
