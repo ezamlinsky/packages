@@ -1,0 +1,133 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='atkmm'
+pkgname=('atkmm' 'atkmm-docs')
+pkgver=2.28.0
+pkgrel=1
+url='http://www.gtkmm.org/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'git'
+	'mm-common'
+	'perl'
+	'glibmm-docs'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=e1f4d5394a7982cc3c82ca63676a2928cd8819c1  # tags/2.28.0^0
+source=("git+https://gitlab.gnome.org/GNOME/atkmm.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-maintainer-mode'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Atkmm                                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_atkmm() {
+	pkgdesc='C++ bindings for ATK'
+	depends=(
+		'atk'
+		'gcc-libs'
+		'glib2'
+		'glibc'
+		'glibmm'
+		'libsigc++'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'atkmm-docs' package
+	mkdir -p $srcdir/atkmm-docs/usr
+	mv usr/share $srcdir/atkmm-docs/usr || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Atkmm-docs                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_atkmm-docs() {
+	pkgdesc='C++ bindings for ATK (documentation)'
+	depends=()
+	options=('docs')
+
+	# Copy files
+	mv $srcdir/atkmm-docs/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
