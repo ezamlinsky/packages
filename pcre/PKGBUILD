@@ -1,0 +1,146 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('pcre')
+pkgver=8.43
+pkgrel=1
+pkgdesc='A library that implements Perl 5-style regular expressions'
+url='http://www.pcre.org/'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'bash'
+	'bzip2'
+	'gcc-libs'
+	'glibc'
+	#'libedit'
+	'readline'
+	'zlib'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.pcre.org/pub/pcre/pcre-$pkgver.tar.bz2"
+	"https://ftp.pcre.org/pub/pcre/pcre-$pkgver.tar.bz2.sig"
+)
+md5sums=(
+	'636222e79e392c3d95dcc545f24f98c4'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-static'
+		'--enable-pcre16'
+		'--enable-pcre32'
+		'--enable-utf'
+		'--enable-jit'
+		'--enable-pcregrep-jit'
+		'--enable-unicode-properties'
+
+	# 'bzip2' related options
+		'--enable-pcregrep-libbz2'
+		#'--disable-pcregrep-libbz2'
+
+	# 'libedit' related options
+		#'--enable-pcretest-libedit'
+		'--disable-pcretest-libedit'
+
+	# 'readline' related options
+		'--enable-pcretest-libreadline'
+		#'--disable-pcretest-libreadline'
+
+	# 'zlib' related options
+		'--enable-pcregrep-libz'
+		#'--disable-pcregrep-libz'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 LICENCE $pkgdir/usr/share/licenses/pcre/LICENCE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
