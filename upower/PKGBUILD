@@ -78,7 +78,7 @@ build() {
 		'--bindir=/usr/bin'
 		'--sbindir=/usr/bin'
 		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib/upower'
+		'--libexecdir=/usr/lib'
 		'--sysconfdir=/etc'
 		'--localstatedir=/var'
 		'--enable-silent-rules'
