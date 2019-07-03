@@ -1,0 +1,180 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase=('glib2')
+pkgname=('glib2' 'glib2-docs')
+pkgver=2.60.4
+pkgrel=1
+url='https://wiki.gnome.org/Projects/GLib'
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'dbus'
+	'gettext'
+	'git'
+	'gtk-doc'
+	'libutil-linux'
+	'meson'
+	'python'
+	'shared-mime-info'
+)
+checkdepends=('desktop-file-utils')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=6672d0cbed1f2bc87ca27ab69290900ff838224e  # tags/2.60.4^0
+source=(
+	"git+https://gitlab.gnome.org/GNOME/glib.git#commit=$_commit"
+	'noisy-glib-compile-schemas.diff'
+	'glib-compile-schemas.hook'
+	'gio-querymodules.hook'
+)
+sha256sums=(
+	'SKIP'
+	'81a4df0b638730cffb7fa263c04841f7ca6b9c9578ee5045db6f30ff0c3fc531'
+	'e1123a5d85d2445faac33f6dae1085fdd620d83279a4e130a83fe38db52b62b3'
+	'5ba204a2686304b1454d401a39a9d27d09dd25e4529664e3fd565be3d439f8b6'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd glib
+
+	# Apply patches
+	patch -Np1 -i $srcdir/noisy-glib-compile-schemas.diff
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd glib
+
+	# Default configure options
+	config_opts=(
+		'-Dman=true'
+		'-Ddtrace=false'
+		'-Dsystemtap=false'
+		'-Dgtk_doc=true'
+		'-Dinternal_pcre=false'
+		'-Dforce_posix_threads=true'
+		'-Dinstalled_tests=false'
+		'-Dnls=enabled'
+
+	# 'attr' related options
+		'-Dxattr=true'
+		#'-Dxattr=false'
+
+	# 'gamin' related options
+		#'-Dfam=true'
+		'-Dfam=false'
+
+	# 'libmount.so' related options
+		'-Dlibmount=true'
+		#'-Dlibmount=false'
+
+	# 'libselinux' related options
+		#'-Dselinux=enabled'
+		'-Dselinux=disabled'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd glib
+
+	# Run internal tests
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Glib2                                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_glib2() {
+	pkgdesc='Low level core library'
+	license=('LGPL2.1')
+	depends=(
+		'attr'
+		#'gamin'
+		'glibc'
+		'libelf'
+		'libffi'
+		'libmount.so'
+		#'libselinux'
+		'pcre'
+		'zlib'
+	)
+	optdepends=(
+		'python: gdbus-codegen, glib-genmarshal, glib-mkenums, gtester-report'
+		'libelf: gresource inspection tool'
+	)
+
+	# Change directory to source directory
+	cd glib
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Add vendor's hooks
+	install -Dm644 -t usr/share/libalpm/hooks $srcdir/*.hook
+
+	# Split 'glib2-docs' package
+	mkdir -p $srcdir/glib2-docs/usr/share/gtk-doc
+	mv usr/share/gtk-doc $srcdir/glib2-docs/usr/share || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Glib2-docs                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_glib2-docs() {
+	pkgdesc="Documentation for GLib"
+	license=('LGPL2.1' 'custom')
+	depends=('glib2')
+	options=('docs')
+
+	# Copy files
+	mv $srcdir/glib2-docs/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/glib/docs/reference/COPYING $pkgdir/usr/share/licenses/glib2-docs/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
