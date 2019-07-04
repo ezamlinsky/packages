@@ -1,0 +1,124 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xf86-input-libinput')
+pkgver=0.28.2
+pkgrel=1
+pkgdesc='Generic input driver for the X.Org server based on libinput'
+url='http://xorg.freedesktop.org/'
+license=('custom')
+arch=('x86_64')
+groups=('xorg-drivers')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libinput>=1.2.0'
+)
+makedepends=(
+	'X-ABI-XINPUT_VERSION=24.1'
+	'libx11'
+	'libxi'
+	'resourceproto'
+	'scrnsaverproto'
+	'xorg-server-devel'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+conflicts=(
+	'X-ABI-XINPUT_VERSION<24'
+	'X-ABI-XINPUT_VERSION>=25'
+	'xorg-server<1.19.0'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/releases/individual/driver/xf86-input-libinput-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/releases/individual/driver/xf86-input-libinput-$pkgver.tar.bz2.sig"
+)
+sha512sums=(
+	'da6eb632180649853b3aa2fb88debd6aafe5ede24a5f4a04a21cf18fa97fd414d300b86cdf8a42027c98ac89f1b9f88034fc9e364ac3a02fa38872e57b542a84'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/xf86-input-libinput/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
