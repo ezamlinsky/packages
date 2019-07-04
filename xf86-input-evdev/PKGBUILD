@@ -1,0 +1,124 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xf86-input-evdev')
+pkgver=2.10.6
+pkgrel=1
+pkgdesc='X.org evdev input driver'
+url='https://xorg.freedesktop.org/'
+license=('custom')
+arch=('x86_64')
+groups=('xorg-drivers')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libevdev'
+	'mtdev'
+	'systemd-libs'
+)
+makedepends=(
+	'X-ABI-XINPUT_VERSION=24.1'
+	'resourceproto'
+	'scrnsaverproto'
+	'xorg-server-devel'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+conflicts=(
+	'X-ABI-XINPUT_VERSION<24.1'
+	'X-ABI-XINPUT_VERSION>=25'
+	'xorg-server<1.19.0'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/releases/individual/driver/xf86-input-evdev-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/releases/individual/driver/xf86-input-evdev-$pkgver.tar.bz2.sig"
+)
+sha512sums=(
+	'560b0a6491d50a46913a5890a35c0367e59f550670993493bd9712d712a9747ddaa6fe5086daabf2fcafa24b0159383787eb273da4a2a60c089bfc0a77ad2ad1'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/xf86-input-evdev/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
