@@ -1,0 +1,90 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libcap')
+pkgver=2.27
+pkgrel=1
+pkgdesc='POSIX 1003.1e capabilities'
+url='http://sites.google.com/site/fullycapable/'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'attr'
+)
+makedepends=('linux-api-headers')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-$pkgver.tar.xz"
+	"https://kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-$pkgver.tar.sign"
+)
+md5sums=(
+	'2e8f9fab32eb5ccb37969fe317fd17aa'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Change binary directory to 'bin'
+	sed "/SBINDIR/s#sbin#bin#" -i Make.Rules
+
+	# Set correct CFLAGS
+	sed -e "s/-O2/$CFLAGS/" -i Make.Rules
+
+	# Set correct LDFLAGS
+	sed -e "s/-shared/$LDFLAGS -shared/" -i Make.Rules
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Build package
+	make KERNEL_HEADERS=/usr/include
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir RAISE_SETFCAP=no prefix=/usr lib=/lib install
+
+	# Install sample capability file
+	install -Dm644 pam_cap/capability.conf \
+	$pkgdir/usr/share/doc/libcap/capability.conf.example
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
