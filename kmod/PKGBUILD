@@ -1,0 +1,172 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('kmod')
+pkgver=26
+pkgrel=2
+pkgdesc='Linux kernel module management tools and library'
+url='http://git.kernel.org/?p=utils/kernel/kmod/kmod.git;a=summary'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'openssl'
+	#'python'
+	'xz'
+	'zlib'
+)
+makedepends=('gtk-doc')
+checkdepends=(
+	'libelf'
+	'linux-headers'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'module-init-tools=3.16'
+	'libkmod.so'
+)
+conflicts=('module-init-tools')
+replaces=('module-init-tools')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-$pkgver.tar.sign"
+	'depmod-search.conf'
+	'0001-Link-against-libcrypto-not-all-of-openssl.patch'
+)
+md5sums=(
+	'1129c243199bdd7db01b55a61aa19601'
+	'SKIP'
+	'dd62cbf62bd8f212f51ef8c43bec9a77'
+	'e918bef174c1057fa13a5ba8c4a30a46'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/0001-Link-against-libcrypto-not-all-of-openssl.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-tools'
+		'--enable-logging'
+		'--enable-manpages'
+		'--enable-gtk-doc'
+
+	# 'openssl' related options
+		'--with-openssl'
+		#'--without-openssl'
+
+	# 'python' related options
+		#'--enable-python'
+		'--disable-python'
+
+	# 'xz' related options
+		'--with-xz'
+		#'--without-xz'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install depmod.d file for search dir
+	install -Dm644 $srcdir/depmod-search.conf $pkgdir/usr/lib/depmod.d/search.conf
+
+	# Install symlinks to kmod
+	for tool in {ins,ls,rm,dep}mod mod{probe,info}; do
+		ln -s kmod $pkgdir/usr/bin/$tool
+	done
+
+	# Create extra directories
+	mkdir -p $pkgdir/{etc,usr/lib}/{depmod,modprobe}.d
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
