@@ -1,0 +1,108 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libedit')
+pkgver=20190324_3.1
+pkgrel=1
+pkgdesc='Command line editor library providing generic line editing, history, and tokenization functions'
+url='http://thrysoee.dk/editline/'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'ncurses'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_pkgver=20190324-3.1
+source=("http://thrysoee.dk/editline/libedit-$_pkgver.tar.gz")
+sha256sums=('ac8f0f51c1cf65492e4d1e3ed2be360bda41e54633444666422fbf393bba1bae')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$_pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$_pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-examples'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$_pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libedit/LICENSE
+
+	# Remove 'history' man file (conflicts with readline)
+	rm $pkgdir/usr/share/man/man3/history.3
+
+	# Copy 'editline' to 'el' man file
+	cp $pkgdir/usr/share/man/man3/editline.3 $pkgdir/usr/share/man/man3/el.3
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
