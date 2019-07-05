@@ -1,0 +1,131 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('db')
+pkgver=5.3.28
+pkgrel=4
+pkgdesc='The Berkeley DB embedded database system'
+url='http://www.oracle.com/technology/software/products/berkeley-db/index.html'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	'sh'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://download.oracle.com/berkeley-db/db-$pkgver.tar.gz"
+	'atomic.patch'
+)
+sha1sums=(
+	'fa3f8a41ad5101f43d08bc0efb6241c9b6fc1ae9'
+	'70a51fe2a39a21652ef01767a9c8a30515b95a33'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p0 -i ../atomic.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver/build_unix
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--disable-diagnostic'
+		'--disable-test'
+		'--enable-compat185'
+		'--enable-dbm'
+		'--enable-sql'
+		'--enable-sql_codegen'
+		'--enable-localization'
+		'--enable-stripped_messages'
+		'--with-cryptography=yes'
+
+	# 'gcc-libs' related options
+		'--enable-cxx'
+		#'--disable-cxx'
+		'--enable-stl'
+		#'--disable-stl'
+	)
+
+	# Run package configuration script
+	../dist/configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make LIBSO_LIBS=-lpthread
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver/build_unix
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 $srcdir/$pkgname-$pkgver/LICENSE $pkgdir/usr/share/licenses/db/LICENSE
+
+	# Move documentation in correct place
+	mkdir -p $pkgdir/usr/share/doc/db
+	mv $pkgdir/usr/docs/* $pkgdir/usr/share/doc/db
+	rm -fr $pkgdir/usr/docs/
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
