@@ -1,0 +1,111 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libcap-ng')
+pkgver=0.7.9
+pkgrel=1
+pkgdesc='Library making programming with POSIX capabilities easier than traditional libcap'
+url='http://people.redhat.com/sgrubb/libcap-ng/'
+license=('LGPL2.1')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('glibc')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================
+source=("libcap-ng-$pkgver.tar.gz::https://github.com/stevegrubb/libcap-ng/archive/v$pkgver.tar.gz")
+sha512sums=('eae256b57af37c1170ee372ab9a6af927826a7b7b92f00c68010afbb32893fc265414ecf28f52e912a41609b4ca5e1295363db88dac9c60ea04bd20a1dfeef83')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-static'
+		'--without-debug'
+		'--without-python'
+		'--without-python3'
+		'--with-warn'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
