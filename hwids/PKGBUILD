@@ -1,0 +1,47 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('hwids')
+pkgver=20190316
+pkgrel=1
+pkgdesc='Hardware identification databases'
+url='https://github.com/gentoo/hwids'
+license=('GPL2')
+arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=('git')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("git://github.com/gentoo/hwids.git#tag=$pkgname-$pkgver")
+md5sums=('SKIP')
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd hwids
+
+	# Install files
+	install -Dm644 pci.ids $pkgdir/usr/share/hwdata/pci.ids
+	install -Dm644 usb.ids $pkgdir/usr/share/hwdata/usb.ids
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
