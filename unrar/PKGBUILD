@@ -1,0 +1,110 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='unrar'
+pkgname=('unrar' 'libunrar')
+pkgver=5.7.5
+pkgrel=1
+epoch=1
+url='http://www.rarlab.com/rar_add.htm'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+source=("http://www.rarlab.com/rar/unrarsrc-$pkgver.tar.gz")
+sha256sums=('e1c2fddaa87a88b1535bfc10ca484f3c5af4e5a55fbb933f8819e26203bbe2ee')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Set correct CFLAGS
+	sed -e "s/-O2/$CFLAGS/" -i makefile
+
+	# Set correct LDFLAGS
+	sed -e "s/LDFLAGS=/LDFLAGS=$LDFLAGS /" -i makefile
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Build unrar
+	make clean
+	make unrar
+
+	# Build libunrar
+	make clean
+	make lib
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Unrar                                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_unrar() {
+	pkgdesc='The RAR uncompression program'
+	depends=(
+		'gcc-libs'
+		'glibc'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	make DESTDIR=$pkgdir/usr install-unrar
+
+	# Install license file
+	install -Dm644 license.txt $pkgdir/usr/share/licenses/unrar/LICENSE
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libunrar                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libunrar() {
+	pkgdesc='Library and header file for applications that use libunrar'
+	depends=(
+		'gcc-libs'
+		'glibc'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	mkdir -p $pkgdir/usr/lib
+	make DESTDIR=$pkgdir/usr install-lib
+
+	# Install header file
+	install -Dm644 dll.hpp $pkgdir/usr/include/unrar/dll.hpp
+
+	# Install license file
+	install -Dm644 license.txt $pkgdir/usr/share/licenses/libunrar/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
