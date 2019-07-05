@@ -1,0 +1,135 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libpcap')
+pkgver=1.9.0
+pkgrel=1
+pkgdesc='A system-independent interface for user-level packet capture'
+url='http://www.tcpdump.org/'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'dbus'
+	'libnl'
+	'sh'
+)
+makedepends=(
+	'bluez-libs'
+	'flex'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"http://www.tcpdump.org/release/libpcap-$pkgver.tar.gz"
+	"http://www.tcpdump.org/release/libpcap-$pkgver.tar.gz.sig"
+	'mgmt.h'
+)
+sha256sums=(
+	'2edb88808e5913fdaa8e9c1fcaf272e19b2485338742b5074b9fe44d68f37019'
+	'SKIP'
+	'7c85da5330ce7ecb6934795c02c652b9e344461302cf74804a4692c3e2e1e7e2'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-usb'
+		'--enable-ipv6'
+		'--enable-netmap'
+		'--enable-rdma'
+		'--enable-packet-ring'
+
+	# 'bluez-libs' related options
+		'--enable-bluetooth'
+		#'--disable-bluetooth'
+
+	# 'dbus' related options
+		'--enable-dbus'
+		#'--disable-dbus'
+
+	# 'libnl' related options
+		'--with-libnl'
+		#'--without-libnl'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/libpcap/LICENSE
+
+	# Create 'net/bpf.h' for backwards compatibility with old programs
+	mkdir -p $pkgdir/usr/include/net
+	cd $pkgdir/usr/include/net && ln -s ../pcap-bpf.h bpf.h
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
