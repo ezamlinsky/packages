@@ -1,0 +1,127 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('readline')
+pkgver=8.0.0
+pkgrel=1
+pkgdesc='GNU readline library'
+url='http://tiswww.case.edu/php/chet/readline/rltop.html'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'ncurses'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'libhistory.so'
+	'libreadline.so'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=('etc/inputrc')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_pver=${pkgver%.*}
+source=(
+	"https://ftp.gnu.org/gnu/readline/readline-$_pver.tar.gz"
+	"https://ftp.gnu.org/gnu/readline/readline-$_pver.tar.gz.sig"
+	'inputrc'
+)
+md5sums=(
+	'7e6c1f16aee3244a69aba6e438295ca3'
+	'SKIP'
+	'58d54966c1191db45973cb3191ac621a'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$_pver
+
+	# Remove RPATH from shared objects (FS#14366)
+	sed -i 's|-Wl,-rpath,$(libdir) ||g' support/shobj-conf
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$_pver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-multibyte'
+		'--with-curses'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make SHLIB_LIBS=-lncurses
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$_pver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install configuration file
+	install -Dm644 $srcdir/inputrc $pkgdir/etc/inputrc
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
