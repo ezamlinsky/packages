@@ -1,0 +1,124 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('iproute2')
+pkgver=5.1.0
+pkgrel=1
+pkgdesc='IP Routing Utilities'
+url='https://git.kernel.org/pub/scm/network/iproute2/iproute2.git'
+license=('GPL2')
+arch=('x86_64')
+groups=('base')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'db'
+	'glibc'
+	'iptables'
+	'libcap'
+	'libelf'
+	'libmnl'
+	#'libselinux'
+	#'linux-atm'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('iproute')
+conflicts=('iproute')
+replaces=('iproute')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/iproute2/ematch_map'
+	'etc/iproute2/rt_dsfield'
+	'etc/iproute2/rt_protos'
+	'etc/iproute2/rt_realms'
+	'etc/iproute2/rt_scopes'
+	'etc/iproute2/rt_tables'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-$pkgver.tar.sign"
+	'0001-make-iproute2-fhs-compliant.patch'
+)
+sha256sums=(
+	'dc5a980873eabf6b00c0be976b6e5562b1400d47d1d07d2ac35d5e5acbcf7bcf'
+	'SKIP'
+	'f60fefe4c17d3b768824bb50ae6416292bcebba06d73452e23f4147b46b827d3'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/0001-make-iproute2-fhs-compliant.patch
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir SBINDIR=/usr/bin install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
