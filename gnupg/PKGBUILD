@@ -1,0 +1,207 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('gnupg')
+pkgver=2.2.16
+pkgrel=1
+pkgdesc='Complete and free implementation of the OpenPGP standard'
+url='http://www.gnupg.org/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'bzip2'
+	'glibc'
+	'gnutls'
+	'libassuan'
+	'libgcrypt'
+	'libgpg-error'
+	'libksba'
+	#'libldap'
+	#'libselinux'
+	'libusb'
+	'npth'
+	#'ntbtls'
+	'readline'
+	'sqlite'
+	'zlib'
+)
+makedepends=(
+	'libusb-compat'
+	'pcsclite'
+)
+checkdepends=('openssh')
+optdepends=(
+	'libusb-compat: scdaemon'
+	'pcsclite: scdaemon'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'dirmngr'
+	"gnupg2=${pkgver}"
+)
+conflicts=(
+	'dirmngr'
+	'gnupg2'
+)
+replaces=(
+	'dirmngr'
+	'gnupg2'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+install='install'
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://gnupg.org/ftp/gcrypt/gnupg/gnupg-$pkgver.tar.bz2"
+	"https://gnupg.org/ftp/gcrypt/gnupg/gnupg-$pkgver.tar.bz2.sig"
+)
+sha256sums=(
+	'6cbe8d454bf5dc204621eed3016d721b66298fa95363395bb8eeceb1d2fd14cb'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libexecdir=/usr/lib/gnupg'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-doc'
+		'--enable-symcryptrun'
+		'--enable-gpg-is-gpg2'
+		'--with-capabilities'
+
+	# 'bzip2' related options
+		'--enable-bzip2'
+		#'--disable-bzip2'
+
+	# 'gnutls' related options
+		'--enable-gnutls'
+		#'--disable-gnutls'
+
+	# 'libldap' related options
+		#'--enable-ldap'
+		'--disable-ldap'
+
+	# 'libselinux' related options
+		#'--enable-selinux-support'
+		'--disable-selinux-support'
+
+	# 'libusb' related options
+		'--enable-card-support'
+		#'--disable-card-support'
+
+	# 'ntbtls' related options
+		#'--enable-ntbtls'
+		'--disable-ntbtls'
+
+	# 'readline' related options
+		'--with-readline'
+		#'--without-readline'
+
+	# 'sqlite' related options
+		'--enable-sqlite'
+		#'--disable-sqlite'
+
+	# 'zlib' related options
+		'--enable-zip'
+		#'--disable-zip'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Add additional soft links
+	ln -s gpg2 $pkgdir/usr/bin/gpg
+	ln -s gpgv2 $pkgdir/usr/bin/gpgv
+
+	# Install systemd configs
+	cd doc/examples/systemd-user
+	for i in *.*; do
+		install -Dm644 $i $pkgdir/usr/lib/systemd/user/$i
+	done
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
