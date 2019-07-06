@@ -1,0 +1,180 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('pam')
+pkgver=1.3.1
+pkgrel=1
+pkgdesc='PAM (Pluggable Authentication Modules) library'
+url='http://linux-pam.org'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'audit'
+	'cracklib'
+	#'db'
+	'glibc'
+	#'libprelude'
+	#'libselinux'
+	#'libtirpc'
+	#'ndbm'
+	'pambase'
+)
+makedepends=(
+	'docbook-xml>=4.4'
+	'docbook-xsl'
+	'flex'
+	'w3m'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/default/passwd'
+	'etc/environment'
+	'etc/security/access.conf'
+	'etc/security/group.conf'
+	'etc/security/limits.conf'
+	'etc/security/namespace.conf'
+	'etc/security/namespace.init'
+	'etc/security/pam_env.conf'
+	'etc/security/time.conf'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://github.com/linux-pam/linux-pam/releases/download/v$pkgver/Linux-PAM-$pkgver.tar.xz"
+	"https://github.com/linux-pam/linux-pam/releases/download/v$pkgver/Linux-PAM-$pkgver.tar.xz.asc"
+)
+md5sums=(
+	'558ff53b0fc0563ca97f79e911822165'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd Linux-PAM-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd Linux-PAM-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-read-both-confs'
+		'--with-randomdev=yes'
+
+	# 'audit' related options
+		#'--enable-audit'
+		'--disable-audit'
+
+	# 'cracklib' related options
+		'--enable-cracklib'
+		#'--disable-cracklib'
+
+	# 'db' related options
+		#'--enable-db=db'
+		'--enable-db=no'
+
+	# 'libprelude' related options
+		#'--enable-prelude'
+		'--disable-prelude'
+
+	# 'libselinux' related options
+		#'--enable-selinux'
+		'--disable-selinux'
+
+	# 'libtirpc' related options
+		#'--enable-nis'
+		'--disable-nis'
+
+	# 'ndbm' related options
+		#'--enable-db=ndbm'
+		'--enable-db=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd Linux-PAM-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd Linux-PAM-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Set unix_chkpwd uid
+	chmod +s $pkgdir/usr/bin/unix_chkpwd
+
+	# Remove doc which is not used anymore
+	rm $pkgdir/usr/share/doc/Linux-PAM/sag-pam_userdb.html
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
