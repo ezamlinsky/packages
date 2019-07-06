@@ -25,7 +25,7 @@ depends=(
 	'glib2'
 	'glibc'
 	'shared-mime-info'
-	'jasper'
+	#'jasper'
 	'libjpeg'
 	'libpng'
 	'libtiff'
@@ -75,8 +75,8 @@ build() {
 		'-Dgir=false'
 
 	# 'jasper' related options
-		'-Djasper=true'
-		#'-Djasper=false'
+		#'-Djasper=true'
+		'-Djasper=false'
 
 	# 'libjpeg' related options
 		'-Djpeg=true'
