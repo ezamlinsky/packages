@@ -1,0 +1,155 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+
+#depends=('desktop-file-utils')
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('easytag')
+pkgver=2.4.3
+pkgrel=2
+pkgdesc='Simple application for viewing and editing tags in audio files'
+url='https://wiki.gnome.org/Apps/EasyTAG'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'flac'
+	'gcc-libs'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk3'
+	'id3lib'
+	'libid3tag'
+	#'libnautilus-extension'
+	'libogg'
+	'libvorbis'
+	#'opusfile'
+	#'speex'
+	#'taglib'
+	#'wavpack'
+)
+makedepends=(
+	'docbook-xsl'
+	'intltool'
+	'itstool'
+	'python'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://download.gnome.org/sources/easytag/${pkgver:0:3}/easytag-$pkgver.tar.xz")
+sha256sums=('fc51ee92a705e3c5979dff1655f7496effb68b98f1ada0547e8cbbc033b67dd5')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-schemas-compile'
+		'--enable-man'
+
+	# 'flac' related options
+		'--enable-flac'
+		#'--disable-flac'
+
+	# 'id3lib' related options
+		'--enable-id3v23'
+		#'--disable-id3v23'
+
+	# 'libid3tag' related options
+		'--enable-mp3'
+		#'--disable-mp3'
+
+	# 'libnautilus-extension' related options
+		#'--enable-nautilus-actions'
+		'--disable-nautilus-actions'
+
+	# 'libvorbis' related options
+		'--enable-ogg'
+		#'--disable-ogg'
+
+	# 'opusfile' related options
+		#'--enable-opus'
+		'--disable-opus'
+
+	# 'speex' related options
+		#'--enable-speex'
+		'--disable-speex'
+
+	# 'taglib' related options
+		#'--enable-mp4'
+		'--disable-mp4'
+
+	# 'wavpack' related options
+		#'--enable-wavpack'
+		'--disable-wavpack'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
