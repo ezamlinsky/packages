@@ -1,0 +1,179 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase=('gpgme')
+pkgname=('gpgme' 'qgpgme' 'python-gpgme')
+pkgver=1.13.1
+pkgrel=1
+url='http://www.gnupg.org/related_software/gpgme/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'gnupg'
+	'libgpg-error'
+	'python'
+	'qt5-base'
+	'swig'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.gnupg.org/ftp/gcrypt/gpgme/gpgme-$pkgver.tar.bz2"
+	"https://www.gnupg.org/ftp/gcrypt/gpgme/gpgme-$pkgver.tar.bz2.sig"
+)
+sha256sums=(
+	'c4e30b227682374c23cddc7fdb9324a99694d907e79242a25a4deeedb393be46'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-fd-passing'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gpgme                                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gpgme() {
+	pkgdesc='A C wrapper library for GnuPG'
+	depends=(
+		'gcc-libs'
+		'glibc'
+		'gnupg>=2'
+		'libassuan'
+		'libgpg-error'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'qgpgme' package
+	mkdir -p $srcdir/qgpgme/usr/{include,lib/cmake}
+	mv usr/include/{qgpgme,QGpgME} $srcdir/qgpgme/usr/include || true
+	mv usr/lib/cmake/QGpgme $srcdir/qgpgme/usr/lib/cmake || true
+	mv usr/lib/libqgpgme.* $srcdir/qgpgme/usr/lib || true
+
+	# Split 'python-gpgme' package
+	mkdir -p $srcdir/python-gpgme/usr/lib
+	mv usr/lib/python3* $srcdir/python-gpgme/usr/lib || true
+
+	# Remove old python2 modules
+	rm -fr usr/lib/python2*
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Qgpgme                                                                 #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_qgpgme() {
+	pkgdesc='Qt bindings for GPGme'
+	depends=(
+		'gcc-libs'
+		'glibc'
+		'gpgme'
+		'libgpg-error'
+		'qt5-base'
+	)
+
+	# Copy files
+	mv $srcdir/qgpgme/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Python-gpgme                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_python-gpgme() {
+	pkgdesc='Python bindings for GPGme'
+	depends=(
+		'glibc'
+		'gpgme'
+		'python'
+	)
+
+	# Copy files
+	mv $srcdir/python-gpgme/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
