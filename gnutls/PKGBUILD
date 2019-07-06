@@ -1,0 +1,163 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('gnutls')
+pkgver=3.6.8
+pkgrel=2
+pkgdesc='A library which provides a secure layer over a reliable transport layer'
+url='https://www.gnutls.org/'
+license=('GPL3' 'LGPL2.1')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	'gmp'
+	#'guile'
+	#'libidn'
+	#'libidn2'
+	'libtasn1'
+	'libunistring'
+	'nettle'
+	'p11-kit'
+	#'trousers'
+	#'unbound'
+)
+checkdepends=('net-tools')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/gnutls-$pkgver.tar.xz"
+	"https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/gnutls-$pkgver.tar.xz.sig"
+)
+sha256sums=(
+	'aa81944e5635de981171772857e72be231a7e0f559ae0292d2737de475383e83'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-manpages'
+		'--disable-tests'
+		'--disable-doc'
+		'--disable-gtk-doc'
+		'--enable-openssl-compatibility'
+		'--enable-local-libopts'
+		'--enable-libopts-install'
+		'--enable-threads=posix'
+		'--with-default-trust-store-pkcs11=pkcs11:model=p11-kit-trust;manufacturer=PKCS%2311%20Kit'
+
+	# 'guile' related options
+		#'--enable-guile'
+		'--disable-guile'
+
+	# 'libidn' or 'libidn2' related options
+		#'--with-idn'
+		'--without-idn'
+
+	# 'libtasn1' related options
+		'--without-included-libtasn1'
+		#'--with-included-libtasn1'
+
+	# 'libunistring' related options
+		'--without-included-unistring'
+		#'--with-included-unistring'
+
+	# 'p11-kit' related options
+		'--with-p11-kit'
+		#'--without-p11-kit'
+
+	# 'trousers' related options
+		#'--without-tpm'
+		'--without-tpm'
+
+	# 'unbound' related options
+		#'--enable-libdane'
+		'--disable-libdane'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
