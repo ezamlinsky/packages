@@ -1,0 +1,222 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='libcanberra'
+pkgname=('libcanberra' 'libcanberra-pulse' 'libcanberra-gstreamer')
+pkgver=0.30+2+gc0620e4
+pkgrel=2
+url='http://0pointer.de/lennart/projects/libcanberra'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'git'
+	'gtk-doc'
+	'lynx'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=c0620e432650e81062c1967cc669829dbd29b310  # master
+source=(
+	"git+http://git.0pointer.net/clone/libcanberra.git#commit=$_commit"
+	'libcanberra.xinit'
+)
+sha256sums=(
+	'SKIP'
+	'a0d0b135d3fea5c703a5f84208b79d66f671b082ae85f67b629ee2568a7ddc30'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Change default sound theme
+	sed -e 's/freedesktop/default/g' -i src/sound-theme-spec.c
+	sed -e 's|freedesktop/stereo|default/stereo|g' -i src/test-canberra.c
+
+	# Fix systemd service files
+	sed -e '/#/d' -e '/ConditionPathExists=/d' \
+		-i src/canberra-system-bootup.service.in \
+		-i src/canberra-system-shutdown.service.in \
+		-i src/canberra-system-shutdown-reboot.service.in
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-oss'
+		'--enable-null'
+		'--enable-gtk-doc'
+		'--with-builtin=dso'
+
+	# 'alsa-lib' related options
+		'--enable-alsa'
+		#'--disable-alsa'
+
+	# 'gstreamer' related options
+		'--enable-gstreamer'
+		#'--disable-gstreamer'
+
+	# 'gtk2' related options
+		'--enable-gtk'
+		#'--disable-gtk'
+
+	# 'gtk3' related options
+		'--enable-gtk3'
+		#'--disable-gtk3'
+
+	# 'libpulse' related options
+		'--enable-pulse'
+		#'--disable-pulse'
+
+	# 'libudev.so' related options
+		'--enable-udev'
+		#'--disable-udev'
+
+	# 'tdb' related options
+		#'--enable-tdb'
+		'--disable-tdb'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libcanberra                                                            #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libcanberra() {
+	pkgdesc='A small and lightweight implementation of the XDG Sound Theme Specification'
+	depends=(
+		'alsa-lib'
+		'glib2'
+		'glibc'
+		'gtk2'
+		'gtk3'
+		'libcanberra-default-sounds'
+		'libltdl'
+		'libudev.so'
+		'libvorbis'
+		'libx11'
+		#'tdb'
+	)
+	optdepends=(
+		'libcanberra-pulse: PulseAudio driver'
+		'libcanberra-gstreamer: GStreamer driver'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	make -j1 DESTDIR=$pkgdir install
+
+	# Install xinit script
+	install -Dm755 $srcdir/libcanberra.xinit \
+	$pkgdir/etc/X11/xinit/xinitrc.d/40-libcanberra-gtk-module.sh
+
+	# Enable desktop-login sound for XFCE
+	mkdir -p $pkgdir/etc/xdg/autostart
+	ln -s /usr/share/gnome/autostart/libcanberra-login-sound.desktop \
+	$pkgdir/etc/xdg/autostart/libcanberra-login-sound.desktop
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'libcanberra-pulse' package
+	mkdir -p $srcdir/libcanberra-pulse/usr/lib/libcanberra-${pkgver%%+*}
+	mv usr/lib/libcanberra-${pkgver%%+*}/libcanberra-pulse.so \
+	$srcdir/libcanberra-pulse/usr/lib/libcanberra-${pkgver%%+*} || true
+
+	# Split 'libcanberra-gstreamer' package
+	mkdir -p $srcdir/libcanberra-gstreamer/usr/lib/libcanberra-${pkgver%%+*}
+	mv usr/lib/libcanberra-${pkgver%%+*}/libcanberra-gstreamer.so \
+	$srcdir/libcanberra-gstreamer/usr/lib/libcanberra-${pkgver%%+*} || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libcanberra-pulse                                                      #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libcanberra-pulse() {
+	pkgdesc='PulseAudio plugin for libcanberra'
+	depends=(
+		"libcanberra=$pkgver-$pkgrel"
+		'glibc'
+		'libpulse'
+	)
+
+	# Copy files
+	mv $srcdir/libcanberra-pulse/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libcanberra-gstreamer                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libcanberra-gstreamer() {
+	pkgdesc='GStreamer plugin for libcanberra'
+	depends=(
+		"libcanberra=$pkgver-$pkgrel"
+		'glib2'
+		'glibc'
+		'gstreamer'
+	)
+
+	# Copy files
+	mv $srcdir/libcanberra-gstreamer/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
