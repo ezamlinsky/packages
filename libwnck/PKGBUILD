@@ -1,0 +1,131 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libwnck')
+pkgver=2.31.0
+pkgrel=2
+pkgdesc='Window Navigator Construction Kit'
+url='http://www.gnome.org/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'atk'
+	'cairo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk2'
+	'libx11'
+	'libxres'
+	'pango'
+	'startup-notification'
+)
+makedepends=(
+	'gobject-introspection'
+	'gtk-doc'
+	'intltool'
+	'libxt'
+	'python2'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"http://ftp.gnome.org/pub/gnome/sources/libwnck/${pkgver:0:4}/libwnck-$pkgver.tar.xz"
+	'WindowActionMenu-unset-window-and-stop-async-events-on-dispose.patch'
+)
+sha512sums=(
+	'54262a08882021f08f3ba7f2ddfa33fc1f02e391a0f61cf999a50a089e0d277dfe13ab133c1a46e9abf0599bd24c21dacff80b51013cbb1375d2cd71ac9abbe9'
+	'1ba6ee8503e71daf103b7285ce0690042ebd86a4b85728a04ff32e6ee5789d2be71ba32149b0c246518bc47a27a233edfa9cfac9eca16cc44b3c6c8d19943423'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/WindowActionMenu-unset-window-and-stop-async-events-on-dispose.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-gtk-doc'
+		'--enable-introspection=no'
+		'--with-x'
+
+	# 'startup-notification' related options
+		'--enable-startup-notification'
+		#'--disable-startup-notification
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Remove binaries are shipped in libwnck3
+	rm -fr $pkgdir/usr/bin
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
