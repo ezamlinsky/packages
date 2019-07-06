@@ -1,0 +1,155 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('smartmontools')
+pkgver=7.0
+pkgrel=1
+pkgdesc='Control and monitor S.M.A.R.T. enabled ATA and SCSI Hard Drives'
+url='http://smartmontools.sourceforge.net'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	'libcap-ng'
+	#'libselinux'
+	'systemd-libs'
+	'sh'
+)
+optdepends=('s-nail: to get mail alerts to work')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/conf.d/smartd'
+	'etc/smartd.conf'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://downloads.sourceforge.net/sourceforge/smartmontools/smartmontools-$pkgver.tar.gz"
+	"https://downloads.sourceforge.net/sourceforge/smartmontools/smartmontools-$pkgver.tar.gz.asc"
+	'smartd.conf'
+)
+sha256sums=(
+	'e5e1ac2786bc87fdbd6f92d0ee751b799fbb3e1a09c0a6a379f9eb64b3e8f61c'
+	'SKIP'
+	'c2c0f2f6b4a3f3d76da1c7706139297aef6e3f2a705eb7fdd800544812427c74'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-sample'
+		'--enable-scsi-cdb-check'
+		'--with-nvme-devicescan=yes'
+		'--with-update-smart-drivedb=yes'
+		'--with-drivedbdir=yes'
+		'--with-savestates=yes'
+		'--with-attributelog=yes'
+		'--with-systemdenvfile=yes'
+		'--with-systemdsystemunitdir=yes'
+		'--with-initscriptdir=no'
+		'--with-smartdscriptdir=/usr/share/smartmontools'
+		'--with-smartdplugindir=/usr/share/smartmontools/smartd_warning.d'
+
+	# 'gnupg' related options
+		'--with-gnupg=yes'
+		#'--with-gnupg=no'
+
+	# 'libcap-ng' related options
+		'--with-libcap-ng=yes'
+		#'--with-libcap-ng=no'
+
+	# 'libselinux' related options
+		#'--with-selinux=yes'
+		'--with-selinux=no'
+
+	# 'systemd-libs' related options
+		'--with-libsystemd=yes'
+		#'--with-libsystemd=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Modify 'smartd.service' file
+	sed \
+	-e 's:/etc/default/smartmontools:/etc/conf.d/smartd:g' \
+	-e 's:smartd_opts:SMARTD_ARGS:g' \
+	-i smartd.service
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install smartd configuration file
+	install -Dm644 $srcdir/smartd.conf $pkgdir/etc/conf.d/smartd
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
