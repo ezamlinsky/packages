@@ -1,0 +1,157 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='elfutils'
+pkgname=('elfutils' 'libelf')
+pkgver=0.176
+pkgrel=1
+url='https://sourceware.org/elfutils/'
+license=('LGPL3' 'GPL' 'GPL3')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://sourceware.org/elfutils/ftp/$pkgver/elfutils-$pkgver.tar.bz2"
+	"https://sourceware.org/elfutils/ftp/$pkgver/elfutils-$pkgver.tar.bz2.sig"
+)
+sha1sums=(
+	'6511203cae7225ae780501834a7ccd234b14889a'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-deterministic-archives'
+
+	# 'bzip2' related options
+		'--with-bzlib'
+		#'--without-bzlib'
+
+	# 'xz' related options
+		'--with-lzma'
+		#'--without-lzma'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
+	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-lto -Wno-error'
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Elfutils                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_elfutils() {
+	pkgdesc='Utilities to handle ELF object files and DWARF debugging information'
+	depends=(
+		"libelf=$pkgver-$pkgrel"
+		'gcc-libs'
+		'glibc'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'libelf' package
+	mkdir -p $srcdir/libelf/usr
+	mv $pkgdir/usr/{lib,include} $srcdir/libelf/usr || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libelf                                                                 #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libelf() {
+	pkgdesc='Libraries to handle ELF object files and DWARF debugging information'
+	depends=(
+		'bzip2'
+		'glibc'
+		'xz'
+		'zlib'
+	)
+
+	# Copy files
+	mv $srcdir/libelf/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
