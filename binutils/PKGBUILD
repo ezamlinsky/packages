@@ -1,0 +1,149 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('binutils')
+pkgver=2.32
+pkgrel=2
+pkgdesc='A set of programs to assemble and manipulate binary and object files'
+url='http://www.gnu.org/software/binutils/'
+license=('GPL')
+arch=('x86_64')
+groups=('base-devel')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'zlib'
+)
+makedepends=('git')
+checkdepends=(
+	'bc'
+	'dejagnu'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+conflicts=('binutils-multilib')
+replaces=('binutils-multilib')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.gnu.org/gnu/binutils/binutils-$pkgver.tar.xz"
+	"https://ftp.gnu.org/gnu/binutils/binutils-$pkgver.tar.xz.sig"
+)
+md5sums=(
+	'0d174cdaf85721c5723bf52355be41e6'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
+	sed '/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/' -i libiberty/configure
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-werror'
+		'--disable-multilib'
+		'--disable-default-strings-all'
+		'--enable-ld=yes'
+		'--enable-gold=yes'
+		'--enable-got=target'
+		'--enable-compressed-debug-sections=all'
+		'--enable-deterministic-archives'
+		'--enable-64-bit-archive'
+		'--enable-threads=posix'
+		'--enable-plugins'
+		'--enable-lto'
+		'--enable-relro'
+		'--enable-secureplt'
+		'--enable-elf-stt-common'
+		'--enable-x86-relax-relocations'
+		'--enable-install-libbfd'
+		'--enable-host-shared'
+		'--with-mmap'
+		'--with-pic'
+		'--with-lib-path=/usr/lib:/usr/local/lib'
+		'--with-bugurl=https://bugs.archlinux.org'
+
+	# 'zlib' related options
+		'--with-system-zlib'
+		#'--without-system-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make LDFLAGS= -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir tooldir=/usr install
+
+	# Remove non required manuals
+	rm -f $pkgdir/usr/share/man/man1/{dlltool,nlmconv,windres,windmc}*
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
