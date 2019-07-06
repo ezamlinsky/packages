@@ -1,0 +1,147 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libtool')
+pkgver=2.4.6+42+gb88cebd5
+pkgrel=4
+pkgdesc='A generic library support script'
+url='http://www.gnu.org/software/libtool'
+license=('GPL')
+arch=('x86_64')
+groups=('base-devel')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'sh'
+	'tar'
+)
+makedepends=(
+	"gcc>=8.3.0"
+	'git'
+	'help2man'
+)
+checkdepends=('gcc-fortran')
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	"libltdl=$pkgver"
+	"libtool-multilib=$pkgver"
+)
+conflicts=(
+	'libltdl'
+	'libtool-multilib'
+)
+replaces=(
+	'libltdl'
+	'libtool-multilib'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=b88cebd510add4420dd8f5367e3cc6e6e1f267cd
+source=(
+	"git+https://git.savannah.gnu.org/git/libtool.git#commit=$_commit"
+	'git+https://git.savannah.gnu.org/git/gnulib.git'
+	'gnulib-bootstrap::git+https://github.com/gnulib-modules/bootstrap.git'
+)
+sha256sums=(
+	'SKIP'
+	'SKIP'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Update submodule
+	git submodule init
+	git config --local submodule.gnulib.url $srcdir/gnulib
+	git config --local submodule.gl-mod/bootstrap.url $srcdir/gnulib-bootstrap
+	git submodule update
+
+	# Run bootstrap script
+	./bootstrap
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-ltdl-install'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
