@@ -1,0 +1,206 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='gtk3'
+pkgname=('gtk3' 'gtk-update-icon-cache')
+pkgver=3.24.10
+pkgrel=1
+epoch=1
+url='http://www.gtk.org/'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'git'
+	'glib2-docs'
+	'gobject-introspection'
+	'gtk-doc'
+	'meson'
+	'sassc'
+	'wayland-protocols'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=3642629767ec54c4079f7d90a9ea780a225bfe5e  # tags/3.24.10^0
+source=(
+	"git+https://gitlab.gnome.org/GNOME/gtk.git#commit=$_commit"
+	'settings.ini'
+	'gtk-query-immodules-3.0.hook'
+	'gtk-update-icon-cache.hook'
+	'gtk-update-icon-cache.script'
+)
+sha256sums=(
+	'SKIP'
+	'01fc1d81dc82c4a052ac6e25bf9a04e7647267cc3017bc91f9ce3e63e5eb9202'
+	'de46e5514ff39a7a65e01e485e874775ab1c0ad20b8e94ada43f4a6af1370845'
+	'496064a9dd6214bd58f689dd817dbdc4d7f17d42a8c9940a87018c3f829ce308'
+	'f1d3a0dbfd82f7339301abecdbe5f024337919b48bd0e09296bb0e79863b2541'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd gtk
+
+	# Default configure options
+	config_opts=(
+		'-Dman=true'
+		'-Dgtk_doc=true'
+		'-Dprofiler=false'
+		'-Dintrospection=false'
+		'-Ddemos=true'
+		'-Dexamples=true'
+		'-Dtests=false'
+		'-Dinstalled_tests=false'
+		'-Dbroadway_backend=false'
+		'-Dprint_backends=file'
+
+	# 'colord' related options
+		#'-Dcolord=yes'
+		'-Dcolord=no'
+
+	# 'libcloudproviders' related options
+		#'-Dcloudproviders=true'
+		'-Dcloudproviders=false'
+
+	# 'libcups' related options
+		#'-Dprint_backends=cups'
+
+	# 'libx11' related options
+		'-Dx11_backend=true'
+		#'-Dx11_backend=false'
+
+	# 'libxinerama' related options
+		'-Dxinerama=yes'
+		#'-Dxinerama=no'
+
+	# 'mir' related options
+		#'-Dmir_backend=true'
+		'-Dmir_backend=false'
+
+	# 'wayland' related options
+		#'-Dwayland_backend=true'
+		'-Dwayland_backend=false'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gtk3                                                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gtk3() {
+	pkgdesc='GObject-based multi-platform GUI toolkit'
+	depends=(
+		'adwaita-icon-theme'
+		'at-spi2-atk'
+		'atk'
+		'cairo'
+		'cantarell-fonts'
+		#'colord'
+		'desktop-file-utils'
+		'fontconfig'
+		'freetype2'
+		'fribidi'
+		'gdk-pixbuf2'
+		'glib2'
+		'glibc'
+		'gtk-update-icon-cache'
+		'harfbuzz'
+		#'json-glib'
+		#'libcloudproviders'
+		#'libcups'
+		'libepoxy'
+		'libx11'
+		'libxcomposite'
+		'libxcursor'
+		'libxdamage'
+		'libxext'
+		'libxfixes'
+		'libxi'
+		'libxinerama'
+		'libxrandr'
+		#'mir'
+		'pango'
+		#'rest'
+		'shared-mime-info'
+		#'wayland'
+	)
+	provides=('gtk3-print-backends')
+	conflicts=('gtk3-print-backends')
+	replaces=("gtk3-print-backends<=3.22.26-1")
+	install='gtk3.install'
+
+	# Change directory to source directory
+	cd gtk
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Install 'settings.ini' file
+	install -Dm644 $srcdir/settings.ini usr/share/gtk-3.0/settings.ini
+
+	# Add vendor's hooks
+	install -Dm644 $srcdir/gtk-query-immodules-3.0.hook \
+	usr/share/libalpm/hooks/gtk-query-immodules-3.0.hook
+
+	# Split 'gtk-update-icon-cache' package
+	mkdir -p $srcdir/gtk-update-icon-cache/usr/bin
+	mv usr/bin/gtk-update-icon-cache \
+	$srcdir/gtk-update-icon-cache/usr/bin/gtk-update-icon-cache || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gtk-update-icon-cache                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gtk-update-icon-cache() {
+	pkgdesc='GTK+ icon cache updater'
+	depends=(
+		'gdk-pixbuf2'
+		'glib2'
+		'glibc'
+		'hicolor-icon-theme'
+	)
+
+	# Copy files
+	mv $srcdir/gtk-update-icon-cache/* $pkgdir
+
+	# Install 'gtk-update-icon-cache.script' script
+	install -D $srcdir/gtk-update-icon-cache.script \
+	$pkgdir/usr/share/libalpm/scripts/gtk-update-icon-cache
+
+	# Add vendor's hooks
+	install -Dm644 $srcdir/gtk-update-icon-cache.hook \
+	$pkgdir/usr/share/libalpm/hooks/gtk-update-icon-cache.hook
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
