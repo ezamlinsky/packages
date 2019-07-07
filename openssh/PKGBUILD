@@ -1,0 +1,228 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('openssh')
+pkgver=8.0p1
+pkgrel=1
+pkgdesc='Premier connectivity tool for remote login with the SSH protocol'
+url='https://www.openssh.com/portable.html'
+license=('custom:BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'audit'
+	'glibc'
+	#'krb5'
+	#'ldns'
+	'libedit'
+	#'libselinux'
+	'openssl'
+	'pam'
+	'zlib'
+)
+makedepends=('linux-headers')
+optdepends=(
+	'xorg-xauth: X11 forwarding'
+	'x11-ssh-askpass: input passphrase in X'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/pam.d/sshd'
+	'etc/ssh/ssh_authorized_keys'
+	'etc/ssh/ssh_banner'
+	'etc/ssh/ssh_config'
+	'etc/ssh/sshd_config'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-$pkgver.tar.gz"
+	"https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-$pkgver.tar.gz.asc"
+	'sshdgenkeys.service'
+	'sshd@.service'
+	'sshd.service'
+	'sshd.socket'
+	'sshd.conf'
+	'sshd.pam'
+)
+sha256sums=(
+	'bd943879e69498e8031eb6b7f44d08cdc37d59a7ab689aa0b437320c3481fd68'
+	'SKIP'
+	'4031577db6416fcbaacf8a26a024ecd3939e5c10fe6a86ee3f0eea5093d533b7'
+	'3a0845737207f4eda221c9c9fb64e766ade9684562d8ba4f705f7ae6826886e5'
+	'c5ed9fa629f8f8dbf3bae4edbad4441c36df535088553fe82695c52d7bde30aa'
+	'de14363e9d4ed92848e524036d9e6b57b2d35cc77d377b7247c38111d2a3defd'
+	'4effac1186cc62617f44385415103021f72f674f8b8e26447fc1139c670090f6'
+	'64576021515c0a98b0aaf0a0ae02e0f5ebe8ee525b1e647ab68f369f81ecd846'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib/ssh'
+		'--sysconfdir=/etc/ssh'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--with-pie'
+		'--with-shadow'
+		'--with-md5-passwords'
+		'--with-mantype=man'
+		'--with-sandbox=seccomp_filter'
+		'--with-privsep-user=nobody'
+		'--with-xauth=/usr/bin/xauth'
+		'--with-maildir=/var/spool/mail'
+		'--with-pid-dir=/run'
+		'--with-default-path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin'
+
+	# 'audit' related options
+		#'--with-audit'
+		'--without-audit'
+
+	# 'krb5' related options
+		#'--with-kerberos5'
+		'--without-kerberos5'
+
+	# 'ldns' related options
+		#'--with-ldns'
+		'--without-ldns'
+
+	# 'libedit' related options
+		'--with-libedit'
+		#'--without-libedit'
+
+	# 'libselinux' related options
+		#'--with-selinux'
+		'--without-selinux'
+
+	# 'openssl' related options
+		'--with-openssl'
+		#'--without-openssl'
+		'--with-ssl-engine'
+
+	# 'pam' related options
+		'--with-pam'
+		#'--without-pam'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k tests
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Instal vendor's files
+	install -Dm644 $srcdir/sshdgenkeys.service $pkgdir/usr/lib/systemd/system/sshdgenkeys.service
+	install -Dm644 $srcdir/sshd@.service $pkgdir/usr/lib/systemd/system/sshd@.service
+	install -Dm644 $srcdir/sshd.service $pkgdir/usr/lib/systemd/system/sshd.service
+	install -Dm644 $srcdir/sshd.socket $pkgdir/usr/lib/systemd/system/sshd.socket
+	install -Dm644 $srcdir/sshd.conf $pkgdir/usr/lib/tmpfiles.d/sshd.conf
+	install -Dm644 $srcdir/sshd.pam $pkgdir/etc/pam.d/sshd
+
+	# Install other files
+	install -Dm755 contrib/findssl.sh $pkgdir/usr/bin/findssl.sh
+	install -Dm755 contrib/ssh-copy-id $pkgdir/usr/bin/ssh-copy-id
+	install -Dm644 contrib/ssh-copy-id.1 $pkgdir/usr/share/man/man1/ssh-copy-id.1
+
+	# Install license file
+	install -Dm644 LICENCE $pkgdir/usr/share/licenses/openssh/LICENCE
+
+	# Create empty file for authorized keys
+	touch $pkgdir/etc/ssh/ssh_authorized_keys
+
+	# Create banner file for ssh daemon
+	echo '
+                             Welcome to Arch Linux!
+                    Please authenticate yourself to log in.
+' > $pkgdir/etc/ssh/ssh_banner
+
+	# Change default 'sshd_config' file
+	sed \
+	-e '/^#ChallengeResponseAuthentication yes$/c ChallengeResponseAuthentication no' \
+	-e '/^#PrintMotd yes$/c PrintMotd no # pam does that' \
+	-e '/^#UsePAM no$/c UsePAM yes' \
+	-i $pkgdir/etc/ssh/sshd_config
+
+	# Set slogin man page to be symlink to ssh man
+	ln -sf ssh.1.gz $pkgdir/usr/share/man/man1/slogin.1.gz
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
