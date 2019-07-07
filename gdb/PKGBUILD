@@ -1,0 +1,225 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='gdb'
+pkgname=('gdb' 'gdb-common')
+pkgver=8.3
+pkgrel=1
+url='http://www.gnu.org/software/gdb/'
+license=('GPL3')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'expat'
+	'guile2.0'
+	'ncurses'
+	'python'
+	'texinfo'
+	'xz'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.gnu.org/gnu/gdb/gdb-$pkgver.tar.xz"
+	"https://ftp.gnu.org/gnu/gdb/gdb-$pkgver.tar.xz.sig"
+)
+sha1sums=(
+	'f45de6af561f0fa0241f0d5085198556fcfd1e5e'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
+	sed '/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/' -i libiberty/configure
+
+	# Link with system 'libbfd' library
+	sed	-e 's|$(BFD_DIR)/libbfd.a|/usr/lib/libbfd.so|g' -i gdb/Makefile.in
+
+	# Link with system 'libopcodes' library
+	sed	-e 's|$(OPCODES_DIR)/libopcodes.a|/usr/lib/libopcodes.so|g' -i gdb/Makefile.in
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+
+
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-werror'
+		'--disable-multilib'
+		'--enable-ld=yes'
+		'--enable-gold=yes'
+		'--enable-decimal-float=yes'
+		'--enable-compressed-debug-sections=all'
+		'--enable-64-bit-archive'
+		'--enable-threads=posix'
+		'--enable-plugins'
+		'--enable-lto'
+		'--enable-secureplt'
+		'--enable-gdbserver'
+		'--enable-multi-ice'
+		'--enable-tui'
+		'--enable-multibyte'
+		'--enable-host-shared'
+		'--with-mmap'
+		'--with-pic'
+		'--with-system-gdbinit=/etc/gdb/gdbinit'
+		'--with-bugurl=https://bugs.archlinux.org'
+		'--without-included-regex'
+
+	# 'babeltrace' related options
+		#'--with-babeltrace'
+		'--without-babeltrace'
+
+	# 'expat' related options
+		'--with-expat'
+		#'--without-expat'
+
+	# 'guile2.0' related options
+		#'--with-guile'
+		'--without-guile'
+
+	# 'isl' related options
+		#'--with-isl'
+		'--without-isl'
+
+	# 'libipt' related options
+		#'--with-intel-pt'
+		'--without-intel-pt'
+
+	# 'mpfr' related options
+		'--with-mpfr'
+		#'--without-mpfr'
+
+	# 'ncurses' related options
+		'--with-curses'
+		#'--without-curses'
+
+	# 'python' related options
+		#'--with-python'
+		'--without-python'
+
+	# 'readline' related options
+		'--with-system-readline'
+		#'--without-system-readline'
+
+	# 'xz' related options
+		'--with-lzma'
+		#'--without-lzma'
+
+	# 'zlib' related options
+		'--with-system-zlib'
+		#'--without-system-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gdb                                                                    #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gdb() {
+	pkgdesc='The GNU Debugger'
+	depends=(
+		"gdb-common=$pkgver"
+		#'babeltrace'
+		'binutils'
+		'expat'
+		'glibc'
+		#'guile2.0'
+		#'isl'
+		#'libipt'
+		'mpfr'
+		'ncurses'
+		#'python'
+		'readline'
+		'xz'
+		'zlib'
+	)
+	backup=('etc/gdb/gdbinit')
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Create empty gdb initialization file
+	mkdir -p etc/gdb
+	touch etc/gdb/gdbinit
+
+	# Resolve conflicts with binutils
+	rm -f $pkgdir/usr/include/{ansidecl,diagnostics,bfd,bfd_stdint,bfdlink,dis-asm,plugin-api,symcat}.h
+	rm -f $pkgdir/usr/share/info/bfd.info
+	rm -f $pkgdir/usr/lib/{libbfd,libopcodes}*
+
+	# Split 'gdb-common' package
+	mkdir -p $srcdir/gdb-common/usr/share
+	mv usr/share/gdb $srcdir/gdb-common/usr/share
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gdb-common                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gdb-common() {
+	pkgdesc='Common files for GNU Debugger'
+	depends=(
+		#'guile2.0'
+		#'python'
+	)
+
+	# Copy files
+	mv $srcdir/gdb-common/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
