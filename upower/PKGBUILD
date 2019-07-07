@@ -42,6 +42,7 @@ makedepends=(
 #       Package miscellaneous options                                          #
 #==============================================================================#
 backup=('etc/UPower/UPower.conf')
+options=('emptydirs')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
