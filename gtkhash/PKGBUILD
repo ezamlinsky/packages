@@ -1,0 +1,248 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='gtkhash'
+pkgname=('gtkhash' 'gtkhash-nemo' 'gtkhash-nautilus' 'gtkhash-thunar' 'gtkhash-caja')
+pkgver=1.2
+pkgrel=1
+url='http://gtkhash.sourceforge.net/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'caja'
+	'intltool'
+	'libnautilus-extension'
+	'librsvg'
+	'nemo'
+	'thunar'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://github.com/tristanheaven/gtkhash/releases/download/v$pkgver/gtkhash-$pkgver.tar.xz")
+sha256sums=('bd870bac6e14babfb6268b617a42e4bcd776559dd80dd62ad9f7cc28b773b8b2')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-schemas-compile'
+		'--disable-debug'
+		'--enable-linux-crypto'
+		'--enable-glib-checksums'
+
+	# 'caja' related options
+		'--enable-caja'
+		#'--disable-caja'
+
+	# 'gtk2' related options
+		#'--with-gtk=2.0'
+		'--with-gtk=3.0'
+
+	# 'libb2' related options
+		#'--enable-blake2'
+		'--disable-blake2'
+
+	# 'libgcrypt' related options
+		'--enable-gcrypt'
+		#'--disable-gcrypt'
+
+	# 'libnautilus-extension' related options
+		'--enable-nautilus'
+		#'--disable-nautilus'
+
+	# 'mbedtls' related options
+		#'--enable-mbedtls'
+		'--disable-mbedtls'
+
+	# 'nemo' related options
+		'--enable-nemo'
+		#'--disable-nemo'
+
+	# 'nettle' related options
+		'--enable-nettle'
+		#'--disable-nettle'
+
+	# 'openssl' related options
+		'--enable-libcrypto'
+		#'--disable-libcrypto'
+
+	# 'thunar' related options
+		'--enable-thunar'
+		#'--disable-thunar'
+
+	# 'zlib' related options
+		'--enable-zlib'
+		#'--disable-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gtkhash                                                                #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gtkhash() {
+	pkgdesc='A GTK+ utility for computing message digests or checksums'
+	depends=(
+		'glib2'
+		'glibc'
+		#'gtk2'
+		'gtk3'
+		#'libb2'
+		'libgcrypt'
+		#'mbedtls'
+		'nettle'
+		'openssl'
+		'zlib'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'gtkhash-nemo' package
+	mkdir -p $srcdir/gtkhash-nemo/usr/{lib,share/appdata}
+	mv usr/lib/nemo/ $srcdir/gtkhash-nemo/usr/lib || true
+	mv usr/share/appdata/nemo-* $srcdir/gtkhash-nemo/usr/share/appdata || true
+
+	# Split 'gtkhash-nautilus' package
+	mkdir -p $srcdir/gtkhash-nautilus/usr/{lib,share/appdata}
+	mv usr/lib/nautilus $srcdir/gtkhash-nautilus/usr/lib || true
+	mv usr/share/appdata/nautilus-* $srcdir/gtkhash-nautilus/usr/share/appdata || true
+
+	# Split 'gtkhash-thunar' package
+	mkdir -p $srcdir/gtkhash-thunar/usr/{lib,share/appdata}
+	mv usr/lib/thunarx-3 $srcdir/gtkhash-thunar/usr/lib || true
+	mv usr/share/appdata/thunar-* $srcdir/gtkhash-thunar/usr/share/appdata || true
+
+	# Split 'gtkhash-caja' package
+	mkdir -p $srcdir/gtkhash-caja/usr/{lib,share/appdata}
+	mv usr/lib/caja $srcdir/gtkhash-caja/usr/lib || true
+	mv usr/share/appdata/caja-* $srcdir/gtkhash-caja/usr/share/appdata || true
+
+	# Remove '/usr/lib' directory
+	rm -fr usr/lib
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gtkhash-nemo                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gtkhash-nemo() {
+	pkgdesc='A GTK+ utility for computing message digests or checksums (Nemo filemanager plugin)'
+	depends=(
+		'gtkhash'
+		'nemo'
+	)
+
+	# Copy files
+	mv $srcdir/gtkhash-nemo/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gtkhash-nautilus                                                       #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gtkhash-nautilus() {
+	pkgdesc='A GTK+ utility for computing message digests or checksums (Nautilus filemanager plugin)'
+	depends=(
+		'gtkhash'
+		'libnautilus-extension'
+	)
+
+	# Copy files
+	mv $srcdir/gtkhash-nautilus/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gtkhash-thunar                                                         #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gtkhash-thunar() {
+	pkgdesc='A GTK+ utility for computing message digests or checksums (Thunar filemanager plugin)'
+	depends=(
+		'gtkhash'
+		'thunar'
+	)
+
+	# Copy files
+	mv $srcdir/gtkhash-thunar/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gtkhash-caja                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gtkhash-caja() {
+	pkgdesc='A GTK+ utility for computing message digests or checksums (Caja filemanager plugin)'
+	depends=(
+		'gtkhash'
+		'caja'
+	)
+
+	# Copy files
+	mv $srcdir/gtkhash-caja/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
