@@ -1,0 +1,272 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('curl')
+pkgoname=('curl')
+pkgver=7.65.1
+pkgrel=3
+pkgdesc='An URL retrieval utility and library'
+url='https://curl.haxx.se'
+license=('MIT')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'axtls'
+	#'brotli'
+	#'c-ares'
+	'ca-certificates'
+	'glibc'
+	#'gnutls'
+	#'krb5'
+	#'libidn2'
+	#'libldap'
+	#'libmetalink'
+	#'libnghttp2'
+	#'libpsl'
+	#'librtmp.so'
+	#'libssh'
+	'libssh2'
+	#'mbedtls'
+	#'nettle'
+	#'nspr'
+	#'nss'
+	'openssl'
+	#'polarssl'
+	#'wolfssl'
+	'zlib'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libcurl.so')
+conflicts=('curl')
+replaces=('curl')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://curl.haxx.se/download/$pkgoname-$pkgver.tar.gz"
+	"https://curl.haxx.se/download/$pkgoname-$pkgver.tar.gz.asc"
+	'0001-multi-make-sure-data-can-present-in-several-sockhash.patch'
+	'0001-multi-fix-the-transfer-hash-function.patch'
+	'0001-multi-fix-the-transfer-hashes-in-the-socket-hash-ent.patch'
+)
+sha512sums=(
+	'0a4b81d115f579df8301859f7d06d00bd9820cbf2fb6b63c6a49418aa174ab32bcbc8942f032f2ea924d208f147de8a30f02f6b922f627d3d9d4afc60df8a39f'
+	'SKIP'
+	'90e0646352baa3b948fc18578eae9f0c878abfa3aec20f19697e8974e669592866a2d778c387d6f693cbcb9aa10cb965a7c7619c7915f4031aa1514a808b9fd3'
+	'140f733410cb3d6d006faf113ba91bbdef5adc127ac7df5b5e415c24fed4ff68ec84ad9750d7f8d209c4a2f656f64b23171d76ebb5f6c6ded19fcd4588157c8f'
+	'52466a96916d42fef5a4719795d8498b530c026a7e6154e137ae6c399a8cb77da0ce89e314e214ff756057a9966c8f4bebeaa4f54b887d64a3d9d60ffe96acf3'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgoname-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/0001-multi-make-sure-data-can-present-in-several-sockhash.patch
+	patch -Np1 -i $srcdir/0001-multi-fix-the-transfer-hashes-in-the-socket-hash-ent.patch
+	patch -Np1 -i $srcdir/0001-multi-fix-the-transfer-hash-function.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgoname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-optimize'
+		'--enable-symbol-hiding'
+		'--disable-debug'
+		'--disable-curldebug'
+		'--enable-http'
+		'--enable-ftp'
+		'--enable-file'
+		'--enable-proxy'
+		'--enable-dict'
+		'--enable-telnet'
+		'--enable-tftp'
+		'--enable-pop3'
+		'--enable-imap'
+		'--enable-smb'
+		'--enable-smtp'
+		'--enable-gopher'
+		'--disable-manual'
+		'--enable-libcurl-option'
+		'--enable-ipv6'
+		'--enable-versioned-symbols'
+		'--enable-threaded-resolver'
+		'--enable-pthreads'
+		'--enable-libgcc'
+		'--enable-verbose'
+		'--enable-crypto-auth'
+		'--enable-ntlm-wb'
+		'--enable-unix-sockets'
+		'--enable-cookies'
+		'--enable-alt-svc'
+
+	# 'axtls' related options
+		#'--with-axtls'
+		'--without-axtls'
+
+	# 'brotli' related options
+		#'--with-brotli'
+		'--without-brotli'
+
+	# 'c-ares' related options
+		#'--enable-ares'
+		'--disable-ares'
+
+	# 'ca-certificates' related options
+		'--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt'
+		#'--without-ca-bundle'
+
+	# 'gnutls' related options
+		#'--with-gnutls'
+		'--without-gnutls'
+
+	# 'krb5' related options
+		#'--with-gssapi'
+		'--without-gssapi'
+
+	# 'libidn2' related options
+		#'--with-libidn2'
+		'--without-libidn2'
+
+	# 'libldap' related options
+		#'--enable-ldap'
+		'--disable-ldap'
+		#'--enable-ldaps'
+		'--disable-ldaps'
+		#'--with-ldap-lib'
+		'--without-ldap-lib'
+		#'--with-lber-lib'
+		'--without-lber-lib'
+
+	# 'libmetalink' related options
+		#'--with-libmetalink'
+		'--without-libmetalink'
+
+	# 'libnghttp2' related options
+		#'--with-nghttp2'
+		'--without-nghttp2'
+
+	# 'libpsl' related options
+		#'--with-libpsl'
+		'--without-libpsl'
+
+	# 'librtmp.so' related options
+		#'--enable-rtsp'
+		'--disable-rtsp'
+		#'--with-librtmp'
+		'--without-librtmp'
+
+	# 'libssh' related options
+		#'--with-libssh'
+		'--without-libssh'
+
+	# 'libssh2' related options
+		'--with-libssh2'
+		#'--without-libssh2'
+
+	# 'mbedtls' related options
+		#'--with-mbedtls'
+		'--without-mbedtls'
+
+	# 'nettle' related options
+		#'--enable-tls-srp'
+		'--disable-tls-srp'
+
+	# 'nss & nspr' related options
+		#'--with-nss'
+		'--without-nss'
+
+	# 'openssl' related options
+		'--with-ssl'
+		#'--without-ssl'
+		'--enable-openssl-auto-load-config'
+		#'--disable-openssl-auto-load-config'
+
+	# 'polarssl' related options
+		#'--with-polarssl'
+		'--without-polarssl'
+
+	# 'wolfssl' related options
+		#'--with-wolfssl'
+		'--without-wolfssl'
+		#'--with-cyassl'
+		'--without-cyassl'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgoname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+	make DESTDIR=$pkgdir install -C scripts
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/curl/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
