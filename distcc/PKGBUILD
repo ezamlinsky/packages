@@ -1,0 +1,173 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('distcc')
+pkgver=3.3.2
+pkgrel=1
+pkgdesc='Distributed C, C++ and Objective-C compiler'
+url='http://distcc.org'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'avahi'
+	'glib2'
+	'glibc'
+	'gtk2'
+	#'krb5'
+	'popt'
+	#'python'
+)
+makedepends=(
+	'git'
+	'setconf'
+)
+optdepends=('python')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/conf.d/distccd'
+	'etc/distcc/hosts'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"git+https://github.com/distcc/distcc#tag=v$pkgver"
+	'distccd.conf.d'
+	'distccd.service'
+)
+sha256sums=(
+	'SKIP'
+	'43e02b461841ca2976816c244a0eca8b24820ca143f73cc0924403d75a8c012f'
+	'0f18ffb58647eeba643f28e9029a5d307100df3470eb228097f2b3f4196d8098'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-rfc2553'
+		'--disable-Werror'
+
+	# 'avahi' related options
+		#'--with-avahi'
+		'--without-avahi'
+
+	# 'gtk2' related options
+		'--with-gtk'
+		#'--without-gtk'
+
+	# 'krb5' related options
+		#'--with-auth'
+		'--without-auth'
+
+	# 'popt' related options
+		'--without-included-popt'
+		#'--with-included-popt'
+
+	# 'python' related options
+		#'--enable-pump-mode'
+		'--disable-pump-mode'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install daemon configuration file
+	install -Dm644 $srcdir/distccd.conf.d $pkgdir/etc/conf.d/distccd
+
+	# Install systemd service file
+	install -Dm644 $srcdir/distccd.service $pkgdir/usr/lib/systemd/system/distccd.service
+
+	# Create directory for compilers substitution
+	install -d $pkgdir/usr/lib/distcc/bin
+
+	# Substitute standard compilers by distcc
+	for compiler in cpp c89 c99 cc gcc c++ g++
+	do
+		ln -sf /usr/bin/distcc $pkgdir/usr/lib/distcc/bin/$compiler
+	done
+
+	# If '/usr/share/distcc/distccmon-gnome' file exists
+	if [ -f $pkgdir/usr/share/distcc/distccmon-gnome.desktop ]
+	then
+
+		# Then move it in '/usr/share/applications/' and correct the icon
+		install -d $pkgdir/usr/share/applications
+
+		sed -e 's/distccmon-gnome-icon.png/monitor/g' \
+		$pkgdir/usr/share/distcc/distccmon-gnome.desktop \
+		> $pkgdir/usr/share/applications/distccmon-gnome.desktop
+		rm -f $pkgdir/usr/share/distcc/distccmon-gnome.desktop
+	fi
+
+	# Remove non required files
+	rm -f $pkgdir/etc/distcc/{clients.allow,commands.allow.sh}
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
