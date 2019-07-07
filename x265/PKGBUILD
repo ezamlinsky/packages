@@ -1,0 +1,95 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('x265')
+pkgver=3.1
+pkgrel=1
+pkgdesc='Open Source H265/HEVC video encoder'
+url='https://bitbucket.org/multicoreware/x265'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	#'numactl'
+)
+makedepends=(
+	'cmake'
+	'mercurial'
+	'nasm'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libx265.so')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("hg+https://bitbucket.org/multicoreware/x265#tag=$pkgver")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DNATIVE_BUILD=ON'
+		'-DHIGH_BIT_DEPTH=ON'
+		'-DENABLE_SHARED=ON'
+		'-DENABLE_HDR10_PLUS=ON'
+
+	# 'numactl' related options
+		#'-DENABLE_LIBNUMA=ON'
+		'-DENABLE_LIBNUMA=OFF'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake ../source "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname/build
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
