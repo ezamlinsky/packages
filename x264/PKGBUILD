@@ -1,0 +1,130 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='x264'
+pkgver=157.r72db4377
+pkgrel=1
+epoch=2
+pkgdesc='Open Source H264/AVC video encoder'
+url='https://www.videolan.org/developers/x264.html'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'ffms2'
+	'glibc'
+	'libavcodec.so'
+	'libavformat.so'
+	'libavutil.so'
+	#'liblsmash.so'
+	'libswscale.so'
+)
+makedepends=(
+	'ffmpeg'
+	'git'
+	'l-smash'
+	'nasm'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'libx264'
+	'libx264.so'
+)
+conflicts=(
+	'libx264'
+	'libx264-10bit'
+	'libx264-all'
+)
+replaces=(
+	'libx264'
+	'libx264-10bit'
+	'libx264-all'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=72db437770fd1ce3961f624dd57a8e75ff65ae0b
+source=("git+https://code.videolan.org/videolan/x264.git#commit=${_commit}")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-pic'
+		'--enable-lto'
+		'--enable-strip'
+
+	# 'ffms2' related options
+		#'--enable-ffms'
+		'--disable-ffms'
+		#'--enable-avs'
+		'--disable-avs'
+
+	# 'libavformat.so' related options
+		'--enable-lavf'
+		#'--disable-lavf'
+
+	# 'liblsmash.so' related options
+		#'--enable-lsmash'
+		'--disable-lsmash'
+
+	# 'libswscale.so' related options
+		'--enable-swscale'
+		#'--disable-swscale'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	make DESTDIR=$pkgdir install-cli install-lib-shared
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
