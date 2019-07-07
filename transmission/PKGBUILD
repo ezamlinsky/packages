@@ -1,0 +1,213 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='transmission'
+pkgname=('transmission-cli' 'transmission-gtk')
+pkgver=2.94
+pkgrel=1
+url='http://www.transmissionbt.com/'
+license=('MIT')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'curl'
+	'gtk3'
+	'intltool'
+	'libevent'
+	'systemd'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://github.com/transmission/transmission-releases/raw/master/transmission-$pkgver.tar.xz"
+	'transmission-2.90-libsystemd.patch'
+	'transmission-cli.sysusers'
+	'transmission-cli.tmpfiles'
+)
+sha256sums=(
+	'35442cc849f91f8df982c3d0d479d650c6ca19310a994eccdaa79a4af3916b7d'
+	'9f8f4bb532e0e46776dbd90e75557364f495ec95896ee35900ea222d69bda411'
+	'641310fb0590d40e00bea1b5b9c843953ab78edf019109f276be9c6a7bdaf5b2'
+	'1266032bb07e47d6bcdc7dabd74df2557cc466c33bf983a5881316a4cc098451'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/transmission-2.90-libsystemd.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-nls'
+		'--enable-utp'
+		'--enable-cli'
+		'--with-gtk'
+
+	# 'cyassl' related options
+		#'--with-crypto=cyassl'
+
+	# 'libevent' related options
+		'--with-inotify'
+		#'--without-inotify'
+
+	# 'libsystemd' related options
+		'--with-systemd-daemon'
+		#'--without-systemd-daemon'
+		'--enable-daemon'
+		#'--disable-daemon'
+
+	# 'openssl' related options
+		'--with-crypto=openssl'
+
+	# 'polarssl' related options
+		#'--with-crypto=polarssl'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Transmission-cli                                                       #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_transmission-cli() {
+	pkgdesc='Fast, easy, and free BitTorrent client (CLI tools, daemon and web client)'
+	depends=(
+		'curl'
+		#'cyassl'
+		'glibc'
+		'libevent'
+		'openssl'
+		'systemd-libs'
+		#'polarssl'
+		'zlib'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install transmission-daemon.service
+	install -Dm644 daemon/transmission-daemon.service \
+	$pkgdir/usr/lib/systemd/system/transmission.service
+
+	# Install 'transmission.conf' file
+	install -Dm644 $srcdir/transmission-cli.sysusers \
+	$pkgdir/usr/lib/sysusers.d/transmission.conf
+
+	# Install 'transmission-cli.tmpfiles' file
+	install -Dm644 $srcdir/transmission-cli.tmpfiles \
+	$pkgdir/usr/lib/tmpfiles.d/transmission.conf
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/transmission-cli/COPYING
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'transmission-gtk' package
+	mkdir -p $srcdir/transmission-gtk/usr/{bin,share/man/man1}
+	mv usr/bin/transmission-gtk $srcdir/transmission-gtk/usr/bin || true
+	mv usr/share/man/man1/transmission-gtk*	$srcdir/transmission-gtk/usr/share/man/man1 || true
+	mv usr/share/applications $srcdir/transmission-gtk/usr/share || true
+	mv usr/share/icons $srcdir/transmission-gtk/usr/share || true
+	mv usr/share/locale $srcdir/transmission-gtk/usr/share || true
+	mv usr/share/pixmaps $srcdir/transmission-gtk/usr/share || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Transmission-gtk                                                       #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_transmission-gtk() {
+	pkgdesc='Fast, easy, and free BitTorrent client (GTK+ GUI)'
+	depends=(
+		'curl'
+		#'cyassl'
+		'desktop-file-utils'
+		'gdk-pixbuf2'
+		'glib2'
+		'glibc'
+		'gtk3'
+		'hicolor-icon-theme'
+		'libevent'
+		'openssl'
+		'pango'
+		#'polarssl'
+		'zlib'
+	)
+	optdepends=(
+		'notification-daemon: Desktop notification support'
+		'transmission-cli: daemon and web support'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Copy files
+	mv $srcdir/transmission-gtk/* $pkgdir
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/transmission-gtk/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
