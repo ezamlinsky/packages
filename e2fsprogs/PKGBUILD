@@ -1,0 +1,137 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('e2fsprogs')
+pkgver=1.45.2
+pkgrel=1
+pkgdesc='Ext2/3/4 filesystem utilities'
+url='http://e2fsprogs.sourceforge.net'
+license=('GPL' 'LGPL' 'MIT')
+arch=('x86_64')
+groups=('base')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libutil-linux'
+	'sh'
+)
+makedepends=('util-linux')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/e2fsck.conf'
+	'etc/mke2fs.conf'
+)
+options=('emptydirs')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${pkgver}/e2fsprogs-${pkgver}.tar.xz"
+	"https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${pkgver}/e2fsprogs-${pkgver}.tar.sign"
+	'MIT-LICENSE'
+)
+sha256sums=(
+	'4952c9ae91e36d762e13cc5b9e8f7eeb5453e4aee4cd9b7402e73f2d4e65e009'
+	'SKIP'
+	'cc45386c1d71f438ad648fd7971e49e3074ad9dbacf9dd3a5b4cb61fd294ecbb'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-elf-shlibs'
+		'--disable-fsck'
+		'--enable-threads=posix'
+		'--enable-lto'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install libraries
+	make DESTDIR=$pkgdir install-libs
+
+	# Install license file
+	install -Dm644 ../MIT-LICENSE $pkgdir/usr/share/licenses/e2fsprogs/MIT-LICENSE
+
+	# Create sample 'e2fsck.conf' config file
+	echo '[options]' >> $pkgdir/etc/e2fsck.conf
+	echo 'max_count_problems = 16' >> $pkgdir/etc/e2fsck.conf
+	echo 'log_dir = /var/log/e2fsck' >> $pkgdir/etc/e2fsck.conf
+	echo 'log_filename = e2fsck-%N.%h.INFO.%D-%T' >> $pkgdir/etc/e2fsck.conf
+	echo 'log_dir_wait = true' >> $pkgdir/etc/e2fsck.conf
+
+	# Create log dir
+	mkdir -p $pkgdir/var/log/e2fsck
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
