@@ -1,0 +1,173 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('ngspice')
+pkgver=30
+pkgrel=2
+pkgdesc='Mixed-level/Mixed-signal circuit simulator based on Spice3f5, Ciber1b1, and Xspice.'
+url='http://ngspice.sourceforge.net'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'adms'
+	#'fftw'
+	'gcc-libs'
+	'glibc'
+	#'libedit'
+	'libx11'
+	'libxaw'
+	'libxt'
+	'ncurses'
+	'readline'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://downloads.sourceforge.net/project/$pkgname/ng-spice-rework/$pkgver/$pkgname-$pkgver.tar.gz"
+	"http://ngspice.sourceforge.net/docs/ngspice-$pkgver-manual.pdf"
+)
+sha1sums=(
+	'980f02200f26083b2bf61606940412df6bdab894'
+	'f1d4de4ed652feb027aea5a96b222368096778c1'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Copy source directory
+	cp -r $pkgname-$pkgver $pkgname-$pkgver-lib
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--mandir=/usr/share/man'
+		'--infodir=/usr/share/info'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-openmp'
+		'--enable-predictor'
+		'--enable-newtrunc'
+		'--enable-sense2'
+		'--enable-experimental'
+		'--enable-xspice'
+		'--enable-cider'
+		'--enable-pss'
+		'--enable-ndev'
+		'--enable-xgraph'
+		'--enable-nodelimiting'
+		'--enable-smoketest'
+		'--with-x'
+
+	# 'adms' related options
+		#'--enable-adms'
+		'--disable-adms'
+
+	# 'fftw' related options
+		#'--with-fftw3=yes'
+		'--with-fftw3=no'
+
+	# 'libedit' related options
+		#'--with-editline=yes'
+		'--with-editline=no'
+
+	# 'readline' related options
+		'--with-readline=yes'
+		#'--with-readline=no'
+	)
+
+	# Change directory to library directory
+	cd $srcdir/$pkgname-$pkgver-lib
+
+	# Run library configuration script
+	./configure "${config_opts[@]}" '--with-ngshared'
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build library
+	make
+
+	# Change directory to program directory
+	cd $srcdir/$pkgname-$pkgver
+
+	# Run program configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build program
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to library directory
+	cd $srcdir/$pkgname-$pkgver-lib
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to program directory
+	cd $srcdir/$pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install documentation
+	install -Dm644 $srcdir/ngspice-$pkgver-manual.pdf \
+	$pkgdir/usr/share/doc/ngspice/manual.pdf
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/ngspice/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
