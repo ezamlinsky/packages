@@ -1,0 +1,113 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('gtk-engines')
+pkgver=2.20.2
+pkgrel=4
+pkgdesc='Theme engines for GTK+ 2'
+url='http://live.gnome.org/GnomeArt'
+license=('GPL' 'LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk2>=2.24.0'
+)
+makedepends=(
+	'git'
+	'gnome-common'
+	'intltool'
+	'pkg-config'
+	'pkgconfig'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+conflicts=(
+	'clearlooks-gtk2'
+	'lighthouse-gtk2'
+)
+replaces=('lighthouse-gtk2')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://ftp.gnome.org/pub/gnome/sources/gtk-engines/${pkgver%.*}/gtk-engines-${pkgver}.tar.bz2")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-glide'
+		'--enable-animation'
+		'--enable-clearlooks'
+		'--disable-crux'
+		'--disable-hc'
+		'--disable-industrial'
+		'--disable-mist'
+		'--disable-redmond'
+		'--disable-thinice'
+		'--disable-deprecated'
+		'--disable-lua'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
