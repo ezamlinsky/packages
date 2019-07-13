@@ -1,0 +1,250 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='poppler'
+pkgname=('poppler' 'poppler-glib' 'poppler-qt5')
+pkgver=0.78.0
+pkgrel=1
+url='https://poppler.freedesktop.org/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'cmake'
+	'git'
+	'gobject-introspection'
+	'gtk-doc'
+	'gtk3'
+	'icu'
+	'pkgconfig'
+	'poppler-data'
+	'python'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=01c92874c3e109cb5cfdbc5ea987ea79283c3c80
+source=(
+	"https://poppler.freedesktop.org/poppler-$pkgver.tar.xz"
+	"https://poppler.freedesktop.org/poppler-$pkgver.tar.xz.sig"
+	"test::git+https://anongit.freedesktop.org/git/poppler/test/#commit=$_commit"
+)
+sha256sums=(
+	'622fdd3187a7339c3b78b861b7cd820ea41ebce0609839ba28ee52c3387938c2'
+	'SKIP'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Set correct path to 'openjpeg.h' file
+	sed -e 's/<openjpeg.h>/\"\/usr\/include\/openjpeg-2.3\/openjpeg.h"/g' -i poppler/JPEG2000Stream.cc
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_INSTALL_LIBDIR=/usr/lib'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DENABLE_GOBJECT_INTROSPECTION=OFF'
+		'-DBUILD_SHARED_LIBS=ON'
+		'-DBUILD_CPP_TESTS=OFF'
+		'-DBUILD_GTK_TESTS=OFF'
+		'-DBUILD_QT5_TESTS=OFF'
+		'-DENABLE_GTK_DOC=ON'
+		'-DENABLE_UTILS=ON'
+		'-DENABLE_CPP=ON'
+		'-DENABLE_SPLASH=ON'
+		'-DENABLE_UNSTABLE_API_ABI_HEADERS=ON'
+		'-DWITH_GTK=ON'
+		'-DSPLASH_CMYK=OFF'
+
+	# 'cairo' related options
+		'-DWITH_Cairo=ON'
+		#'-DWITH_Cairo=OFF'
+
+	# 'curl' related options
+		'-DENABLE_LIBCURL=ON'
+		#'-DENABLE_LIBCURL=OFF'
+
+	# 'fontconfig' related options
+		'-DFONT_CONFIGURATION=fontconfig'
+		#'-DFONT_CONFIGURATION=generic'
+
+	# 'glib2' related options
+		'-DENABLE_GLIB=ON'
+		#'-DENABLE_GLIB=OFF'
+		'-DWITH_GLIB=ON'
+		#'-DWITH_GLIB=OFF'
+
+	# 'lcms2' related options
+		'-DENABLE_CMS=lcms2'
+
+	# 'lcms' related options
+		#'-DENABLE_CMS=lcms1'
+
+	# 'libjpeg' related options
+		'-DWITH_JPEG=ON'
+		#'-DWITH_JPEG=OFF'
+		'-DENABLE_DCTDECODER=libjpeg'
+		#'-DENABLE_DCTDECODER=none'
+
+	# 'libpng' related options
+		'-DWITH_PNG=ON'
+		#'-DWITH_PNG=OFF'
+
+	# 'libtiff' related options
+		'-DWITH_TIFF=ON'
+		#'-DWITH_TIFF=OFF'
+
+	# 'nss' related options
+		'-DWITH_NSS3=ON'
+		#'-DWITH_NSS3=OFF'
+
+	# 'openjpeg2' related options
+		'-DENABLE_LIBOPENJPEG=openjpeg2'
+
+	# 'openjpeg' related options
+		#'-DENABLE_LIBOPENJPEG=openjpeg'
+
+	# 'qt5-base' related options
+		'-DENABLE_QT5=ON'
+		#'-DENABLE_QT5=OFF'
+
+	# 'zlib' related options
+		'-DENABLE_ZLIB=ON'
+		#'-DENABLE_ZLIB=OFF'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Poppler                                                                #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_poppler() {
+	pkgdesc='PDF rendering library based on xpdf 3.0'
+	depends=(
+		'cairo'
+		'curl'
+		'fontconfig'
+		'freetype2'
+		'gcc-libs'
+		'glibc'
+		#'lcms'
+		'lcms2'
+		'libpng'
+		'libtiff'
+		'nspr'
+		'nss'
+		#'openjpeg'
+		'openjpeg2'
+		'zlib'
+	)
+	optdepends=('poppler-data: encoding data to display PDF documents containing CJK characters')
+	conflicts=(
+		"poppler-qt3<$pkgver"
+		"poppler-qt4<$pkgver"
+	)
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver/build
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'poppler-glib' package
+	mkdir -p $srcdir/poppler-glib/usr/{include/poppler,lib/pkgconfig}
+	mv usr/include/poppler/glib $srcdir/poppler-glib/usr/include/poppler || true
+	mv usr/lib/libpoppler-glib* $srcdir/poppler-glib/usr/lib || true
+	mv usr/lib/pkgconfig/poppler-glib.pc $srcdir/poppler-glib/usr/lib/pkgconfig || true
+
+	# Split 'poppler-qt5' package
+	mkdir -p $srcdir/poppler-qt5/usr/{include/poppler,lib/pkgconfig}
+	mv usr/include/poppler/qt5 $srcdir/poppler-qt5/usr/include/poppler || true
+	mv usr/lib/libpoppler-qt5* $srcdir/poppler-qt5/usr/lib || true
+	mv usr/lib/pkgconfig/poppler-qt5.pc $srcdir/poppler-qt5/usr/lib/pkgconfig || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Poppler-glib                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_poppler-glib() {
+	pkgdesc='Poppler glib bindings'
+	depends=(
+		"poppler=$pkgver"
+		'cairo'
+		'freetype2'
+		'gcc-libs'
+		'glib2'
+		'glibc'
+	)
+
+	# Copy files
+	mv $srcdir/poppler-glib/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Poppler-qt5                                                            #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_poppler-qt5() {
+	pkgdesc='Poppler Qt5 bindings'
+	depends=(
+		"poppler=$pkgver"
+		'freetype2'
+		'gcc-libs'
+		'glibc'
+		'qt5-base'
+	)
+
+	# Copy files
+	mv $srcdir/poppler-qt5/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
