@@ -25,7 +25,7 @@ arch=('x86_64')
 depends=(
 	#'axtls'
 	#'brotli'
-	#'c-ares'
+	'c-ares'
 	'ca-certificates'
 	'glibc'
 	#'gnutls'
@@ -151,8 +151,8 @@ build() {
 		'--without-brotli'
 
 	# 'c-ares' related options
-		#'--enable-ares'
-		'--disable-ares'
+		'--enable-ares'
+		#'--disable-ares'
 
 	# 'ca-certificates' related options
 		'--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt'
