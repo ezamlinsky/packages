@@ -1,0 +1,128 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('bzip2')
+pkgver=1.0.7
+pkgrel=2
+pkgdesc='A high-quality data compression program'
+url='https://sourceware.org/bzip2/'
+license=('custom')
+arch=('x86_64')
+groups=('base')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'grep'
+	'less'
+	'sh'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://sourceware.org/pub/bzip2/bzip2-$pkgver.tar.gz"
+	"https://sourceware.org/pub/bzip2/bzip2-$pkgver.tar.gz.sig"
+	'bzip2-ldflags.patch'
+)
+sha256sums=(
+	'e768a87c5b1a79511499beb41500bcc4caf203726fff46a6f5f9ad27fe08ab2b'
+	'SKIP'
+	'fd7b402b94d42a642bd13430bf489077017de3dbbef9fb4656ccb6fb3c751504'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/bzip2-ldflags.patch
+
+	# Set correct CFLAGS
+	sed -e "s/-O2/$CFLAGS/" -i Makefile
+	sed -e "s/-O2/$CFLAGS/" -i Makefile-libbz2_so
+
+	# Set correct LDFLAGS
+	sed -e "s/ -shared / $LDFLAGS\0/g" -i Makefile-libbz2_so
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Build shared library
+	make -f Makefile-libbz2_so
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make PREFIX=$pkgdir/usr install
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/bzip2/LICENSE
+
+	# Install shared library
+	install -m755 libbz2.so.* $pkgdir/usr/lib
+	ln -s libbz2.so.$pkgver $pkgdir/usr/lib/libbz2.so
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Remove static library
+	rm usr/lib/libbz2.a
+
+	# Move man directory into correct place
+	mkdir -p usr/share
+	mv usr/man usr/share
+
+	# Set additional man page links
+	ln -sf bzip2.1 usr/share/man/man1/bunzip2.1
+	ln -sf bzip2.1 usr/share/man/man1/bzcat.1
+	ln -sf bzip2.1 usr/share/man/man1/bzip2recover.1
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
