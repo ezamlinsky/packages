@@ -1,0 +1,290 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('claws-mail')
+pkgver=3.17.3
+pkgrel=5
+pkgdesc='A GTK+ based e-mail client'
+url='http://www.claws-mail.org'
+license=('GPL3')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	#'compface'
+	'curl'
+	'dbus-glib'
+	'desktop-file-utils'
+	'enchant'
+	'expat'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gnutls'
+	'gpgme'
+	'gtk2'
+	'hicolor-icon-theme'
+	#'jpilot'
+	'libarchive'
+	'libcanberra'
+	#'libetpan'
+	#'libgdata'
+	'libgpg-error'
+	#'libical'
+	'libice'
+	#'libldap'
+	'libnotify'
+	'librsvg'
+	'libsm'
+	'libx11'
+	#'libytnef'
+	'nettle'
+	#'networkmanager'
+	'pango'
+	'perl'
+	'poppler-glib'
+	#'python2'
+	'startup-notification'
+	'zlib'
+)
+makedepends=(
+	'bogofilter'
+	'dillo'
+	'docbook-utils'
+	'pygtk'
+	'spamassassin'
+)
+optdepends=(
+	'bogofilter: adds support for spamfiltering'
+	'dillo: for html viewer plugin'
+	'ghostscript: for pdf viewer plugin'
+	'libxml2: for gtkhtml2_viewer and rssyl plugins'
+	'python: needed for some tools'
+	'spamassassin: adds support for spamfiltering'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('claws')
+conflicts=('claws-mail-extra-plugins')
+replaces=('sylpheed-claws' 'claws-mail-extra-plugins')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"http://www.claws-mail.org/download.php?file=releases/claws-mail-$pkgver.tar.xz"
+	"http://www.claws-mail.org/download.php?file=releases/claws-mail-$pkgver.tar.xz.asc"
+)
+sha256sums=(
+	'504e1f5a6f0880192662826ac07bcd083c3167b3db7143858617d6c51233d2f2'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-crash-dialog'
+		'--disable-valgrind'
+		'--disable-alternate-addressbook'
+		'--enable-pthread'
+		'--enable-manual'
+		'--enable-ipv6'
+		'--enable-acpi_notifier-plugin'
+		'--enable-address_keeper-plugin'
+		'--enable-att_remover-plugin'
+		'--enable-attachwarner-plugin'
+		'--enable-bogofilter-plugin'
+		'--enable-bsfilter-plugin'
+		'--enable-spamassassin-plugin'
+		'--enable-clamd-plugin'
+		'--enable-dillo-plugin'
+		'--enable-fetchinfo-plugin'
+		'--enable-mailmbox-plugin'
+		'--enable-managesieve-plugin'
+		'--enable-newmail-plugin'
+
+	# 'compface' related options
+		#'--enable-compface'
+		'--disable-compface'
+
+	# 'curl' related options
+		'--enable-libravatar-plugin'
+		#'--disable-libravatar-plugin'
+		'--enable-spam_report-plugin'
+		#'--disable-spam_report-plugin'
+
+	# 'dbus-glib' related options
+		'--enable-dbus'
+		#'--disable-dbus'
+
+	# 'enchant' related options
+		'--enable-enchant'
+		#'--disable-enchant'
+
+	# 'expat & curl' related options
+		'--enable-rssyl-plugin'
+		#'--disable-rssyl-plugin'
+
+	# 'gnutls' related options
+		'--enable-gnutls'
+		#'--disable-gnutls'
+		'--with-password-encryption=gnutls'
+		#'--with-password-encryption=old'
+
+	# 'gpgme' related options
+		'--enable-pgpcore-plugin'
+		#'--disable-pgpcore-plugin'
+
+	# 'jpilot' related options
+		#'--enable-jpilot'
+		'--disable-jpilot'
+
+	# 'libarchive' related options
+		'--enable-archive-plugin'
+		#'--disable-archive-plugin'
+
+	# 'libetpan' related options
+		#'--enable-libetpan'
+		'--disable-libetpan'
+
+	# 'libgdata' related options
+		#'--enable-gdata-plugin'
+		'--disable-gdata-plugin'
+
+	# 'libgpg-error & gpgme' related options
+		'--enable-pgpinline-plugin'
+		#'--disable-pgpinline-plugin'
+		'--enable-pgpmime-plugin'
+		#'--disable-pgpmime-plugin'
+		'--enable-smime-plugin'
+		#'--disable-smime-plugin'
+
+	# 'libical & curl' related options
+		#'--enable-vcalendar-plugin'
+		'--disable-vcalendar-plugin'
+
+	# 'libldap' related options
+		#'--enable-ldap'
+		'--disable-ldap'
+
+	# 'libnotify & libcanberra' related options
+		'--enable-notification-plugin'
+		#'--disable-notification-plugin'
+
+	# 'librsvg' related options
+		'--enable-svg'
+		#'--disable-svg'
+
+	# 'libsm & libx11' related options
+		'--enable-libsm'
+		#'--disable-libsm'
+
+	# 'libytnef' related options
+		#'--enable-tnef_parse-plugin'
+		'--disable-tnef_parse-plugin'
+
+	# 'networkmanager' related options
+		#'--enable-networkmanager'
+		'--disable-networkmanager'
+
+	# 'perl' related options
+		'--enable-perl-plugin'
+		#'--disable-perl-plugin'
+
+	# 'poppler-glib' related options
+		'--enable-pdf_viewer-plugin'
+		#'--disable-pdf_viewer-plugin'
+
+	# 'python2' related options
+		#'--enable-python-plugin'
+		'--disable-python-plugin'
+
+	# 'startup-notification' related options
+		'--enable-startup-notification'
+		#'--disable-startup-notification'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install 'mail-command' script
+	mkdir -p $pkgdir/usr/lib/claws-mail/tools
+	echo '#!/bin/bash' >> $pkgdir/usr/lib/claws-mail/tools/mail-command.sh
+	echo 'DISPLAY=:0 notify-send --urgency=low --expire-time=10000 --icon=claws-mail "Incoming mail" "You have received $1 new email(s)."' >> $pkgdir/usr/lib/claws-mail/tools/mail-command.sh
+	echo 'canberra-gtk-play --display=:0 --id=message-new-email --description="Mail notification"' >> $pkgdir/usr/lib/claws-mail/tools/mail-command.sh
+	chmod +x $pkgdir/usr/lib/claws-mail/tools/mail-command.sh
+
+	# Install extra tools
+	cd tools
+	cp -arvt $pkgdir/usr/lib/claws-mail/tools *.pl *.py *.sh \
+	kdeservicemenu multiwebsearch.conf tb2claws-mail update-po uudec uuooffice README
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
