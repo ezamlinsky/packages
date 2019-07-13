@@ -1,0 +1,199 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('glibc')
+pkgver=2.29
+pkgrel=4
+pkgdesc='GNU C Library'
+url='http://www.gnu.org/software/libc'
+license=('GPL' 'LGPL')
+arch=('x86_64')
+groups=('base')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'filesystem'
+	#'gd'
+	#'libselinux'
+	'linux-api-headers>=4.10'
+	'tzdata'
+)
+makedepends=(
+	'git'
+	'python'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/gai.conf'
+	'etc/locale.gen'
+	'etc/nscd.conf'
+)
+options=('emptydirs')
+install='glibc.install'
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=34fb5f61d3c3f4b8fc616ea259fa19168b58ecd4
+source=(
+	"git+https://sourceware.org/git/glibc.git#commit=$_commit"
+	'locale.gen.txt'
+	'locale-gen'
+	'lib32-glibc.conf'
+	'bz20338.patch'
+	'0001-Revert-elf-Correct-absolute-SHN_ABS-symbol-run-time-.patch'
+	'file-truncated-while-reading-soname-after-patchelf.patch'
+)
+md5sums=(
+	'SKIP'
+	'07ac979b6ab5eeb778d55f041529d623'
+	'476e9113489f93b348b21e144b6a8fcf'
+	'6e052f1cb693d5d3203f50f9d4e8c33b'
+	'dc0d3ad59aeaaf591b085a77de6e03e9'
+	'af5d3c5227ac639effe39667a43879a1'
+	'0820504d2e83ee15f74a656771361872'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Apply patches
+	patch -p1 -i $srcdir/bz20338.patch
+	patch -p1 -i $srcdir/0001-Revert-elf-Correct-absolute-SHN_ABS-symbol-run-time-.patch
+	patch -p1 -i $srcdir/file-truncated-while-reading-soname-after-patchelf.patch
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-werror'
+		'--disable-multilib'
+		'--enable-stackguard-randomization'
+		'--enable-stack-protector=strong'
+		'--enable-lock-elision=yes'
+		'--enable-tunables=yes'
+		'--enable-add-ons'
+		'--enable-bind-now'
+		'--enable-static-pie'
+		'--enable-mathvec'
+		'--enable-cet'
+		'--with-headers=/usr/include'
+		'--with-bugurl=https://bugs.archlinux.org'
+
+	# 'gd' related options
+		#'--with-gd'
+		'--without-gd'
+
+	# 'libselinux' related options
+		#'--with-selinux'
+		'--without-selinux'
+	)
+
+	# Change directory to build directory
+	mkdir -p build && cd build
+
+	# Change compile flags
+	export CPPFLAGS=''
+	export CFLAGS+=' -fno-lto'
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	../configure "${config_opts[@]}"
+
+	# Correct installation directories
+	echo "slibdir=/usr/lib" >> configparms
+	echo "rtlddir=/usr/lib" >> configparms
+	echo "sbindir=/usr/bin" >> configparms
+	echo "rootsbindir=/usr/bin" >> configparms
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname/build
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname/build
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install nscd
+	install -Dm644 ../nscd/nscd.conf $pkgdir/etc/nscd.conf
+	install -Dm644 ../nscd/nscd.service $pkgdir/usr/lib/systemd/system/nscd.service
+	install -Dm644 ../nscd/nscd.tmpfiles $pkgdir/usr/lib/tmpfiles.d/nscd.conf
+	install -dm755 $pkgdir/var/db/nscd
+
+	# Install 'gai.conf'
+	install -Dm644 ../posix/gai.conf $pkgdir/etc/gai.conf
+
+	# Install 'locale-gen'
+	install -Dm644 $srcdir/locale.gen.txt $pkgdir/etc/locale.gen
+	install -Dm755 $srcdir/locale-gen $pkgdir/usr/bin/locale-gen
+	install -dm755 $pkgdir/usr/lib/locale
+
+	# Generate list of supported locales
+	sed -e '1,3d' -e 's|/| |g' -e 's|\\| |g' -e 's|^|#|g' \
+	../localedata/SUPPORTED >> $pkgdir/etc/locale.gen
+
+	# Remove 'ld.so.cache'
+	rm -f $pkgdir/etc/ld.so.{cache,conf}
+
+	# Remove files shipped in tzdata
+	rm -f $pkgdir/usr/bin/{tzselect,zdump,zic}
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
