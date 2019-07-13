@@ -1,0 +1,221 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('mc')
+pkgver=4.8.23
+pkgrel=1
+pkgdesc='A file manager that emulates Norton Commander'
+url='https://midnight-commander.org/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'aspell'
+	'e2fsprogs'
+	'glib2'
+	'glibc'
+	'gpm'
+	'libssh2'
+	'ncurses'
+	'pcre'
+	#'slang'
+)
+makedepends=(
+	'libx11'
+	'libxt'
+	'unzip'
+)
+optdepends=(
+	'aspell: spelling corrections'
+	'cabextract: ucab extfs'
+	'cdparanoia: audio extfs'
+	'cdrkit: iso9660 extfs'
+	'cvs: CVS support'
+	'gawk: hp48+ extfs'
+	'mtools: a+ extfs'
+	'p7zip: support for 7zip archives'
+	'perl: needed by several extfs scripts'
+	'python2-boto: s3+ extfs'
+	'python2-pytz: s3+ extfs'
+	'samba: VFS support'
+	'unace: uace extfs'
+	'unarj: uarj extfs'
+	'unrar: urar extfs'
+	'zip: uzip extfs'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/mc/edit.indent.rc'
+	'etc/mc/filehighlight.ini'
+	'etc/mc/mc.ext'
+	'etc/mc/mc.keymap'
+	'etc/mc/mc.menu'
+	'etc/mc/mcedit.menu'
+	'etc/mc/sfs.ini'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"http://ftp.midnight-commander.org/mc-$pkgver.tar.xz"
+	'mc-mksh-subshell-v2.patch'
+)
+sha256sums=(
+	'dd7f7ce74183307b0df25b5c3e60ad3293fd3d3d27d2f37dd7a10efce13dff1c'
+	'5147afa3f9dfc00d8b7b36bbb144bcdb78d86301a0f8196686262a9eee41fb96'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/mc-mksh-subshell-v2.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-static'
+		'--enable-mclib'
+		'--enable-charset'
+		'--enable-background'
+		'--enable-threads=posix'
+		'--disable-tests'
+		'--disable-assert'
+		'--disable-doxygen-man'
+		'--disable-doxygen-doc'
+		'--disable-doxygen-dot'
+		'--disable-doxygen-rtf'
+		'--disable-doxygen-xml'
+		'--disable-doxygen-chm'
+		'--disable-doxygen-chi'
+		'--disable-doxygen-html'
+		'--disable-doxygen-ps'
+		'--disable-doxygen-pdf'
+		'--enable-vfs-cpio'
+		'--enable-vfs-extfs'
+		'--enable-vfs-fish'
+		'--enable-vfs-ftp'
+		'--enable-vfs-sfs'
+		'--enable-vfs-sftp'
+		'--enable-vfs-smb'
+		'--enable-vfs-tar'
+		'--with-homedir'
+		'--with-subshell'
+		'--with-internal-edit'
+		'--with-diff-viewer'
+		'--with-mmap'
+
+	# 'aspell' related options
+		#'--enable-aspell'
+		'--disable-aspell'
+
+	# 'e2fsprogs' related options
+		'--enable-vfs-undelfs'
+		#'--disable-vfs-undelfs'
+
+	# 'glib2' related options
+		'--with-search-engine=glib'
+
+	# 'gpm' related options
+		'--with-gpm-mouse'
+		#'--without-gpm-mouse'
+
+	# 'libssh2' related options
+		'--enable-vfs-sftp'
+		#'--disable-vfs-sftp'
+
+	# 'libx11' related options
+		'--with-x'
+		#'--without-x'
+
+	# 'ncurses' related options
+		'--with-screen=ncurses'
+
+	# 'pcre' related options
+		'--with-pcre'
+		#'--without-pcre'
+		'--with-search-engine=pcre'
+
+	# 'slang' related options
+		#'--with-screen=slang'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Set path to Python interpreter
+	export PYTHON_PATH=/usr/bin/python2
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Replace mc.keymap symlink with target file to fix backup mechanism (FS#50889)
+	rm -f $pkgdir/etc/mc/mc.keymap
+	cp $pkgdir/etc/mc/mc.default.keymap $pkgdir/etc/mc/mc.keymap
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
