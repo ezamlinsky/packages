@@ -1,0 +1,182 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('evince')
+pkgver=3.32.0
+pkgrel=2
+pkgdesc='Document viewer (PDF, Postscript, djvu, tiff, dvi, XPS, SyncTex support with gedit, comics books (cbr,cbz,cb7 and cbt))'
+url='https://wiki.gnome.org/Apps/Evince'
+license=('GPL')
+arch=('x86_64')
+groups=('gnome')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'atk'
+	'cairo'
+	'djvulibre'
+	'gcc-libs'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	#'gnome-desktop'
+	#'gspell'
+	#'gst-plugins-base-libs'
+	'gtk3'
+	'libarchive'
+	#'libgxps'
+	#'libnautilus-extension'
+	'libsecret'
+	#'libspectre'
+	#'libsynctex'
+	'libtiff'
+	'libxml2'
+	'pango'
+	'poppler-glib'
+	#'t1lib'
+	#'texlive-bin'
+	'zlib'
+)
+makedepends=(
+	'appstream-glib'
+	'docbook-xsl'
+	'git'
+	'gnome-common'
+	'gobject-introspection'
+	'gtk-doc'
+	'intltool'
+	'itstool'
+	'meson'
+	'python'
+	'yelp-tools'
+)
+optdepends=('gvfs: bookmark support and session saving')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=d3aecce7c6ec973af471ca88e3a2c4910ac52d13  # gnome-3-32
+source=("git+https://gitlab.gnome.org/GNOME/evince.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		#'-Dplatform=gnome'
+		'-Dgtk_doc=true'
+		'-Ddbus=true'
+		'-Dviewer=true'
+		'-Dpreviewer=true'
+		'-Dthumbnailer=true'
+		'-Dintrospection=false'
+		'-Dgtk_unix_print=enabled'
+
+	# 'djvulibre' related options
+		'-Ddjvu=enabled'
+		#'-Ddjvu=disabled'
+
+	# 'gcc-libs' related options
+		'-Dbrowser_plugin=true'
+		#'-Dbrowser_plugin=false'
+
+	# 'gnome-desktop' related options
+		#'-Dthumbnail_cache=enabled'
+		'-Dthumbnail_cache=disabled'
+
+	# 'gspell' related options
+		#'-Dgspell=enabled'
+		'-Dgspell=disabled'
+
+	# 'gst-plugins-base-libs' related options
+		#'-Dmultimedia=enabled'
+		'-Dmultimedia=disabled'
+
+	# 'libarchive' related options
+		'-Dcomics=enabled'
+		#'-Dcomics=disabled'
+
+	# 'libgxps' related options
+		#'-Dxps=enabled'
+		'-Dxps=disabled'
+
+	# 'libnautilus-extension' related options
+		#'-Dnautilus=true'
+		'-Dnautilus=false'
+
+	# 'libsecret' related options
+		'-Dkeyring=enabled'
+		#'-Dkeyring=disabled'
+
+	# 'libspectre' related options
+		#'-Dps=enabled'
+		'-Dps=disabled'
+
+	# 'libtiff' related options
+		'-Dtiff=enabled'
+		#'-Dtiff=disabled'
+
+	# 'poppler-glib' related options
+		'-Dpdf=enabled'
+		#'-Dpdf=disabled'
+
+	# 't1lib' related options
+		#'-Dt1lib=enabled'
+		'-Dt1lib=disabled'
+
+	# 'texlive-bin' related options
+		#'-Ddvi=enabled'
+		'-Ddvi=disabled'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
