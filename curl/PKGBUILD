@@ -33,7 +33,7 @@ depends=(
 	#'libidn2'
 	#'libldap'
 	#'libmetalink'
-	#'libnghttp2'
+	'libnghttp2'
 	#'libpsl'
 	#'librtmp.so'
 	#'libssh'
@@ -185,8 +185,8 @@ build() {
 		'--without-libmetalink'
 
 	# 'libnghttp2' related options
-		#'--with-nghttp2'
-		'--without-nghttp2'
+		'--with-nghttp2'
+		#'--without-nghttp2'
 
 	# 'libpsl' related options
 		#'--with-libpsl'
