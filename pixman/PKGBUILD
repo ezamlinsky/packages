@@ -34,20 +34,6 @@ source=("https://xorg.freedesktop.org/releases/individual/lib/pixman-$pkgver.tar
 sha1sums=('87e1abc91ac4e5dfcc275f744f1d0ec3277ee7cd')
 
 #==============================================================================#
-#       Package preparation sequence                                           #
-#==============================================================================#
-prepare() {
-
-	# Change directory to source directory
-	cd $pkgname-$pkgver
-
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
-}
-
-#==============================================================================#
 #       Package building sequence                                              #
 #==============================================================================#
 build() {
