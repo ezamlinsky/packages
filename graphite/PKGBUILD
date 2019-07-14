@@ -1,0 +1,106 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='graphite'
+pkgver=1.3.13
+pkgrel=1
+epoch=1
+pkgdesc='Reimplementation of the SIL Graphite text processing engine'
+url='https://github.com/silnrsi/graphite'
+license=('LGPL' 'GPL' 'custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+)
+makedepends=(
+	'asciidoc'
+	'cmake'
+	'freetype2'
+	'graphviz'
+	'python'
+)
+checkdepends=('python-fonttools')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://github.com/silnrsi/graphite/releases/download/$pkgver/graphite2-$pkgver.tgz")
+sha1sums=('bd3494575a1ff1c5b4ea796444274dab1e5992c9')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd graphite2-$pkgver
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DGRAPHITE2_VM_TYPE=auto'
+		'-DBUILD_SHARED_LIBS=ON'
+		'-DGRAPHITE2_COMPARE_RENDERER=OFF'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Build package
+	make
+
+	# Build docs
+	make -j1 docs
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd graphite2-$pkgver/build
+
+	# Run internal checks
+	ctest || true
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd graphite2-$pkgver/build
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 ../COPYING $pkgdir/usr/share/licenses/graphite/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
