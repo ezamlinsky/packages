@@ -1,0 +1,95 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='ffmpegthumbnailer'
+pkgver=2.2.0
+pkgrel=2
+pkgdesc='Lightweight video thumbnailer that can be used by file managers.'
+url='https://github.com/dirkvdb/ffmpegthumbnailer'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'ffmpeg'
+	'gcc-libs'
+	'glibc'
+	'libjpeg'
+	'libpng'
+)
+makedepends=('cmake')
+optdepends=('gvfs: support for gio uris')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://github.com/dirkvdb/ffmpegthumbnailer/archive/$pkgver.tar.gz")
+sha1sums=('cbd130569ed56f8e3097378b52d66dde2f23b0d4')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_INSTALL_LIBDIR=lib'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DENABLE_SHARED=ON'
+		'-DENABLE_STATIC=OFF'
+		'-DENABLE_TESTS=OFF'
+		'-DENABLE_GIO=ON'
+		'-DENABLE_THUMBNAILER=ON'
+
+	# 'libjpeg' related options
+		'-DHAVE_JPEG=ON'
+		#'-DHAVE_JPEG=OFF'
+
+	# 'libpng' related options
+		'-DHAVE_PNG=ON'
+		#'-DHAVE_PNG=OFF'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver/build
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
