@@ -1,0 +1,158 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='tumbler'
+pkgver=0.2.5
+pkgrel=1
+pkgdesc='D-Bus service for applications to request thumbnails'
+url='http://www.xfce.org/'
+license=('GPL2' 'LGPL')
+arch=('x86_64')
+groups=('xfce4')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	'curl'
+	'ffmpegthumbnailer'
+	'freetype2'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	#'gst-plugins-base-libs'
+	'libgsf'
+	'libjpeg-turbo'
+	'libopenraw'
+	'libpng'
+	'poppler-glib'
+)
+makedepends=(
+	'intltool'
+	'python'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://archive.xfce.org/src/xfce/tumbler/${pkgver%.*}/tumbler-$pkgver.tar.bz2")
+sha256sums=('6447697a861a4854f18348a4dc6aa8b7903a0f22c52350b793fab6bc6968d459')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-gtk-doc'
+		'--disable-debug'
+		'--enable-debug=no'
+
+	# 'curl' related options
+		'--enable-cover-thumbnailer'
+		#'--disable-cover-thumbnailer'
+
+	# 'ffmpegthumbnailer' related options
+		'--enable-ffmpeg-thumbnailer'
+		#'--disable-ffmpeg-thumbnailer'
+
+	# 'freetype2' related options
+		'--enable-font-thumbnailer'
+		#'--disable-font-thumbnailer'
+
+	# 'gdk-pixbuf2' related options
+		'--enable-pixbuf-thumbnailer'
+		#'--disable-pixbuf-thumbnailer'
+		'--enable-desktop-thumbnailer'
+		#'--disable-desktop-thumbnailer'
+
+	# 'gst-plugins-base-libs' related options
+		#'--enable-gstreamer-thumbnailer'
+		'--disable-gstreamer-thumbnailer'
+
+	# 'libgsf' related options
+		'--enable-odf-thumbnailer'
+		#'--disable-odf-thumbnailer'
+
+	# 'libjpeg-turbo' related options
+		'--enable-jpeg-thumbnailer'
+		#'--disable-jpeg-thumbnailer'
+
+	# 'libopenraw' related options
+		'--enable-raw-thumbnailer'
+		#'--disable-raw-thumbnailer'
+
+	# 'libpng' related options
+		'--enable-xdg-cache'
+		#'--disable-xdg-cache'
+
+	# 'poppler-glib' related options
+		'--enable-poppler-thumbnailer'
+		#'--disable-poppler-thumbnailer'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
