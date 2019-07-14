@@ -1,0 +1,245 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='wxgtk'
+pkgname=('wxgtk-common' 'wxgtk3')
+pkgver=3.0.4
+pkgrel=2
+url='https://wxwidgets.org'
+license=('custom:wxWindows')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'gconf'
+	'glu'
+	'gst-plugins-base'
+	'gtk2'
+	'gvfs'
+	'libnotify'
+	'libxpm'
+	'webkit2gtk'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://github.com/wxWidgets/wxWidgets/releases/download/v$pkgver/wxWidgets-$pkgver.tar.bz2"
+	'make-abicheck-non-fatal.patch'
+)
+sha256sums=(
+	'96157f988d261b7368e5340afa1a0cad943768f35929c22841f62c25b17bf7f0'
+	'46a1bb97d69163547da13d5e23a4c73e68de27ee601da5d2fb5bc5c417931453'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd wxWidgets-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/make-abicheck-non-fatal.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd wxWidgets-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--disable-gtktest'
+		'--disable-sdltest'
+		'--disable-precomp-headers'
+		'--enable-all-features'
+		'--enable-optimise'
+		'--enable-intl'
+		'--enable-unicode'
+		'--enable-utf8'
+		'--disable-ipv6'
+		'--without-subdirs'
+		'--with-regex=builtin'
+		'--with-libiconv=yes'
+		'--with-gtkprint=yes'
+		'--with-themes=all'
+		'--with-x'
+
+	# 'expat' related options
+		'--with-expat=sys'
+		#'--with-expat=no'
+
+	# 'gst-plugins-base-libs' related options
+		#'--enable-mediactrl'
+		'--disable-mediactrl'
+
+	# 'gtk2' related options
+		#'--with-gtk=2'
+
+	# 'gtk3' related options
+		'--with-gtk=3'
+
+	# 'gvfs' related options
+		'--with-gnomevfs=yes'
+		#'--with-gnomevfs=no'
+
+	# 'libglvnd' related options
+		'--with-opengl=yes'
+		#'--with-opengl=no'
+
+	# 'libjpeg' related options
+		'--with-libjpeg=sys'
+		#'--with-libjpeg=no'
+
+	# 'libmspack' related options
+		#'--with-libmspack=yes'
+		'--with-libmspack=no'
+
+	# 'libnotify' related options
+		'--with-libnotify=yes'
+		#'--with-libnotify=no'
+
+	# 'libpng' related options
+		'--with-libpng=sys'
+		#'--with-libpng=no'
+
+	# 'libtiff' related options
+		'--with-libtiff=sys'
+		#'--with-libtiff=no'
+		'--with-libjbig=yes'
+		#'--with-libjbig=no'
+		'--with-liblzma=yes'
+		#'--with-liblzma=no'
+
+	# 'libxpm' related options
+		'--with-libxpm=sys'
+		#'--with-libxpm=no'
+
+	# 'sdl2' related options
+		#'--with-sdl=yes'
+		'--with-sdl=no'
+
+	# 'zlib' related options
+		'--with-zlib=sys'
+		#'--with-zlib=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Wxgtk-common                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_wxgtk-common() {
+	pkgdesc='Common libraries and headers for wxgtk2 and wxgtk3'
+	depends=(
+		'expat'
+		'gcc-libs'
+		'glibc'
+		'zlib'
+	)
+
+	# Change directory to source directory
+	cd wxWidgets-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 docs/licence.txt $pkgdir/usr/share/licenses/wxgtk-common/LICENSE
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'wxgtk' package
+	mkdir -p $srcdir/wxgtk/usr/{bin,lib}
+	mv usr/bin/wx-config  $srcdir/wxgtk/usr/bin
+	mv usr/lib/libwx_gtk* $srcdir/wxgtk/usr/lib
+	mv usr/lib/wx $srcdir/wxgtk/usr/lib
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Wxgtk                                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_wxgtk3() {
+	pkgdesc='GTK+ implementation of wxWidgets API for GUI'
+	depends=(
+		'cairo'
+		'gcc-libs'
+		'gdk-pixbuf2'
+		'glib2'
+		'glibc'
+		#'gst-plugins-base-libs'
+		#'gtk2'
+		'gtk3'
+		'libglvnd'
+		#'libmspack'
+		'libnotify'
+		'libpng'
+		'libsm'
+		'libtiff'
+		'libx11'
+		'libxxf86vm'
+		'pango'
+		#'sdl2'
+		'wxgtk-common'
+	)
+	optdepends=('webkit2gtk: for webview support')
+	conflicts=('wxgtk<3.0.3.1-2')
+
+	# Copy files
+	mv $srcdir/wxgtk/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/wxWidgets-$pkgver/docs/licence.txt $pkgdir/usr/share/licenses/wxgtk/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
