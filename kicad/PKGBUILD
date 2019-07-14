@@ -1,0 +1,161 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='kicad'
+pkgver=5.1.2
+pkgrel=1
+pkgdesc='Electronic schematic and printed circuit board (PCB) design tools'
+url='http://kicad-pcb.org/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	'desktop-file-utils'
+	'gcc-libs'
+	'glew'
+	'glibc'
+	'glu'
+	'hicolor-icon-theme'
+	'libglvnd'
+	'ngspice'
+	'openssl'
+	'pixman'
+	#'python'
+	'wxgtk-common'
+	'wxgtk3'
+)
+makedepends=(
+	'boost'
+	'cmake'
+	'glm'
+	'mesa'
+	'opencascade'
+	'python-wxpython'
+	'swig'
+	'zlib'
+)
+optdepends=(
+	'kicad-library: for footprints and symbols'
+	'kicad-library-3d: for 3d models of components'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://launchpad.net/kicad/5.0/$pkgver/+download/kicad-$pkgver.tar.xz"
+	"kicad-i18n.$pkgver.tar.gz::https://github.com/KiCad/kicad-i18n/archive/$pkgver.tar.gz"
+)
+sha512sums=(
+	'5280be13d82d675aecab208f6d05ac8ac31a8f4d620c541748a1c519f8587b0250f189d8c5cdc0d7fa19b52780e5c68bb3e1956a3f303bb183bfb4c59062be1b'
+	'9c7bb6a3d33442c019669f6bfebb6bff0cf49afaaa58772a70eca3dafb8d405d29ec5338e622af9c97c1cb0a9463a548af43b42178dbe6e647cad1d2638652a0'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to kicad source directory
+	cd $srcdir/$pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS -fno-lto'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS -fno-lto'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DKICAD_INSTALL_DEMOS=OFF'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DBUILD_GITHUB_PLUGIN=OFF'
+		'-DUSE_WX_GRAPHICS_CONTEXT=OFF'
+		'-DUSE_WX_OVERLAY=ON'
+
+	# 'ngspice' related options
+		'-DKICAD_SPICE=ON'
+
+	# 'opencascade' related options
+		#'-DKICAD_USE_OCC=ON'
+		'-DKICAD_USE_OCC=OFF'
+		#'-DKICAD_USE_OCE=ON'
+		'-DKICAD_USE_OCE=OFF'
+
+	# 'python2' related options
+		#'-DKICAD_SCRIPTING=ON'
+		'-DKICAD_SCRIPTING=OFF'
+		#'-DKICAD_SCRIPTING_ACTION_MENU=ON'
+		'-DKICAD_SCRIPTING_ACTION_MENU=OFF'
+		#'-DKICAD_SCRIPTING_MODULES=ON'
+		'-DKICAD_SCRIPTING_MODULES=OFF'
+		#'-DKICAD_SCRIPTING_WXPYTHON=ON'
+		'-DKICAD_SCRIPTING_WXPYTHON=OFF'
+		#'-DKICAD_SCRIPTING_WXPYTHON_PHOENIX=ON'
+		'-DKICAD_SCRIPTING_WXPYTHON_PHOENIX=OFF'
+
+	# 'python3' related options
+		#'-DKICAD_SCRIPTING_PYTHON3=ON'
+		'-DKICAD_SCRIPTING_PYTHON3=OFF'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Build package
+	make
+
+	# Change directory to internationalization source directory
+	cd $srcdir/$pkgname-i18n-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_BUILD_TYPE=Release'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to kicad source directory
+	cd $srcdir/$pkgbase-$pkgver/build
+
+	# Install kicad files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to internationalization source directory
+	cd $srcdir/$pkgname-i18n-$pkgver/build
+
+	# Install internationalization files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
