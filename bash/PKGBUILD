@@ -1,0 +1,243 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='bash'
+pkgver=5.0
+pkgrel=1
+pkgdesc='The GNU Bourne Again shell'
+url='http://www.gnu.org/software/bash/bash.html'
+license=('GPL')
+arch=('x86_64')
+groups=('base')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'readline>=7.0'
+	'ncurses'
+)
+optdepends=('bash-completion: for tab completion')
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('sh')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/bash.bashrc'
+	'etc/bash.bash_logout'
+	'etc/skel/.bashrc'
+	'etc/skel/.bash_profile'
+	'etc/skel/.bash_logout'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver.tar.gz"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver.tar.gz.sig"
+	'dot.bashrc'
+	'dot.bash_profile'
+	'dot.bash_logout'
+	'system.bashrc'
+	'system.bash_logout'
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-001"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-001.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-002"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-002.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-003"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-003.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-004"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-004.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-005"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-005.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-006"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-006.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-007"
+	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-007.sig"
+)
+md5sums=(
+	'2b44b47b905be16f45709648f671820b'
+	'SKIP'
+	'027d6bd8f5f6a06b75bb7698cb478089'
+	'2902e0fee7a9168f3a4fd2ccd60ff047'
+	'42f4400ed2314bd7519c020d0187edc5'
+	'd8f3f334e72c0e30032eae1a1229aef1'
+	'472f536d7c9e8250dc4568ec4cfaf294'
+	'b026862ab596a5883bb4f0d1077a3819'
+	'SKIP'
+	'2f4a7787365790ae57f36b311701ea7e'
+	'SKIP'
+	'af7f2dd93fd5429fb5e9a642ff74f87d'
+	'SKIP'
+	'b60545b273bfa4e00a760f2c648bed9c'
+	'SKIP'
+	'875a0bedf48b74e453e3997c84b5d8a4'
+	'SKIP'
+	'4a8ee95adb72c3aba03d9e8c9f96ece6'
+	'SKIP'
+	'411560d81fde2dc5b17b83c3f3b58c6f'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p0 -i $srcdir/bash${pkgver//./}-001
+	patch -p0 -i $srcdir/bash${pkgver//./}-002
+	patch -p0 -i $srcdir/bash${pkgver//./}-003
+	patch -p0 -i $srcdir/bash${pkgver//./}-004
+	patch -p0 -i $srcdir/bash${pkgver//./}-005
+	patch -p0 -i $srcdir/bash${pkgver//./}-006
+	patch -p0 -i $srcdir/bash${pkgver//./}-007
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-alias'
+		'--enable-arith-for-command'
+		'--enable-array-variables'
+		'--enable-bang-history'
+		'--enable-brace-expansion'
+		'--enable-casemod-attributes'
+		'--enable-casemod-expansions'
+		'--enable-command-timing'
+		'--enable-cond-command'
+		'--enable-cond-regexp'
+		'--enable-coprocesses'
+		'--enable-debugger'
+		'--enable-direxpand-default'
+		'--enable-directory-stack'
+		'--enable-disabled-builtins'
+		'--enable-dparen-arithmetic'
+		'--enable-extended-glob'
+		'--enable-extended-glob-default'
+		'--enable-function-import'
+		'--enable-glob-asciiranges-default'
+		'--enable-help-builtin'
+		'--enable-history'
+		'--enable-job-control'
+		'--enable-multibyte'
+		'--enable-net-redirections'
+		'--enable-process-substitution'
+		'--enable-progcomp'
+		'--enable-prompt-string-decoding'
+		'--enable-readline'
+		'--enable-restricted'
+		'--enable-select'
+		'--enable-separate-helpfiles'
+		'--enable-single-help-strings'
+		'--enable-xpg-echo-default'
+		'--without-bash-malloc'
+
+	# 'readline' related options
+		'--with-installed-readline=yes'
+		#'--with-installed-readline=no'
+
+	# 'ncurses' related options
+		'--with-curses=yes'
+		#'--with-curses=no'
+	)
+
+	# Change compile flags
+	export CFLAGS+=" -DSYS_BASHRC='\"/etc/bash.bashrc\"' -DSYS_BASH_LOGOUT='\"/etc/bash.bash_logout\"'"
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install system-wide configuration files
+	install -Dm644 $srcdir/system.bashrc $pkgdir/etc/bash.bashrc
+	install -Dm644 $srcdir/system.bash_logout $pkgdir/etc/bash.bash_logout
+
+	# Insstall user configuration file skeletons
+	install -Dm644 $srcdir/dot.bashrc $pkgdir/etc/skel/.bashrc
+	install -Dm644 $srcdir/dot.bash_profile $pkgdir/etc/skel/.bash_profile
+	install -Dm644 $srcdir/dot.bash_logout $pkgdir/etc/skel/.bash_logout
+
+	# Make 'sh' to be symlink to 'bash'
+	ln -s bash $pkgdir/usr/bin/sh
+
+	# Remove 'Makefile.inc'
+	rm -f $pkgdir/usr/lib/bash/Makefile.inc
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
