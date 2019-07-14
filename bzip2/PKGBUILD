@@ -105,7 +105,8 @@ package() {
 
 	# Install shared library
 	install -m755 libbz2.so.* $pkgdir/usr/lib
-	ln -s libbz2.so.$pkgver $pkgdir/usr/lib/libbz2.so
+	ln -sf libbz2.so.$pkgver $pkgdir/usr/lib/libbz2.so
+	ln -sf libbz2.so.$pkgver $pkgdir/usr/lib/libbz2.so.1.0
 
 	# Change directory to target directory
 	cd $pkgdir
