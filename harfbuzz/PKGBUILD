@@ -1,0 +1,191 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='harfbuzz'
+pkgname=('harfbuzz' 'harfbuzz-icu')
+pkgver=2.5.3
+pkgrel=1
+url='http://www.freedesktop.org/wiki/Software/HarfBuzz'
+license=('MIT')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'cairo'
+	'git'
+	'gobject-introspection'
+	'gtk-doc'
+	'icu'
+	'python'
+	'ragel'
+)
+checkdepends=(
+	'python-fonttools'
+	'python-setuptools'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=b14e413fae8f14b75c5956e9b38e413c878ded0c  # tags/2.5.3^0
+source=("git+https://github.com/harfbuzz/harfbuzz#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-gtk-doc'
+		'--enable-introspection=no'
+		'--with-ucdn=yes'
+		'--with-gobject=yes'
+		'--with-fontconfig=yes'
+
+	# 'cairo' related options
+		'--with-cairo=yes'
+		#'--with-cairo=no'
+
+	# 'freetype2' related options
+		'--with-freetype=yes'
+		#'--with-freetype=no'
+
+	# 'gcc-libs' related options
+		'--with-libstdc++=yes'
+		#'--with-libstdc++=no'
+
+	# 'glib2' related options
+		'--with-glib=yes'
+		#'--with-glib=no'
+
+	# 'graphite' related options
+		'--with-graphite2=yes'
+		#'--with-graphite2=no'
+
+	# 'icu' related options
+		'--with-icu=yes'
+		#'--with-icu=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Harfbuzz                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_harfbuzz() {
+	pkgdesc='OpenType text shaping engine'
+	depends=(
+		'cairo'
+		'freetype2'
+		'gcc-libs'
+		'glib2'
+		'glibc'
+		'graphite'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/harfbuzz/COPYING
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'harfbuzz-icu' package
+	mkdir -p $srcdir/harfbuzz-icu/usr/{include/harfbuzz,lib/pkgconfig}
+	mv usr/lib/libharfbuzz-icu* $srcdir/harfbuzz-icu/usr/lib || true
+	mv usr/lib/pkgconfig/harfbuzz-icu.pc $srcdir/harfbuzz-icu/usr/lib/pkgconfig || true
+	mv usr/include/harfbuzz/hb-icu.h $srcdir/harfbuzz-icu/usr/include/harfbuzz || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Harfbuzz-icu                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_harfbuzz-icu() {
+	pkgdesc="OpenType text shaping engine (ICU integration)"
+	depends=(
+		'glibc'
+		'harfbuzz'
+		'icu'
+	)
+
+	# Copy files
+	mv $srcdir/harfbuzz-icu/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/$pkgbase/COPYING $pkgdir/usr/share/licenses/harfbuzz-icu/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
