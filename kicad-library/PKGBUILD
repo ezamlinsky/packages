@@ -1,0 +1,125 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='kicad-library'
+pkgname=('kicad-library' 'kicad-library-3d')
+pkgver=5.1.2
+pkgrel=1
+url='https://kicad.github.io/'
+license=('GPL')
+arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'cmake'
+	'tar'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"kicad-sym.$pkgver.tgz::https://github.com/KiCad/kicad-symbols/archive/$pkgver.tar.gz"
+	"kicad-foot.$pkgver.tgz::https://github.com/KiCad/kicad-footprints/archive/$pkgver.tar.gz"
+	"kicad-3d.$pkgver.tgz::https://github.com/KiCad/kicad-packages3D/archive/$pkgver.tar.gz"
+)
+md5sums=(
+	'63d41e72a4ca16ecc534f174565ca8e2'
+	'beb7a445253bf769b97fb46b857e9f37'
+	'2c9ecc770ff3e79c191f0a3935c23da8'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_BUILD_TYPE=Release'
+	)
+
+	# Change directory to 'kicad-symbols'
+	cd $srcdir/kicad-symbols-$pkgver
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Change directory to 'kicad-footprints'
+	cd $srcdir/kicad-footprints-$pkgver
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Change directory to 'kicad-packages3D'
+	cd $srcdir/kicad-packages3D-$pkgver
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Kicad-library                                                          #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_kicad-library() {
+	pkgdesc='Kicad component and footprint libraries'
+	depends=()
+
+	# Change directory to 'kicad-symbols'
+	cd $srcdir/kicad-symbols-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Change directory to 'kicad-footprints'
+	cd $srcdir/kicad-footprints-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Kicad-library-3d                                                       #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_kicad-library-3d() {
+	pkgdesc='Kicad 3D render model libraries'
+	depends=()
+
+	# Change directory to 'kicad-packages3D'
+	cd $srcdir/kicad-packages3D-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
