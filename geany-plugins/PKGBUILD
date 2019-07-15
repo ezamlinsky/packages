@@ -1,0 +1,217 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='geany-plugins'
+pkgver=1.35
+pkgrel=2
+pkgdesc='Plugins for Geany'
+url='https://plugins.geany.org/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	"geany>=$pkgver"
+	'cairo'
+	#'ctpl'
+	'enchant'
+	'gdk-pixbuf2'
+	'geany'
+	'glib2'
+	'glibc'
+	'gpgme'
+	'gtk3'
+	#'gtkspell3'
+	#'libgit2'
+	'libsoup'
+	'libxml2'
+	#'lua51'
+	'pango'
+	'vte3'
+	#'python'
+	#'webkit2gtk'
+)
+makedepends=(
+	'cppcheck'
+	'intltool'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://plugins.geany.org/geany-plugins/geany-plugins-$pkgver.tar.bz2"
+	"https://plugins.geany.org/geany-plugins/geany-plugins-$pkgver.tar.bz2.sig"
+)
+sha256sums=(
+	'b3718ad31c02e178aec108045109b456ef81052b0951ae294b0bf7ce3ff2cb25'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Create configure script
+	autoreconf -fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-utilslib'
+		'--enable-peg-markdown'
+		'--enable-addons'
+		'--enable-autoclose'
+		'--enable-automark'
+		'--enable-codenav'
+		'--enable-commander'
+		'--enable-defineformat'
+		'--enable-geanyctags'
+		'--enable-geanydoc'
+		'--enable-geanyextrasel'
+		'--enable-geanyinsertnum'
+		'--enable-latex'
+		'--enable-geanymacro'
+		'--enable-geanynumberedbookmarks'
+		'--enable-keyrecord'
+		'--enable-lineoperations'
+		'--enable-lipsum'
+		'--enable-pairtaghighlighter'
+		'--enable-shiftcolumn'
+		'--enable-tableconvert'
+		'--enable-workbench'
+		'--enable-xmlsnippets'
+		'--enable-scope'
+		'--enable-vimode'
+
+	# 'cairo' related options
+		'--enable-overview'
+		#'--disable-overview'
+		'--enable-pohelper'
+		#'--disable-pohelper'
+
+	# 'cppcheck' related options
+		#'--enable-cppcheck'
+		'--disable-cppcheck'
+
+	# 'ctpl & pango' related options
+		#'--enable-geanygendoc'
+		'--disable-geanygendoc'
+
+	# 'enchant' related options
+		'--enable-spellcheck'
+		#'--disable-spellcheck'
+
+	# 'gdk-pixbuf2' related options
+		'--enable-sendmail'
+		#'--disable-sendmail'
+		'--enable-treebrowser'
+		#'--disable-treebrowser'
+
+	# 'gpgme' related options
+		'--enable-geanypg'
+		#'--disable-geanypg'
+
+	# 'gtkspell3' related options
+		#'--enable-gtkspell'
+		'--disable-gtkspell'
+		#'--enable-geanyvc'
+		'--disable-geanyvc'
+
+	# 'libgit2' related options
+		#'--enable-gitchangebar'
+		'--disable-gitchangebar'
+
+	# 'libsoup' related options
+		'--enable-geniuspaste'
+		#'--disable-geniuspaste'
+		'--enable-updatechecker'
+		#'--disable-updatechecker'
+
+	# 'libxml2' related options
+		'--enable-pretty_printer'
+		#'--disable-pretty_printer'
+
+	# 'lua51' related options
+		#'--enable-geanylua'
+		'--disable-geanylua'
+
+	# 'pango' related options
+		'--enable-geanyminiscript'
+		#'--disable-geanyminiscript'
+		'--enable-geanyprj'
+		#'--disable-geanyprj'
+		'--enable-projectorganizer'
+		#'--disable-projectorganizer'
+
+	# 'python' related options
+		#'--enable-geanypy'
+		'--disable-geanypy'
+
+	# 'webkit2gtk' related options
+		#'--enable-markdown'
+		'--disable-markdown'
+		#'--enable-webhelper'
+		'--disable-webhelper'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
