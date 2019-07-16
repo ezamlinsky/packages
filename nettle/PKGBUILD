@@ -78,7 +78,6 @@ build() {
 		'--enable-assembler'
 		'--enable-openssl'
 		'--enable-x86-aesni'
-		'--enable-x86-sha-ni'
 	)
 
 	# Run package configuration script
