@@ -1,0 +1,86 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='xcursor-vanilla-dmz'
+pkgname=('xcursor-vanilla-dmz' 'xcursor-vanilla-dmz-aa')
+pkgver=0.4.5
+pkgrel=1
+url='http://jimmac.musichall.cz/'
+license=('CCPL:by-nc-sa')
+arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=('xorg-xcursorgen')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://ftp.de.debian.org/debian/pool/main/d/dmz-cursor-theme/dmz-cursor-theme_$pkgver.tar.xz")
+sha256sums=('b719a64ed9c51905743105e5a50b15492695929ab2d6fca2cea760d52ccd1f5c')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $srcdir/dmz-cursor-theme-$pkgver/DMZ-White/pngs
+
+	# Build package
+	./make.sh
+
+	# Change directory to source directory
+	cd $srcdir/dmz-cursor-theme-$pkgver/DMZ-Black/pngs
+
+	# Build package
+	./make.sh
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xcursor-vanilla-dmz                                                    #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xcursor-vanilla-dmz() {
+	pkgdesc='Vanilla DMZ cursor theme'
+
+	# Change directory to source directory
+	cd dmz-cursor-theme-$pkgver
+
+	# Install files
+	mkdir -p $pkgdir/usr/share/icons/Vanilla-DMZ/cursors
+	cp -a DMZ-White/xcursors/* $pkgdir/usr/share/icons/Vanilla-DMZ/cursors
+	install -Dm644 DMZ-White/index.theme $pkgdir/usr/share/icons/Vanilla-DMZ/index.theme
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xcursor-vanilla-dmz-aa                                                 #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xcursor-vanilla-dmz-aa() {
+	pkgdesc='Vanilla DMZ AA cursor theme'
+
+	# Change directory to source directory
+	cd dmz-cursor-theme-$pkgver
+
+	# Install files
+	mkdir -p $pkgdir/usr/share/icons/Vanilla-DMZ-AA/cursors
+	cp -a DMZ-Black/xcursors/* $pkgdir/usr/share/icons/Vanilla-DMZ-AA/cursors
+	install -Dm644 DMZ-Black/index.theme $pkgdir/usr/share/icons/Vanilla-DMZ-AA/index.theme
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
