@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('linux-api-headers')
-pkgver=5.3.1
-pkgrel=2
+pkgver=5.4.17
+pkgrel=1
 pkgdesc='Kernel headers sanitized for use in userspace'
-url='http://www.gnu.org/software/libc'
+url='https://www.gnu.org/software/libc'
 license=('GPL2')
 arch=('any')
 
@@ -31,7 +31,7 @@ source=(
 	"https://www.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-$pkgver.tar.sign"
 )
 md5sums=(
-	'4c68633ce304b8fbc7be2d3452060c11'
+	'208ec24f003490b25a671cd3d9483b9c'
 	'SKIP'
 )
 
@@ -61,9 +61,6 @@ package() {
 
 	# Use headers from libdrm instead of supplied by default
 	rm -r $pkgdir/usr/include/drm
-
-	# Clean-up unnecessary files generated during install
-	find $pkgdir \( -name .install -o -name ..install.cmd \) -delete
 }
 
 ################################################################################
