@@ -1,0 +1,166 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='boost'
+pkgname=('boost' 'boost-libs')
+pkgver=1.69.0
+pkgrel=2
+url='http://www.boost.org/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'bzip2'
+	'gcc-libs'
+	'glibc'
+	'icu'
+	'openmpi'
+	#'python'
+	#'python-numpy'
+	'python2'
+	'python2-numpy'
+	'xz'
+	'zlib'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://downloads.sourceforge.net/project/boost/boost/$pkgver/boost_${pkgver//./_}.tar.bz2")
+sha256sums=('8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd ${pkgbase}_${pkgver//./_}
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--libdir=/usr/lib'
+		'--includedir=/usr/include'
+		'--with-toolset=gcc'
+		'--with-libraries=all'
+
+	# 'icu' related options
+		'--with-icu'
+		#'--without-icu'
+
+	# 'python' related options
+		#'--with-python=python3'
+
+	# 'python2' related options
+		'--with-python=python2'
+	)
+
+	# Run package configuration script
+	./bootstrap.sh "${config_opts[@]}"
+
+	# Enable support for OpenMPI
+	echo 'using mpi ;' >> project-config.jam
+
+	# Build options
+	build_opts=(
+		"cflags=${CPPFLAGS} ${CFLAGS} -fPIC"
+		"cxxflags=${CPPFLAGS} ${CXXFLAGS} -fPIC -std=c++14"
+		"linkflags=${LDFLAGS}"
+		'debug-symbols=off'
+		'variant=release'
+		'threading=multi'
+		'link=shared'
+		'runtime-link=shared,static'
+		'--stagedir=release'
+		'--layout=system'
+		'--build-dir=build'
+		'--build-type=minimal'
+	)
+
+	# Get the number of parallel jobs from makeflags
+	local JOBS="$(sed -e 's/.*\(-j *[0-9]\+\).*/\1/' <<< ${MAKEFLAGS})"
+
+	# Build package
+	./b2 stage $JOBS "${build_opts[@]}"
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Boost                                                                  #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_boost() {
+	pkgdesc='Free peer-reviewed portable C++ source libraries - development headers'
+	depends=(
+		"boost-libs=$pkgver"
+		#'python'
+		'python2'
+	)
+
+	# Change directory to source directory
+	cd ${pkgbase}_${pkgver//./_}
+
+	# Get the number of parallel jobs from makeflags
+	local JOBS="$(sed -e 's/.*\(-j *[0-9]\+\).*/\1/' <<< ${MAKEFLAGS})"
+
+	# Install files
+	./b2 install $JOBS --prefix=$pkgdir/usr
+
+	# Install boostbook which is needed by quickbook
+	mkdir -p $pkgdir/usr/share/boostbook
+	cp -a tools/boostbook/{xsl,dtd} $pkgdir/usr/share/boostbook
+
+	# Install license file
+	install -Dm644 LICENSE_1_0.txt $pkgdir/usr/share/licenses/boost/LICENSE
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'boost-libs' package
+	mkdir -p $srcdir/boost-libs/usr/lib
+	mv usr/lib/*.so* $srcdir/boost-libs/usr/lib || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Boost-libs                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_boost-libs() {
+	pkgdesc='Free peer-reviewed portable C++ source libraries - runtime libraries'
+	depends=(
+		'bzip2'
+		'gcc-libs'
+		'glibc'
+		'icu>=55.1'
+		'xz'
+		'zlib'
+		'zstd'
+	)
+	optdepends=('openmpi: for mpi support')
+	provides=('libboost_context.so')
+
+	# Copy files
+	mv $srcdir/boost-libs/* $pkgdir
+
+	# Install license file
+	install -Dm644 ${pkgbase}_${pkgver//./_}/LICENSE_1_0.txt \
+	$pkgdir/usr/share/licenses/boost-libs/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
