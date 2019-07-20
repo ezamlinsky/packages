@@ -1,0 +1,156 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='udisks2'
+pkgver=2.8.3
+pkgrel=1
+pkgdesc='Disk Management Service, version 2'
+url='https://www.freedesktop.org/wiki/Software/udisks'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'acl'
+	'glib2'
+	'glibc'
+	'libatasmart'
+	'libblockdev'
+	'libgudev'
+	#'libiscsi'
+	#'libstoragemgmt'
+	'libutil-linux'
+	'polkit'
+	'systemd-libs'
+)
+makedepends=(
+	'docbook-xsl'
+	'gobject-introspection'
+	'parted'
+	'gtk-doc'
+)
+optdepends=(
+	'gptfdisk: GUID partition table support'
+	'ntfs-3g: NTFS filesystem management support'
+	'dosfstools: VFAT filesystem management support'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://github.com/storaged-project/udisks/archive/udisks-$pkgver.tar.gz")
+sha512sums=('4e8d1b8afbe2d1c62b48ee6a0cde5515663f334f6ffd9a98d090628ec91139766bc8484e6acb7502c8e62a55adb07291e60565bebe5391ea338f611f338a64d0')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd udisks-udisks-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd udisks-udisks-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-man'
+		'--enable-gtk-doc'
+		'--enable-debug=no'
+		'--enable-introspection=no'
+		'--enable-fhs-media'
+		'--enable-bcache'
+		'--enable-btrfs'
+		'--enable-lvm2'
+		'--enable-lvmcache'
+		'--enable-vdo'
+		'--enable-zram'
+		'--with-systemdsystemunitdir=/usr/lib/systemd/system'
+
+	# 'acl' related options
+		'--enable-acl'
+		#'--disable-acl'
+
+	# 'libiscsi' related options
+		#'--enable-iscsi'
+		'--disable-iscsi'
+
+	# 'libstoragemgmt' related option
+		#'--enable-lsm'
+		'--disable-lsm'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd udisks-udisks-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd udisks-udisks-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/udisks2/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
