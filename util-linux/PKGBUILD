@@ -1,0 +1,299 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='util-linux'
+pkgname=('util-linux' 'libutil-linux')
+pkgver=2.34
+pkgrel=3
+url='https://github.com/karelzak/util-linux'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'systemd'
+	'python'
+	'libcap-ng'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.kernel.org/pub/linux/utils/util-linux/v$pkgver/util-linux-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/util-linux/v$pkgver/util-linux-$pkgver.tar.sign"
+	'0001-lsblk-force-to-print-PKNAME-for-partition.patch'
+	'pam-login'
+	'pam-common'
+	'pam-runuser'
+	'pam-su'
+	'util-linux.sysusers'
+	'60-rfkill.rules'
+	'rfkill-unblock_.service'
+	'rfkill-block_.service'
+)
+sha256sums=(
+	'743f9d0c7252b6db246b659c1e1ce0bd45d8d4508b4dfa427bbb4a3e9b9f62b5'
+	'SKIP'
+	'cfadc020011f88c028dc50c4e6790f5bae385b881417d917a8706c6ff78613d9'
+	'993a3096c2b113e6800f2abbd5d4233ebf1a97eef423990d3187d665d3490b92'
+	'fc6807842f92e9d3f792d6b64a0d5aad87995a279153ab228b1b2a64d9f32f20'
+	'95b7cdc4cba17494d7b87f37f8d0937ec54c55de0e3ce9d9ab05ad5cc76bf935'
+	'51eac9c2a2f51ad3982bba35de9aac5510f1eeff432d2d63c6362e45d620afc0'
+	'10b0505351263a099163c0d928132706e501dd0a008dac2835b052167b14abe3'
+	'7423aaaa09fee7f47baa83df9ea6fef525ff9aec395c8cbd9fe848ceb2643f37'
+	'8ccec10a22523f6b9d55e0d6cbf91905a39881446710aa083e935e8073323376'
+	'a22e0a037e702170c7d88460cc9c9c2ab1d3e5c54a6985cd4a164ea7beff1b36'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/0001-lsblk-force-to-print-PKNAME-for-partition.patch
+
+	# Set 'sbin' directory to 'bin' directory
+	sed -e 's/\/sbin/\/bin/g' -i configure.ac
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-gtk-doc'
+		'--disable-assert'
+		'--enable-tunelp'
+		'--enable-line'
+		'--enable-vipw'
+		'--enable-newgrp'
+		'--enable-chfn-chsh'
+		'--enable-pg'
+		'--enable-write'
+		'--enable-usrdir-path'
+		'--enable-login-stat-mail'
+		'--enable-sulogin-emergency-mount'
+		'--enable-fs-paths-default=/usr/bin:/usr/local/bin'
+		'--with-util'
+		'--with-tinfo'
+		'--with-btrfs'
+
+	# 'audit' related options
+		#'--with-audit=yes'
+		'--with-audit=no'
+
+	# 'libcap-ng' related options
+		'--with-cap-ng=yes'
+		#'--with-cap-ng=no'
+
+	# 'libselinux' related options
+		#'--with-selinux=yes'
+		'--with-selinux=no'
+
+	# 'libsmack' related options
+		#'--with-smack=yes'
+		'--with-smack=no'
+
+	# 'libsystemd' related options
+		'--with-systemd=yes'
+		#'--with-systemd=no'
+		'--with-udev=yes'
+		#'--with-udev=no'
+
+	# 'libuser' related options
+		#'--with-user=yes'
+		'--with-user=no'
+
+	# 'libutempter' related options
+		#'--with-utempter=yes'
+		'--with-utempter=no'
+
+	# 'ncurses' related options
+		'--with-ncursesw=yes'
+		#--with-ncurses=yes
+
+	# 'python2' related options
+		#'--with-python=2'
+		'--with-python=no'
+
+	# 'python' related options
+		#'--with-python=3'
+		'--with-python=no'
+
+	# 'readline' related options
+		'--with-readline=yes'
+		#'--with-readline=no'
+
+	# 'slang' related options
+		#'--with-slang=yes'
+		'--with-slang=no'
+
+	# 'zlib' related options
+		'--with-libz=yes'
+		#'--with-libz=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Util-linux                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_util-linux() {
+	pkgdesc='Miscellaneous system utilities for Linux'
+	groups=('base' 'base-devel')
+	depends=(
+#		'audit'
+		'coreutils'
+		'glibc'
+		'libcap-ng'
+#		'libselinux'
+#		'libsmack'
+#		'libuser'
+#		'libutempter'
+		'libutil-linux'
+		'ncurses'
+		'pam'
+#		'python'
+#		'python2'
+		'pcre2'
+		'readline'
+#		'shadow'
+#		'slang'
+		'systemd-libs'
+		'zlib'
+	)
+	optdepends=(
+		'python: python bindings to libmount'
+		'words: default dictionary for look'
+	)
+	provides=('rfkill')
+	conflicts=('rfkill')
+	replaces=('rfkill')
+	backup=(
+		'etc/pam.d/chfn'
+		'etc/pam.d/chsh'
+		'etc/pam.d/login'
+		'etc/pam.d/runuser'
+		'etc/pam.d/runuser-l'
+		'etc/pam.d/su'
+		'etc/pam.d/su-l'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install PAM files for login-utils
+	install -Dm644 $srcdir/pam-common $pkgdir/etc/pam.d/chfn
+	install -Dm644 $srcdir/pam-common $pkgdir/etc/pam.d/chsh
+	install -Dm644 $srcdir/pam-login $pkgdir/etc/pam.d/login
+	install -Dm644 $srcdir/pam-runuser $pkgdir/etc/pam.d/runuser
+	install -Dm644 $srcdir/pam-runuser $pkgdir/etc/pam.d/runuser-l
+	install -Dm644 $srcdir/pam-su $pkgdir/etc/pam.d/su
+	install -Dm644 $srcdir/pam-su $pkgdir/etc/pam.d/su-l
+
+	# Install systemd-sysusers
+	install -Dm644 $srcdir/util-linux.sysusers \
+	$pkgdir/usr/lib/sysusers.d/util-linux.conf
+
+	# Install systemd-service files for rfkill
+	install -Dm644 $srcdir/rfkill-unblock_.service \
+	$pkgdir/usr/lib/systemd/system/rfkill-unblock@.service
+	install -Dm644 $srcdir/rfkill-block_.service \
+	$pkgdir/usr/lib/systemd/system/rfkill-block@.service
+
+	# Install rules for rfkill
+	install -Dm644 $srcdir/60-rfkill.rules \
+	$pkgdir/usr/lib/udev/rules.d/60-rfkill.rules
+
+	# Set uid flag for newgrp, chfn and chsh
+	chmod 4755 $pkgdir/usr/bin/{newgrp,chsh,chfn}
+
+	# TODO(dreisner): offer this upstream?
+	if [ -f $pkgdir/usr/lib/systemd/system/uuidd.socket ]; then
+		sed -i '/ListenStream/ aRuntimeDirectory=uuidd' \
+		$pkgdir/usr/lib/systemd/system/uuidd.socket
+	fi
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'libutil-linux' package
+	mkdir -p $srcdir/libutil-linux/usr/lib
+	mv usr/lib/lib* $srcdir/libutil-linux/usr/lib
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libutil-linux                                                          #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libutil-linux() {
+	pkgdesc='Util-linux runtime libraries'
+	depends=('glibc')
+	provides=(
+		'glibc'
+		'libblkid.so'
+		'libfdisk.so'
+		'libmount.so'
+		'libsmartcols.so'
+		'libuuid.so'
+	)
+
+	# Copy files
+	mv $srcdir/libutil-linux/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
