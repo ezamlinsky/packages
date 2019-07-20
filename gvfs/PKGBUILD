@@ -1,0 +1,471 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='gvfs'
+pkgname=('gvfs' 'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb')
+pkgver=1.40.2
+pkgrel=1
+url='https://wiki.gnome.org/Projects/gvfs'
+license=('LGPL')
+arch=('x86_64')
+groups=('gnome')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'avahi'
+	'cmake'
+	'dbus'
+	'dconf'
+	'docbook-xsl'
+	'fuse2'
+	'gcr'
+	'git'
+	'glib2'
+	'glibc'
+	'gnome-online-accounts'
+	'gtk-doc'
+	'gtk3'
+	'intltool'
+	'libarchive'
+	'libbluray'
+	'libcdio-paranoia'
+	'libgcrypt'
+	'libgdata'
+	'libgphoto2'
+	'libgudev'
+	'libimobiledevice'
+	'libmtp'
+	'libnfs'
+	'libplist'
+	'libsecret'
+	'libusb'
+	'libxml2'
+	'meson'
+	'polkit'
+	'python'
+	'smbclient'
+	'systemd-libs'
+	'udisks2'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=b7dc2daf2af667f1816ecdb8561c5a21beca85a8  # tags/1.40.2^0
+source=(
+	"git+https://git.gnome.org/browse/gvfs#commit=$_commit"
+	'gvfsd.hook'
+)
+sha256sums=(
+	'SKIP'
+	'478b9cf7b4c242959fc640dbf0cd4935f16c59b81f5828a3af102d608d7a9d72'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Default configure options
+	config_opts=(
+		'-D man=true'
+		'-D devel_utils=false'
+		'-D installed_tests=false'
+
+	# 'avahi' related options
+		#'-D dnssd=true'
+		'-D dnssd=false'
+
+	# 'fuse2' related options
+		#'-D fuse=true'
+		'-D fuse=false'
+
+	# 'gcr' related options
+		#'-D gcr=true'
+		'-D gcr=false'
+
+	# 'gnome-online-accounts' related options
+		'-D goa=true'
+		#'-D goa=false'
+
+	# 'libarchive' related options
+		'-D archive=true'
+		#'-D archive=false'
+
+	# 'libbluray' related options
+		#'-D bluray=true'
+		'-D bluray=false'
+
+	# 'libcdio-paranoia' related options
+		#'-D cdda=true'
+		'-D cdda=false'
+
+	# 'libgcrypt' related options
+		'-D gcrypt=true'
+		#'-D gcrypt=false'
+		'-D afp=true'
+		#'-D afp=false'
+
+	# 'gnome-online-accounts & libgdata' related options
+		'-D google=true'
+		#'-D google=false'
+
+	# 'libgphoto2' related options
+		'-D gphoto2=true'
+		#'-D gphoto2'
+
+	# 'libgudev' related options
+		'-D gudev=true'
+		#'-D gudev=false'
+
+	# 'libimobiledevice & libplist' related options
+		'-D afc=true'
+		#'-D afc=false'
+
+	# 'libmtp' related options
+		'-D mtp=true'
+		#'-D mtp=false'
+
+	# 'libnfs' related options
+		'-D nfs=true'
+		#'-D nfs=false'
+
+	# 'libsecret' related options
+		'-D keyring=true'
+		#'-D keyring=false'
+
+	# 'libsoup & libxml2' related options
+		'-D http=true'
+		#'-D http=false'
+
+	# 'libsystemd' related options
+		'-D logind=true'
+		#'-D logind=false'
+
+	# 'libusb' related options
+		'-D libusb=true'
+		#'-D libusb=false'
+
+	# 'polkit' related options
+		'-D admin=true'
+		#'-D admin=false'
+
+	# 'smbclient' related options
+		'-D smb=true'
+		#'-D smb=false'
+
+	# 'ssh' related options
+		'-D sftp=true'
+		#'-D sftp=false'
+
+	# 'udisks2' related options
+		'-D udisks2=true'
+		#'-D udisks2=false'
+	)
+
+	# Run package configuration script
+	arch-meson build ${config_opts[@]}
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gvfs                                                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gvfs() {
+	pkgdesc='Virtual filesystem implementation for GIO'
+	depends=(
+		'glib2'
+		'glibc'
+		#'avahi'
+		#'fuse2'
+		#'gcr'
+		'libarchive'
+		#'libbluray'
+		#'libcdio-paranoia'
+		'libgcrypt'
+		'libgudev'
+		'libsecret'
+		'libxml2'
+		'polkit'
+		'systemd-libs'
+		'udisks2'
+	)
+	replaces=(
+		'gvfs-obexftp'
+		'gvfs-afp'
+	)
+	optdepends=(
+		'gvfs-afc: AFC (mobile devices) support'
+		'gvfs-goa: gnome-online-accounts (e.g. OwnCloud) support'
+		'gvfs-google: Google Drive support'
+		'gvfs-gphoto2: gphoto2 (PTP camera/MTP media player) support'
+		'gvfs-mtp: MTP device support'
+		'gvfs-nfs: NFS support'
+		'gvfs-smb: SMB/CIFS (Windows client) support'
+		'gtk3: Recent files support'
+	)
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Install 'gvfsd.hook'
+	install -Dm644 ../gvfsd.hook $pkgdir/usr/share/libalpm/hooks/gvfsd.hook
+
+	# Set correct permissions for the 'rules.d' directory
+	install -d -o root -g polkitd -m 750 $pkgdir/usr/share/polkit-1/rules.d
+
+	# Create directories for split packages
+	mkdir -p $srcdir/gvfs-{afc,goa,gphoto2,mtp}/usr/{lib/{gvfs,systemd/user},share/{dbus-1/services,gvfs/{mounts,remote-volume-monitors}}} \
+	$srcdir/gvfs-{google,nfs,smb}/usr/{lib/gvfs,share/gvfs/mounts} \
+	$srcdir/gvfs-smb/usr/share/{GConf/gsettings,glib-2.0/schemas}
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'gvfs-afc' package
+	mv usr/lib/gvfs-afc-volume-monitor \
+	$srcdir/gvfs-afc/usr/lib || true
+	mv usr/lib/systemd/user/gvfs-afc-volume-monitor.service \
+	$srcdir/gvfs-afc/usr/lib/systemd/user || true
+	mv usr/share/gvfs/remote-volume-monitors/afc.monitor \
+	$srcdir/gvfs-afc/usr/share/gvfs/remote-volume-monitors || true
+	mv usr/share/dbus-1/services/org.gtk.vfs.AfcVolumeMonitor.service \
+	$srcdir/gvfs-afc/usr/share/dbus-1/services || true
+	mv usr/lib/gvfsd-afc \
+	$srcdir/gvfs-afc/usr/lib || true
+	mv usr/share/gvfs/mounts/afc.mount \
+	$srcdir/gvfs-afc/usr/share/gvfs/mounts || true
+
+	# Split 'gvfs-goa' package
+	mv usr/lib/gvfs-goa-volume-monitor \
+	$srcdir/gvfs-goa/usr/lib || true
+	mv usr/lib/systemd/user/gvfs-goa-volume-monitor.service \
+	$srcdir/gvfs-goa/usr/lib/systemd/user || true
+	mv usr/share/gvfs/remote-volume-monitors/goa.monitor \
+	$srcdir/gvfs-goa/usr/share/gvfs/remote-volume-monitors || true
+	mv usr/share/dbus-1/services/org.gtk.vfs.GoaVolumeMonitor.service \
+	$srcdir/gvfs-goa/usr/share/dbus-1/services || true
+
+	# Split 'gvfs-google' package
+	mv usr/lib/gvfsd-google \
+	$srcdir/gvfs-google/usr/lib || true
+	mv usr/share/gvfs/mounts/google.mount \
+	$srcdir/gvfs-google/usr/share/gvfs/mounts || true
+
+	# Split 'gvfs-gphoto2' package
+	mv usr/lib/gvfs-gphoto2-volume-monitor \
+	$srcdir/gvfs-gphoto2/usr/lib || true
+	mv usr/lib/systemd/user/gvfs-gphoto2-volume-monitor.service \
+	$srcdir/gvfs-gphoto2/usr/lib/systemd/user || true
+	mv usr/share/gvfs/remote-volume-monitors/gphoto2.monitor \
+	$srcdir/gvfs-gphoto2/usr/share/gvfs/remote-volume-monitors || true
+	mv usr/share/dbus-1/services/org.gtk.vfs.GPhoto2VolumeMonitor.service \
+	$srcdir/gvfs-gphoto2/usr/share/dbus-1/services || true
+	mv usr/lib/gvfsd-gphoto2 \
+	$srcdir/gvfs-gphoto2/usr/lib || true
+	mv usr/share/gvfs/mounts/gphoto2.mount \
+	$srcdir/gvfs-gphoto2/usr/share/gvfs/mounts || true
+
+	# Split 'gvfs-mtp' package
+	mv usr/lib/gvfs-mtp-volume-monitor \
+	$srcdir/gvfs-mtp/usr/lib || true
+	mv usr/lib/systemd/user/gvfs-mtp-volume-monitor.service \
+	$srcdir/gvfs-mtp/usr/lib/systemd/user || true
+	mv usr/share/gvfs/remote-volume-monitors/mtp.monitor \
+	$srcdir/gvfs-mtp/usr/share/gvfs/remote-volume-monitors || true
+	mv usr/share/dbus-1/services/org.gtk.vfs.MTPVolumeMonitor.service \
+	$srcdir/gvfs-mtp/usr/share/dbus-1/services || true
+	mv usr/lib/gvfsd-mtp \
+	$srcdir/gvfs-mtp/usr/lib || true
+	mv usr/share/gvfs/mounts/mtp.mount \
+	$srcdir/gvfs-mtp/usr/share/gvfs/mounts || true
+
+	# Split 'gvfs-nfs' package
+	mv usr/lib/gvfsd-nfs \
+	$srcdir/gvfs-nfs/usr/lib || true
+	mv usr/share/gvfs/mounts/nfs.mount \
+	$srcdir/gvfs-nfs/usr/share/gvfs/mounts || true
+
+	# Split 'gvfs-smb' package
+	mv usr/lib/gvfsd-smb \
+	$srcdir/gvfs-smb/usr/lib || true
+	mv usr/lib/gvfsd-smb-browse \
+	$srcdir/gvfs-smb/usr/lib || true
+	mv usr/share/gvfs/mounts/smb.mount \
+	$srcdir/gvfs-smb/usr/share/gvfs/mounts || true
+	mv usr/share/gvfs/mounts/smb-browse.mount \
+	$srcdir/gvfs-smb/usr/share/gvfs/mounts || true
+	mv usr/share/glib-2.0/schemas/org.gnome.system.smb.gschema.xml \
+	$srcdir/gvfs-smb/usr/share/glib-2.0/schemas || true
+	mv usr/share/GConf/gsettings/gvfs-smb.convert \
+	$srcdir/gvfs-smb/usr/share/GConf/gsettings || true
+
+	# Remove files which are used in split packages
+	rm -f usr/lib/gvfs-{afc,goa,gphoto2,mtp}-volume-monitor
+	rm -f usr/lib/systemd/user/gvfs-{afc,goa,gphoto2,mtp}-volume-monitor.service
+	rm -f usr/share/gvfs/remote-volume-monitors/{afc,goa,gphoto2,mtp}.monitor
+	rm -f usr/share/dbus-1/services/org.gtk.vfs.{Afc,Goa,GPhoto2,MTP}VolumeMonitor.service
+	rm -f usr/lib/gvfsd-{afc,google,gphoto2,mtp,nfs,smb,smb-browse}
+	rm -f usr/share/gvfs/mounts/{afc,google,gphoto2,mtp,nfs,smb,smb-browse}.mount
+	rm -f usr/share/glib-2.0/schemas/org.gnome.system.smb.gschema.xml
+	rm -f usr/share/GConf/gsettings/gvfs-smb.convert
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gvfs-afc                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gvfs-afc() {
+	pkgdesc='Virtual filesystem implementation for GIO (AFC backend; Apple mobile devices)'
+	depends=(
+		'glib2'
+		'glibc'
+		"gvfs=$pkgver"
+		'libimobiledevice'
+		'libplist'
+	)
+
+	# Copy files
+	mv $srcdir/gvfs-afc/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gvfs-goa                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gvfs-goa() {
+	pkgdesc='Virtual filesystem implementation for GIO (Gnome Online Accounts backend; cloud storage)'
+	depends=(
+		'glib2'
+		'glibc'
+		"gvfs=$pkgver"
+		'gnome-online-accounts'
+	)
+
+	# Copy files
+	mv $srcdir/gvfs-goa/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gvfs-google                                                            #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gvfs-google() {
+	pkgdesc='Virtual filesystem implementation for GIO (Google Drive backend)'
+	depends=(
+		'glib2'
+		'glibc'
+		"gvfs-goa=$pkgver"
+		'gnome-online-accounts'
+		'libgdata'
+	)
+
+	# Copy files
+	mv $srcdir/gvfs-google/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gvfs-gphoto2                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gvfs-gphoto2() {
+	pkgdesc='Virtual filesystem implementation for GIO (gphoto2 backend; PTP camera, MTP media player)'
+	depends=(
+		'glib2'
+		'glibc'
+		"gvfs=$pkgver"
+		'libgphoto2'
+		'libgudev'
+	)
+
+	# Copy files
+	mv $srcdir/gvfs-gphoto2/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gvfs-mtp                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gvfs-mtp() {
+	pkgdesc='Virtual filesystem implementation for GIO (MTP backend; Android, media player)'
+	depends=(
+		'glib2'
+		'glibc'
+		"gvfs=$pkgver"
+		'libgudev'
+		'libmtp'
+		'libusb'
+	)
+
+	# Copy files
+	mv $srcdir/gvfs-mtp/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gvfs-nfs                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gvfs-nfs() {
+	pkgdesc='Virtual filesystem implementation for GIO (NFS backend)'
+	depends=(
+		'glib2'
+		'glibc'
+		"gvfs=$pkgver"
+		'libnfs'
+	)
+	install="gvfs-nfs.install"
+
+	# Copy files
+	mv $srcdir/gvfs-nfs/* $pkgdir
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gvfs-smb                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gvfs-smb() {
+	pkgdesc='Virtual filesystem implementation for GIO (SMB/CIFS backend; Windows client)'
+	depends=(
+		'glib2'
+		'glibc'
+		"gvfs=$pkgver"
+		'smbclient'
+	)
+
+	# Copy files
+	mv $srcdir/gvfs-smb/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
