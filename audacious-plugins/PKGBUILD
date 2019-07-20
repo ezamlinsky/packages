@@ -1,0 +1,284 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('audacious-plugins')
+pkgver=3.10.1
+pkgrel=3
+pkgdesc='Plugins for Audacious'
+url='http://audacious-media-player.org/'
+license=('BSD' 'GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	"audacious>=$pkgver"
+	#'adplug'
+	'alsa-lib'
+	'cairo'
+	'curl'
+	'faad2'
+	'ffmpeg'
+	'flac'
+	#'fluidsynth'
+	'gcc-libs'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk2'
+	#'jack2'
+	'lame'
+	#'libbs2b'
+	#'libcdio-paranoia'
+	#'libcue'
+	'libglvnd'
+	#'libmms'
+	#'libmodplug'
+	'libnotify'
+	'libogg'
+	'libpulse'
+	#'libsamplerate'
+	#'libsidplayfp'
+	'libsndfile'
+	#'libsoxr'
+	'libvorbis'
+	'libx11'
+	'libxcomposite'
+	'libxml2'
+	'libxrender'
+	#'lirc'
+	#'mpg123'
+	#'neon'
+	'pango'
+	#'sdl'
+	#'sdl2'
+	#'sndio'
+	#'wavpack'
+	'zlib'
+)
+makedepends=('python')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://distfiles.audacious-media-player.org/audacious-plugins-$pkgver.tar.bz2")
+sha256sums=('eec3177631f99729bf0e94223b627406cc648c70e6646e35613c7b55040a2642')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-oss4'
+		'--enable-console'
+		'--enable-mpris2'
+		'--enable-songchange'
+		'--enable-filewriter'
+		'--disable-qt'
+
+	# 'adplug' related options
+		#'--enable-adplug'
+		'--disable-adplug'
+
+	# 'alsa-lib' related options
+		'--enable-alsa'
+		#'--disable-alsa'
+
+	# 'curl' related options
+		'--enable-scrobbler2'
+		#'--disable-scrobbler2'
+
+	# 'faad2' related options
+		'--enable-aac'
+		#'--disable-aac'
+
+	# 'ffmpeg' related options
+		'--with-ffmpeg=ffmpeg'
+		#'--with-ffmpeg=none'
+
+	# 'flac' related options
+		'--enable-flac'
+		#'--disable-flac'
+
+	# 'fluidsynth' related options
+		#'--enable-amidiplug'
+		'--disable-amidiplug'
+
+	# 'gtk2' related options
+		'--enable-gtk'
+		#'--disable-gtk'
+
+	# 'jack2' related options
+		#'--enable-jack'
+		'--disable-jack'
+
+	# 'lame' related options
+		'--enable-filewriter_mp3'
+		#'--disable-filewriter_mp3'
+
+	# 'libbs2b' related options
+		#'--enable-bs2b'
+		'--disable-bs2b'
+
+	# 'libcdio-paranoia' related options
+		#'--enable-cdaudio'
+		'--disable-cdaudio'
+
+	# 'libcue' related options
+		#'--enable-cue'
+		'--disable-cue'
+
+	# 'libglvnd' related options
+		'--enable-glspectrum'
+		#'--disable-glspectrum'
+
+	# 'libmms' related options
+		#'--enable-mms'
+		'--disable-mms'
+
+	# 'libmodplug' related options
+		#'--enable-modplug'
+		'--disable-modplug'
+
+	# 'libnotify' related options
+		'--enable-notify'
+		#'--disable-notify'
+
+	# 'libpulse' related options
+		'--enable-pulse'
+		#'--disable-pulse'
+
+	# 'libsamplerate' related options
+		#'--enable-resample'
+		'--disable-resample'
+		#'--enable-speedpitch'
+		'--disable-speedpitch'
+
+	# 'libsidplayfp' related options
+		#'--enable-sid'
+		'--disable-sid'
+
+	# 'libsndfile' related options
+		'--enable-sndfile'
+		#'--disable-sndfile'
+
+	# 'libsoxr' related options
+		#'--enable-soxr'
+		'--disable-soxr'
+
+	# 'libvorbis & libogg' related options
+		'--enable-vorbis'
+		#'--disable-vorbis'
+
+	# 'libx11 & gtk2' related options
+		'--enable-hotkey'
+		#'--disable-hotkey'
+
+	# 'libxcomposite & libxrender & gtk2' related options
+		'--enable-aosd'
+		#'--disable-aosd'
+
+	# 'libxml2' related options
+		'--with-system-libxml2=yes'
+		#'--with-system-libxml2=no'
+
+	# 'lirc' related options
+		#'--enable-lirc'
+		'--disable-lirc'
+
+	# 'mpg123' related options
+		#'--enable-mpg123'
+		'--disable-mpg123'
+
+	# 'neon' related options
+		#'--enable-neon'
+		'--disable-neon'
+
+	# 'sdl2' related options
+		#'--enable-sdlout'
+		#'--with-libsdl=2'
+		'--disable-sdlout'
+
+	# 'sdl' related options
+		#'--enable-sdlout'
+		#'--with-libsdl=1'
+		'--disable-sdlout'
+
+	# 'sndio' related options
+		#'--enable-sndio'
+		'--disable-sndio'
+
+	# 'wavpack' related options
+		#'--enable-wavpack'
+		'--disable-wavpack'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/audacious-plugins/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
