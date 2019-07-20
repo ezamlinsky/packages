@@ -89,9 +89,9 @@ build() {
 		'--enable-debug=no'
 		'--enable-introspection=no'
 		'--with-gtk-doc'
-		'--with-bcache'           # support bcache [default=yes]
-		'--with-loop'             # support loop [default=yes]
-		'--with-swap'             # support swap [default=yes]
+		'--with-bcache'
+		'--with-loop'
+		'--with-swap'
 
 	# 'cryptsetup && nss && volume_key' related options
 		#'--with-crypto'
