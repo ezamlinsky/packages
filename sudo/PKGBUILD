@@ -1,0 +1,208 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname='sudo'
+pkgver=1.8.27
+pkgrel=1
+pkgdesc='Give certain users the ability to run some commands as root'
+url='https://www.sudo.ws/sudo/'
+license=('custom')
+arch=('x86_64')
+groups=('base-devel')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	#'audit'
+	#'krb5'
+	'libgcrypt'
+	#'libldap'
+	#'libselinux'
+	#'openssl'
+	'pam'
+	'zlib'
+)
+makedepends=(
+	'libsasl'
+	'sssd'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/sudoers'
+	'etc/pam.d/sudo'
+)
+options=('emptydirs')
+install='sudo.install'
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.sudo.ws/sudo/dist/sudo-$pkgver.tar.gz"
+	"https://www.sudo.ws/sudo/dist/sudo-$pkgver.tar.gz.sig"
+	'sudo.pam'
+)
+sha256sums=(
+	'7beb68b94471ef56d8a1036dbcdc09a7b58a949a68ffce48b83f837dd33e2ec0'
+	'SKIP'
+	'd1738818070684a5d2c9b26224906aad69a4fea77aabd960fc2675aee2df1fa2'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-pie'
+		'--enable-tmpfiles.d'
+		'--with-man'
+		'--with-mdoc'
+		'--with-insults'
+		'--with-all-insults'
+		'--with-rundir=/run/sudo'
+		'--with-vardir=/var/db/sudo'
+		'--with-logging=file'
+		'--without-lecture'
+
+	# 'audit' related options
+		#'--with-linux-audit'
+		'--without-linux-audit'
+
+	# 'krb5' related options
+		#'--enable-gss-krb5-ccache-name'
+		'--disable-gss-krb5-ccache-name'
+		#'--with-kerb5'
+		'--without-kerb5'
+
+	# 'libgcrypt' related options
+		'--enable-gcrypt'
+		#'--disable-gcrypt'
+
+	# 'libldap' related options
+		#'--with-ldap'
+		'--without-ldap'
+		#'--enable-sasl'
+		'--disable-sasl'
+
+	# 'libselinux' related options
+		#'--with-selinux'
+		'--without-selinux'
+
+	# 'openssl' related options
+		#'--enable-openssl'
+		'--disable-openssl'
+
+	# 'pam' related options
+		'--enable-pam-session'
+		#'--disable-pam-session'
+		'--with-pam'
+		#'--without-pam'
+		'--with-pam-login'
+		#'--without-pam-login'
+
+	# 'sssd' related options
+		#'--with-sssd'
+		'--without-sssd'
+
+	# 'zlib' related options
+		'--enable-zlib'
+		#'--disable-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install PAM module
+	install -Dm644 $srcdir/sudo.pam $pkgdir/etc/pam.d/sudo
+
+	# Install license file
+	install -Dm644 doc/LICENSE $pkgdir/usr/share/licenses/sudo/LICENSE
+
+	# Create empty 'sudo.conf' file
+	touch $pkgdir/etc/sudo.conf
+
+	# Remove 'sudoers.dist' (not needed since pacman manages updates to sudoers)
+	rm $pkgdir/etc/sudoers.dist
+
+	# Remove '/run' directory (we will create it using systemd-tmpfiles)
+	rm -fr $pkgdir/run
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
