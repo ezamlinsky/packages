@@ -107,7 +107,7 @@ prepare() {
 	done
 
 	# Create configure script
-	autoreconf -v -f --install
+	autoreconf -fi
 
 	# Supress etc/pam.d/*, we provide our own
 	sed -i '/^SUBDIRS/s/pam\.d//' etc/Makefile.in

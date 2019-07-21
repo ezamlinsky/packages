@@ -62,7 +62,7 @@ prepare() {
 	patch -p1 -i $srcdir/make-4.2.1-test-driver.patch
 
 	# Run automatic configure script
-	autoreconf -f -i
+	autoreconf -fi
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then

@@ -10,37 +10,37 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgname=('findutils')
-pkgver=4.6.0
-pkgrel=4
-pkgdesc='GNU utilities to locate files'
-url='http://www.gnu.org/software/findutils'
-license=('GPL3')
+pkgname=('volume_key')
+pkgver=0.3.11
+pkgrel=2
+pkgdesc='A library for manipulating storage volume encryption keys and storing them separately from volumes to handle forgotten passphrases'
+url='https://pagure.io/volume_key'
+license=('GPL')
 arch=('x86_64')
-groups=('base' 'base-devel')
 
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'cryptsetup'
+	'glib2'
 	'glibc'
-	#'libselinux'
-	'sh'
+	'gpgme'
+	'libutil-linux'
+	'nspr'
+	'nss'
 )
+makedepends=(
+	'python'
+	'swig'
+)
+optdepends=('python: for python bindings')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=(
-	"ftp://ftp.gnu.org/pub/gnu/findutils/findutils-$pkgver.tar.gz"
-	'gnulib-fflush.patch'
-	'gnulib-makedev.patch'
-)
-sha1sums=(
-	'f18e8aaee3f3d4173a1f598001003be8706d28b0'
-	'1bc1586f6a52083939c4cabc32f12e7aead97e61'
-	'051382a2b0039438c2b143f2f9e5dc4bea130a09'
-)
+source=("https://github.com/felixonmars/volume_key/archive/volume_key-$pkgver.tar.gz")
+sha512sums=('594995cda12562a6beb6a404e2d6a152fcca6c08c1c6eae4d3c7ded8b4a55d43ddef1e45956075c7168c5f4919e38c87f79caf1af4e9cbc371eabc5228259f07')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -48,19 +48,10 @@ sha1sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -p1 -i $srcdir/gnulib-fflush.patch
-	patch -p1 -i $srcdir/gnulib-makedev.patch
+	cd $pkgname-$pkgname-$pkgver
 
 	# Run automatic configure script
 	autoreconf -fi
-
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
 }
 
 #==============================================================================#
@@ -69,7 +60,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-$pkgname-$pkgver
 
 	# Default configure options
 	config_opts=(
@@ -83,21 +74,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--disable-debug'
-		'--disable-assert'
-		'--enable-threads=posix'
-		'--enable-leaf-optimisation'
-		'--enable-d_type-optimization'
-		'--without-included-regex'
-
-	# 'libselinux' related options
-		#'--with-selinux'
-		'--without-selinux'
 	)
-
-	# Don't build or install locate because we use mlocate,
-	# which is a secure version of locate.
-	sed -i '/^SUBDIRS/s/locate//' Makefile.in
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
@@ -106,9 +83,6 @@ build() {
 	if [ -f libtool ]; then
 		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
 	fi
-
-	# Don't build locate, but the docs want a file in there
-	make -C locate dblocation.texi
 
 	# Build package
 	make
@@ -120,7 +94,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-$pkgname-$pkgver
 
 	# Run internal checks
 	make -k check
@@ -132,10 +106,16 @@ check() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-$pkgname-$pkgver
 
 	# Install files
 	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/volume_key/LICENSE
+
+	# Remove python library
+	rm -fr $pkgdir/usr/lib/python*
 }
 
 ################################################################################
