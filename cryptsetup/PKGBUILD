@@ -1,0 +1,193 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('cryptsetup')
+pkgver=2.1.0
+pkgrel=1
+pkgdesc='Userspace setup tool for transparent encryption of block devices using dm-crypt'
+url='https://gitlab.com/cryptsetup/cryptsetup/'
+license=('GPL')
+arch=('x86_64')
+groups=('base')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'argon2'
+	'bash'
+	'device-mapper'
+	#'gcrypt'
+	'glibc'
+	'json-c'
+	#'libpwquality'
+	#'libselinux'
+	'libutil-linux'
+	#'nettle'
+	#'nss'
+	'openssl'
+	#'passwdqc-utils'
+	'popt'
+)
+makedepends=('util-linux')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://www.kernel.org/pub/linux/utils/cryptsetup/v${pkgver%.*}/${pkgname}-${pkgver}.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/cryptsetup/v${pkgver%.*}/${pkgname}-${pkgver}.tar.sign"
+	'hooks-encrypt'
+	'install-encrypt'
+	'install-sd-encrypt'
+)
+sha256sums=(
+	'a3eeb2741f8f3376d16585191f3c60e067dd987e096c3c4b073fab7748b1c897'
+	'SKIP'
+	'416aa179ce3c6a7a5eee0861f1f0a4fafac91b69e84a2aae82b6e5a6140e31e2'
+	'7b8c8a189f1b63cb4a0c0dd93d3452615bdc05f0e33570c78b338446a59ca750'
+	'95a16baa273a0ea5c531bc4b65e7f142ae7cb6423b5e512f4413d1dd4a545421'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-static-cryptsetup'
+		'--enable-keyring'
+		'--enable-kernel_crypto'
+		'--enable-blkid'
+		'--enable-fips'
+		'--enable-luks-adjust-xts-keysize'
+
+	# 'argon2' related option
+		#'--enable-libargon2'
+		'--disable-libargon2'
+		'--enable-internal-argon2'
+		#'--disable-internal-argon2'
+		'--enable-internal-sse-argon2'
+		#'--disable-internal-sse-argon2'
+
+	# 'gcrypt' related options
+		#'--with-crypto_backend=gcrypt'
+		#'--with-crypto_backend=kernel'
+		#'--enable-gcrypt-pbkdf2'
+
+	# 'libpwquality' related options
+		#'--enable-pwquality'
+		'--disable-pwquality'
+
+	# 'libselinux' related options
+		#'--enable-selinux'
+		'--disable-selinux'
+
+	# 'nettle' related options
+		#'--with-crypto_backend=nettle'
+		#'--with-crypto_backend=kernel'
+
+	# 'nss' related options
+		#'--with-crypto_backend=nss'
+		#'--with-crypto_backend=kernel'
+
+	# 'openssl' related options
+		'--with-crypto_backend=openssl'
+		#'--with-crypto_backend=kernel'
+
+	# 'passwdqc-utils' related options
+		#'--enable-passwdqc'
+		'--disable-passwdqc'
+
+	# 'popt' related options
+		'--enable-cryptsetup'
+		'--enable-veritysetup'
+		'--enable-cryptsetup-reencrypt'
+		'--enable-integritysetup'
+		'--enable-udev'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install hooks
+	install -D -m0644 $srcdir/hooks-encrypt $pkgdir/usr/lib/initcpio/hooks/encrypt
+	install -D -m0644 $srcdir/install-encrypt $pkgdir/usr/lib/initcpio/install/encrypt
+	install -D -m0644 $srcdir/install-sd-encrypt $pkgdir/usr/lib/initcpio/install/sd-encrypt
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/cryptsetup/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
