@@ -22,24 +22,25 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	#'cryptsetup'
+	'cryptsetup'
 	#'device-mapper'
 	#'dmraid'
 	'glib2'
 	'glibc'
 	'kmod'
-	#'libbytesize'
+	'libbytesize'
 	'libutil-linux'
 	#'libyaml'
 	#'ndctl'
-	#'nss'
-	#'parted'
+	'nss'
+	'parted'
 	'systemd-libs'
-	#'volume_key'
+	'volume_key'
 )
 makedepends=(
 	'autoconf-archive'
 	'gobject-introspection'
+	'gtk-doc'
 	'python'
 	'python2'
 	'systemd'
@@ -94,10 +95,10 @@ build() {
 		'--with-swap'
 
 	# 'cryptsetup && nss && volume_key' related options
-		#'--with-crypto'
-		'--without-crypto'
-		#'--with-escrow'
-		'--without-escrow'
+		'--with-crypto'
+		#'--without-crypto'
+		'--with-escrow'
+		#'--without-escrow'
 
 	# 'device-mapper' related options
 		#'--with-dm'
@@ -114,14 +115,14 @@ build() {
 		'--without-dmraid'
 
 	# 'libbytesize' related options
-		#'--with-tools'
-		'--without-tools'
-		#'--with-btrfs'
-		'--without-btrfs'
-		#'--with-mdraid'
-		'--without-mdraid'
-		#'--with-kbd'
-		'--without-kbd'
+		'--with-tools'
+		#'--without-tools'
+		'--with-btrfs'
+		#'--without-btrfs'
+		'--with-mdraid'
+		#'--without-mdraid'
+		'--with-kbd'
+		#'--without-kbd'
 
 	# 'libyaml && libbytesize' related options
 		#'--with-vdo'
@@ -132,10 +133,10 @@ build() {
 		'--without-nvdimm'
 
 	# 'parted' related option
-		#'--with-part'
-		'--without-part'
-		#'--with-fs'
-		'--without-fs'
+		'--with-part'
+		#'--without-part'
+		'--with-fs'
+		#'--without-fs'
 
 	# 'python' related options
 		#'--with-python3'
