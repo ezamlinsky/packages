@@ -1,0 +1,151 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('parted')
+pkgver=3.2
+pkgrel=9
+pkgdesc='A program for creating, destroying, resizing, checking and copying partitions'
+url='https://www.gnu.org/software/parted/parted.html'
+license=('GPL3')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'device-mapper'
+	'glibc'
+	'libutil-linux'
+	'ncurses'
+	'readline'
+	#'libselinux'
+)
+makedepends=('pkg-config')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.gnu.org/gnu/parted/parted-$pkgver.tar.xz"
+	"https://ftp.gnu.org/gnu/parted/parted-$pkgver.tar.xz.sig"
+	'0001-fat16.patch'
+	'0002-include.patch'
+)
+sha256sums=(
+	'858b589c22297cacdf437f3baff6f04b333087521ab274f7ab677cb8c6bb78e4'
+	'SKIP'
+	'20f54040e58bbbef6ed043c8be98dda5696035349c3efad850972c938f08f84a'
+	'789d6ef8fcff389f9f74bd9e377aff9949ab5b317a80bd38cec39510bd40cef6'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/0001-fat16.patch
+	patch -p1 -i $srcdir/0002-include.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--disable-assert'
+		'--disable-discover-only'
+		'--disable-read-only'
+		'--enable-dynamic-loading'
+		'--enable-pc98'
+		'--enable-threads=posix'
+		'--without-included-regex'
+
+	# 'device-mapper' related options
+		'--enable-device-mapper'
+		#'--disable-device-mapper'
+
+	# 'readline' related options
+		'--with-readline'
+		#'--without-readline'
+
+	# 'libselinux' related options
+		#'--enable-selinux'
+		'--disable-selinux'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/parted/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
