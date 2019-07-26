@@ -1,0 +1,373 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('mpv')
+pkgver=0.29.1
+pkgrel=6
+epoch=1
+pkgdesc='A free, open source, and cross-platform media player'
+url='https://mpv.io/'
+license=('GPL3')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'alsa-lib'
+	#'crossc'
+	'desktop-file-utils'
+	#'glew-wayland'
+	'glibc'
+	'hicolor-icon-theme'
+	#'jack'
+	'lcms2'
+	'libarchive'
+	'libass'
+	'libavcodec.so'
+	'libavdevice.so'
+	'libavutil.so'
+	#'libbluray'
+	#'libcaca'
+	#'libcdio'
+	#'libcdio-paranoia'
+	#'libdrm'
+	#'libdvdnav'
+	#'libdvdread'
+	'libegl'
+	'libgl'
+	'libjpeg-turbo'
+	'libpulse'
+	#'libva-drm.so'
+	#'libva-wayland.so'
+	#'libva-x11.so'
+	#'libva.so'
+	#'libvdpau'
+	'libx11'
+	'libxext'
+	'libxinerama'
+	'libxkbcommon'
+	'libxrandr'
+	'libxss'
+	'libxv'
+	#'lua52'
+	'mesa'
+	#'mujs'
+	#'openal'
+	#'rsound'
+	#'rubberband'
+	#'sdl2'
+	#'shaderc'
+	#'smbclient'
+	#'sndio'
+	#'uchardet'
+	#'v4l-utils'
+	#'vapoursynth'
+	#'vulkan-icd-loader'
+	#'wayland'
+	'zlib'
+)
+makedepends=(
+	'ffnvcodec-headers'
+	'ladspa'
+	'python-docutils'
+	'vulkan-headers'
+	'wayland-protocols'
+	'xdg-utils'
+)
+optdepends=('youtube-dl: for video-sharing websites playback')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/mpv/input.conf'
+	'etc/mpv/mpv.conf'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_waf_version=2.0.9
+source=(
+	"$pkgname-$pkgver.tar.gz::https://github.com/mpv-player/mpv/archive/v$pkgver.tar.gz"
+	"https://waf.io/waf-$_waf_version"
+)
+sha256sums=(
+	'f9f9d461d1990f9728660b4ccb0e8cb5dce29ccaa6af567bec481b79291ca623'
+	'2a8e0816f023995e557f79ea8940d322bec18f286917c8f9a6fa2dc3875dfa48'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Instal waf
+	install -m755 $srcdir/waf-$_waf_version waf
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--confdir=/etc/mpv'
+		'--disable-static-build'
+		'--disable-libmpv-static'
+		'--enable-libmpv-shared'
+		'--enable-cplugins'
+		'--enable-plain-gl'
+		'--enable-tv'
+		'--enable-dvbin'
+		'--disable-debug-build'
+		'--disable-oss-audio'
+		'--disable-html-build'
+		'--disable-pdf-build'
+		'--enable-manpage-build'
+
+	# 'alsa-lib' related options
+		'--enable-alsa'
+		#'--disable-alsa'
+
+	# 'crossc' related options
+		#'--enable-crossc'
+		'--disable-crossc'
+
+	# 'glew-wayland' related options
+		#'--enable-gl-wayland'
+		'--disable-gl-wayland'
+
+	# 'jack' related options
+		#'--enable-jack'
+		'--disable-jack'
+
+	# 'lcms2' related options
+		'--enable-lcms2'
+		#'--disable-lcms2'
+
+	# 'libarchive' related options
+		'--enable-libarchive'
+		#'--disable-libarchive'
+
+	# 'libass' related options
+		'--enable-libass'
+		#'--disable-libass'
+		'--enable-libass-osd'
+		#'--disable-libass-osd'
+
+	# 'libavdevice.so' related options
+		'--enable-libavdevice'
+		#'--disable-libavdevice'
+
+	# 'libavutil.so' related options
+		'--enable-drmprime'
+		#'--disable-drmprime'
+
+	# 'libbluray' related options
+		#'--enable-libbluray'
+		'--disable-libbluray'
+
+	# 'libcaca' related options
+		#'--enable-caca'
+		'--disable-caca'
+
+	# 'libcdio & libcdio-paranoia' related options
+		#'--enable-cdda'
+		'--disable-cdda'
+
+	# 'libdrm' related options
+		#'--enable-drm'
+		'--disable-drm'
+
+	# 'libdvdnav' related options
+		#'--enable-dvdnav'
+		'--disable-dvdnav'
+
+	# 'libdvdread' related options
+		#'--enable-dvdread'
+		'--disable-dvdread'
+
+	# 'libjpeg-turbo' related options
+		'--enable-jpeg'
+		#'--disable-jpeg'
+
+	# 'libpulse' related options
+		'--enable-pulse'
+		#'--disable-pulse'
+
+	# 'libva.so' related options
+		#'--enable-vaapi'
+		'--disable-vaapi'
+
+	# 'libva-drm.so' related options
+		#'--enable-vaapi-drm'
+		'--disable-vaapi-drm'
+
+	# 'libva-wayland.so & glew-wayland' related options
+		#'--enable-vaapi-wayland'
+		'--disable-vaapi-wayland'
+
+	# 'libva-x11.so' related options
+		#'--enable-vaapi-x11'
+		'--disable-vaapi-x11'
+
+	# 'libva-x11.so & libegl' related options
+		#'--enable-vaapi-x-egl'
+		'--disable-vaapi-x-egl'
+
+	# 'libva-x11.so & libgl' related options
+		#'--enable-vaapi-glx'
+		'--disable-vaapi-glx'
+
+	# 'libvdpau' related options
+		#'--enable-vdpau'
+		'--disable-vdpau'
+		#'--enable-vdpau-gl-x11'
+		'--disable-vdpau-gl-x11'
+
+	# 'libx11 & libegl' related options
+		'--enable-egl-x11'
+		#'--disable-egl-x11'
+
+	# 'libx11 & libgl' related options
+		'--enable-gl-x11'
+		#'--disable-gl-x11'
+
+	# 'libx11 & libxss & libxext & libxinerama & libxrandr' related options
+		'--enable-x11'
+		#'--disable-x11'
+
+	# 'libxv' related options
+		'--enable-xv'
+		#'--disable-xv'
+
+	# 'lua52' related options
+		#'--enable-lua'
+		'--disable-lua'
+
+	# 'mesa' related options
+		'--enable-gbm'
+		#'--disable-gbm'
+
+	# 'mesa & libdrm & libegl' related options
+		#'--enable-egl-drm'
+		'--disable-egl-drm'
+
+	# 'mujs' related options
+		#'--enable-javascript'
+		'--disable-javascript'
+
+	# 'openal' related options
+		#'--enable-openal'
+		'--disable-openal'
+
+	# 'rsound' related options
+		#'--enable-rsound'
+		'--disable-rsound'
+
+	# 'rubberband' related options
+		#'--enable-rubberband'
+		'--disable-rubberband'
+
+	# 'sdl2' related options
+		#'--enable-sdl2'
+		'--disable-sdl2'
+
+	# 'shaderc' related options
+		#'--enable-shaderc'
+		'--disable-shaderc'
+
+	# 'smbclient' related options
+		#'--enable-libsmbclient'
+		'--disable-libsmbclient'
+
+	# 'sndio' related options
+		#'--enable-sndio'
+		'--disable-sndio'
+
+	# 'uchardet' related options
+		#'--enable-uchardet'
+		'--disable-uchardet'
+
+	# 'v4l-utils' related options
+		#'--enable-libv4l2'
+		'--disable-libv4l2'
+		#'--enable-tv-v4l2'
+		'--disable-tv-v4l2'
+		#'--enable-audio-input'
+		'--disable-audio-input'
+
+	# 'vapoursynth' related options
+		#'--enable-vapoursynth'
+		'--disable-vapoursynth'
+		#'--enable-vapoursynth-lazy'
+		'--disable-vapoursynth-lazy'
+
+	# 'vulkan-icd-loader' related options
+		#'--enable-vulkan'
+		'--disable-vulkan'
+
+	# 'wayland & libxkbcommon' related options
+		#'--enable-wayland'
+		'--disable-wayland'
+		#'--enable-wayland-protocols'
+		'--disable-wayland-protocols'
+		#'--enable-wayland-scanner'
+		'--disable-wayland-scanner'
+
+	# 'zlib' related options
+		'--enable-zlib'
+		#'--disable-zlib'
+	)
+
+	# Run package configuration script
+	./waf configure ${config_opts[@]}
+
+	# Build package
+	./waf build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	./waf install --destdir=$pkgdir
+
+	# Install configuration files
+	install -Dm644 etc/mpv.conf $pkgdir/etc/mpv/mpv.conf
+	install -Dm644 etc/input.conf $pkgdir/etc/mpv/input.conf
+
+	# Install documentation
+	install -m644 DOCS/{encoding.rst,tech-overview.txt} $pkgdir/usr/share/doc/mpv
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
