@@ -1,0 +1,633 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('ffmpeg')
+pkgver=4.1.4
+pkgrel=1
+epoch=1
+pkgdesc='Complete solution to record, convert and stream audio and video'
+url='http://ffmpeg.org/'
+license=('GPL3')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'alsa-lib'
+	#'aom'
+	'bzip2'
+	'cairo'
+	#'celt'
+	#'chromaprint'
+	#'davs2'
+	#'decklink'
+	#'flite'
+	'fontconfig'
+	#'frei0r-plugins'
+	'fribidi'
+	'glib2'
+	'glibc'
+	'gmp'
+	#'gnutls'
+	#'gsm'
+	#'jack'
+	#'kvazaar'
+	#'ladspa'
+	'lame'
+	#'lensfun'
+	#'libaom-git'
+	'libass.so'
+	#'libavc1394'
+	#'libbluray.so'
+	#'libbs2b'
+	#'libcaca'
+	#'libcdio-paranoia'
+	#'libclc'
+	#'libcodec2'
+	#'libdc1394'
+	#'libdrm'
+	#'libfdk-aac.so'
+	'libfreetype.so'
+	'libgcrypt'
+	'libgl'
+	#'libgme'
+	#'libiec61883'
+	#'libilbc'
+	#'libklvanc-git'
+	#'libmfx'
+	#'libmodplug'
+	#'libmysofa'
+	#'libndi3-bin'
+	#'libomxil-bellagio'
+	#'libopenmpt'
+	'libpulse'
+	#'libraw1394'
+	'librsvg'
+	#'librtmp.so'
+	#'libsoxr'
+	#'libssh'
+	#'libtensorflow-cpu'
+	#'libtheora'
+	#'libtls'
+	#'libva-drm.so'
+	#'libva-x11.so'
+	#'libva.so'
+	#'libvdpau'
+	#'libvidstab.so'
+	'libvorbis.so'
+	'libvorbisenc.so'
+	'libvpx.so'
+	#'libwebp'
+	'libx11'
+	'libx264.so'
+	'libx265.so'
+	'libxcb'
+	'libxext'
+	'libxml2'
+	'libxv'
+	'libxvidcore.so'
+	#'libzimg.so'
+	#'lilv'
+	#'mbedtls-git'
+	#'openal'
+	#'opencore-amr'
+	#'opencv'
+	#'openh264'
+	'openjpeg2'
+	'openssl'
+	#'opus'
+	#'rockchip-mpp'
+	#'rubberband'
+	#'sdl2'
+	#'shine'
+	#'smbclient'
+	#'snappy'
+	#'sndio'
+	#'speex'
+	#'srt'
+	#'tesseract'
+	#'twolame'
+	#'v4l-utils'
+	#'vapoursynth'
+	#'vmaf'
+	#'vo-amrwbenc'
+	#'wavpack'
+	#'xavs'
+	#'xavs2'
+	'xz'
+	#'zeromq'
+	'zlib'
+	#'zvbi'
+)
+makedepends=(
+	'ffnvcodec-headers'
+	'frei0r-plugins'
+	'git'
+	'ladspa'
+	'nasm'
+)
+optdepends=('ladspa: LADSPA filters')
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'libavcodec.so'
+	'libavdevice.so'
+	'libavfilter.so'
+	'libavformat.so'
+	'libavutil.so'
+	'libpostproc.so'
+	'libswresample.so'
+	'libswscale.so'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("git+https://git.ffmpeg.org/ffmpeg.git#tag=n${pkgver}")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-optimizations'
+		'--enable-gpl'
+		'--enable-version3'
+		'--enable-nonfree'
+		'--enable-pic'
+		'--enable-lto'
+		'--enable-doc'
+		'--enable-manpages'
+		'--disable-htmlpages'
+		'--disable-podpages'
+		'--disable-txtpages'
+		'--enable-avisynth'
+
+	# 'alsa-lib' related options
+		'--enable-alsa'
+		#'--disable-alsa'
+
+	# 'bzip2' related options
+		'--enable-bzlib'
+		#'--disable-bzlib'
+
+	# 'celt' related options
+		#'--enable-libcelt'
+		'--disable-libcelt'
+
+	# 'chromaprint' related options
+		#'--enable-chromaprint'
+		'--disable-chromaprint'
+
+	# 'davs2' related options
+		#'--enable-libdavs2'
+		'--disable-libdavs2'
+
+	# 'decklink' related options
+		#'--enable-decklink'
+		'--disable-decklink'
+
+	# 'ffnvcodec-headers' related options
+		'--enable-ffnvcodec'
+		#'--disable-ffnvcodec'
+		'--enable-cuvid'
+		#'--disable-cuvid'
+		'--enable-nvdec'
+		#'--disable-nvdec'
+		'--enable-nvenc'
+		#'--disable-nvenc'
+
+	# 'flite' related options
+		#'--enable-libflite'
+		'--disable-libflite'
+
+	# 'fontconfig' related options
+		'--enable-libfontconfig'
+		#'--disable-libfontconfig'
+
+	# 'frei0r-plugins' related options
+		#'--enable-frei0r'
+		'--disable-frei0r'
+
+	# 'fribidi' related options
+		'--enable-libfribidi'
+		#'--disable-libfribidi'
+
+	# 'gmp' related options
+		'--enable-gmp'
+		#'--disable-gmp'
+
+	# 'gnutls' related options
+		#'--enable-gnutls'
+		'--disable-gnutls'
+
+	# 'gsm' related options
+		#'--enable-libgsm'
+		'--disable-libgsm'
+
+	# 'jack' related options
+		#'--enable-libjack'
+		'--disable-libjack'
+
+	# 'kvazaar' related options
+		#'--enable-libkvazaar'
+		'--disable-libkvazaar'
+
+	# 'ladspa' related options
+		#'--enable-ladspa'
+		'--disable-ladspa'
+
+	# 'lame' related options
+		'--enable-libmp3lame'
+		#'--disable-libmp3lame'
+
+	# 'lensfun' related options
+		#'--enable-liblensfun'
+		'--disable-liblensfun'
+
+	# 'libaom-git' related options
+		#'--enable-libaom'
+		'--disable-libaom'
+
+	# 'libass.so' related options
+		'--enable-libass'
+		#'--disable-libass'
+
+	# 'libbluray.so' related options
+		#'--enable-libbluray'
+		'--disable-libbluray'
+
+	# 'libbs2b' related options
+		#'--enable-libbs2b'
+		'--disable-libbs2b'
+
+	# 'libcaca' related options
+		#'--enable-libcaca'
+		'--disable-libcaca'
+
+	# 'libcdio-paranoia' related options
+		#'--enable-libcdio'
+		'--disable-libcdio'
+
+	# 'libclc' related options
+		#'--enable-opencl'
+		'--disable-opencl'
+
+	# 'libcodec2' related options
+		#'--enable-libcodec2'
+		'--disable-libcodec2'
+
+	# 'libdc1394 & libraw1394 & libavc1394' related options
+		#'--enable-libdc1394'
+		'--disable-libdc1394'
+
+	# 'libdrm' related options
+		#'--enable-libdrm'
+		'--disable-libdrm'
+
+	# 'libfdk-aac.so' related options
+		#'--enable-libfdk-aac'
+		'--disable-libfdk-aac'
+
+	# 'libfreetype.so' related options
+		'--enable-libfreetype'
+		#'--disable-libfreetype'
+
+	# 'libgcrypt' related options
+		'--enable-gcrypt'
+		#'--disable-gcrypt'
+
+	# 'libgl' related options
+		'--enable-opengl'
+		#'--disable-opengl'
+
+	# 'libgme' related options
+		#'--enable-libgme'
+		'--disable-libgme'
+
+	# 'libiec61883' related options
+		#'--enable-libiec61883'
+		'--disable-libiec61883'
+
+	# 'libilbc' related options
+		#'--enable-libilbc'
+		'--disable-libilbc'
+
+	# 'libklvanc-git' related options
+		#'--enable-libklvanc'
+		'--disable-libklvanc'
+
+	# 'libmfx' related options
+		#'--enable-libmfx'
+		'--disable-libmfx'
+
+	# 'libmodplug' related options
+		#'--enable-libmodplug'
+		'--disable-libmodplug'
+
+	# 'libmysofa' related options
+		#'--enable-libmysofa'
+		'--disable-libmysofa'
+
+	# 'libndi3-bin' related options
+		#'--enable-libndi_newtek'
+		'--disable-libndi_newtek'
+
+	# 'libomxil-bellagio' related options
+		#'--enable-omx'
+		'--disable-omx'
+
+	# 'libopenmpt' related options
+		#'--enable-libopenmpt'
+		'--disable-libopenmpt'
+
+	# 'libpulse' related options
+		'--enable-libpulse'
+		#'--disable-libpulse'
+
+	# 'librsvg & cairo' related options
+		'--enable-librsvg'
+		#'--disable-librsvg'
+
+	# 'librtmp.so' related options
+		#'--enable-librtmp'
+		'--disable-librtmp'
+
+	# 'libsoxr' related options
+		#'--enable-libsoxr'
+		'--disable-libsoxr'
+
+	# 'libssh' related options
+		#'--enable-libssh'
+		'--disable-libssh'
+
+	# 'libtensorflow-cpu' related options
+		#'--enable-libtensorflow'
+		'--disable-libtensorflow'
+
+	# 'libtheora' related options
+		#'--enable-libtheora'
+		'--disable-libtheora'
+
+	# 'libtls' related options
+		#'--enable-libtls'
+		'--disable-libtls'
+
+	# 'libva.so & libva-drm.so & libva-x11.so' related options
+		#'--enable-vaapi'
+		'--disable-vaapi'
+
+	# 'libvdpau' related options
+		#'--enable-vdpau'
+		'--disable-vdpau'
+
+	# 'libvidstab.so' related options
+		#'--enable-libvidstab'
+		'--disable-libvidstab'
+
+	# 'libvorbis.so & libvorbisenc.so' related options
+		'--enable-libvorbis'
+		#'--disable-libvorbis'
+
+	# 'libvpx.so' related options
+		'--enable-libvpx'
+		#'--disable-libvpx'
+
+	# 'libwebp' related options
+		#'--enable-libwebp'
+		'--disable-libwebp'
+
+	# 'libx11 & libxv & libxext' related options
+		'--enable-xlib'
+		#'--disable-xlib'
+
+	# 'libx264.so' related options
+		'--enable-libx264'
+		#'--disable-libx264'
+
+	# 'libx265.so' related options
+		'--enable-libx265'
+		#'--disable-libx265'
+
+	# 'libxcb' related options
+		'--enable-libxcb'
+		#'--disable-libxcb'
+		'--enable-libxcb-shape'
+		#'--disable-libxcb-shape'
+		'--enable-libxcb-shm'
+		#'--disable-libxcb-shm'
+		'--enable-libxcb-xfixes'
+		#'--disable-libxcb-xfixes'
+
+	# 'libxml2' related options
+		'--enable-libxml2'
+		#'--disable-libxml2'
+
+	# 'libxvidcore.so' related options
+		'--enable-libxvid'
+		#'--disable-libxvid'
+
+	# 'libzimg.so' related options
+		#'--enable-libzimg'
+		'--disable-libzimg'
+
+	# 'lilv' related options
+		#'--enable-lv2'
+		'--disable-lv2'
+
+	# 'mbedtls-git' related options
+		#'--enable-mbedtls'
+		'--disable-mbedtls'
+
+	# 'openal' related options
+		#'--enable-openal'
+		'--disable-openal'
+
+	# 'opencore-amr' related options
+		#'--enable-libopencore-amrnb'
+		'--disable-libopencore-amrnb'
+		#'--enable-libopencore-amrwb'
+		'--disable-libopencore-amrwb'
+
+	# 'opencv' related options
+		#'--enable-libopencv'
+		'--disable-libopencv'
+
+	# 'openh264' related options
+		#'--enable-libopenh264'
+		'--disable-libopenh264'
+
+	# 'openjpeg2' related options
+		'--enable-libopenjpeg'
+		#'--disable-libopenjpeg'
+
+	# 'openssl' related options
+		'--enable-openssl'
+		#'--disable-openssl'
+
+	# 'opus' related options
+		#'--enable-libopus'
+		'--disable-libopus'
+
+	# 'rockchip-mpp & libdrm' related options
+		#'--enable-rkmpp'
+		'--disable-rkmpp'
+
+	# 'rubberband' related options
+		#'--enable-librubberband'
+		'--disable-librubberband'
+
+	# 'sdl2' related options
+		#'--enable-sdl2'
+		'--disable-sdl2'
+
+	# 'shine' related options
+		#'--enable-libshine'
+		'--disable-libshine'
+
+	# 'smbclient' related options
+		#'--enable-libsmbclient'
+		'--disable-libsmbclient'
+
+	# 'snappy' related options
+		#'--enable-libsnappy'
+		'--disable-libsnappy'
+
+	# 'sndio' related options
+		#'--enable-sndio'
+		'--disable-sndio'
+
+	# 'speex' related options
+		#'--enable-libspeex'
+		'--disable-libspeex'
+
+	# 'srt' related options
+		#'--enable-libsrt'
+		'--disable-libsrt'
+
+	# 'tesseract' related options
+		#'--enable-libtesseract'
+		'--disable-libtesseract'
+
+	# 'twolame' related options
+		#'--enable-libtwolame'
+		'--disable-libtwolame'
+
+	# 'v4l-utils' related options
+		#'--enable-libv4l2'
+		'--disable-libv4l2'
+		#'--enable-v4l2-m2m'
+		'--disable-v4l2-m2m'
+
+	# 'vapoursynth' related options
+		#'--enable-vapoursynth'
+		'--disable-vapoursynth'
+
+	# 'vmaf' related options
+		#'--enable-libvmaf'
+		'--disable-libvmaf'
+
+	# 'vo-amrwbenc' related options
+		#'--enable-libvo-amrwbenc'
+		'--disable-libvo-amrwbenc'
+
+	# 'wavpack' related options
+		#'--enable-libwavpack'
+		'--disable-libwavpack'
+
+	# 'xavs' related options
+		#'--enable-libxavs'
+		'--disable-libxavs'
+
+	# 'xavs2' related options
+		#'--enable-libxavs2'
+		'--disable-libxavs2'
+
+	# 'xz' related options
+		'--enable-lzma'
+		#'--disable-lzma'
+
+	# 'zeromq' related options
+		#'--enable-libzmq'
+		'--disable-libzmq'
+
+	# 'zlib' related options
+		'--enable-zlib'
+		#'--disable-zlib'
+
+	# 'zvbi' related options
+		#'--enable-libzvbi'
+		'--disable-libzvbi'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+
+	# Build docs
+	make doc/{ffmpeg,ffplay}.1
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install manuals
+	make DESTDIR=$pkgdir install-man
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
