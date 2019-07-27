@@ -120,7 +120,6 @@ package_gtk3() {
 		'at-spi2-atk'
 		'atk'
 		'cairo'
-		'cantarell-fonts'
 		#'colord'
 		'desktop-file-utils'
 		'fontconfig'
