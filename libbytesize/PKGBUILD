@@ -26,12 +26,9 @@ depends=(
 	'gmp'
 	'mpfr'
 	'pcre2'
-	'python'
+	#'python'
 )
-makedepends=(
-	'gtk-doc'
-	'python'
-)
+makedepends=('gtk-doc')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
