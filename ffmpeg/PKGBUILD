@@ -79,9 +79,9 @@ depends=(
 	#'libtensorflow-cpu'
 	#'libtheora'
 	#'libtls'
-	#'libva-drm.so'
-	#'libva-x11.so'
-	#'libva.so'
+	'libva-drm.so'
+	'libva-x11.so'
+	'libva.so'
 	#'libvdpau'
 	#'libvidstab.so'
 	'libvorbis.so'
@@ -412,8 +412,8 @@ build() {
 		'--disable-libtls'
 
 	# 'libva.so & libva-drm.so & libva-x11.so' related options
-		#'--enable-vaapi'
-		'--disable-vaapi'
+		'--enable-vaapi'
+		#'--disable-vaapi'
 
 	# 'libvdpau' related options
 		#'--enable-vdpau'

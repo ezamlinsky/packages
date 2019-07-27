@@ -47,10 +47,10 @@ depends=(
 	'libgl'
 	'libjpeg-turbo'
 	'libpulse'
-	#'libva-drm.so'
+	'libva-drm.so'
 	#'libva-wayland.so'
-	#'libva-x11.so'
-	#'libva.so'
+	'libva-x11.so'
+	'libva.so'
 	#'libvdpau'
 	'libx11'
 	'libxext'
@@ -218,28 +218,28 @@ build() {
 		#'--disable-pulse'
 
 	# 'libva.so' related options
-		#'--enable-vaapi'
-		'--disable-vaapi'
+		'--enable-vaapi'
+		#'--disable-vaapi'
 
 	# 'libva-drm.so' related options
-		#'--enable-vaapi-drm'
-		'--disable-vaapi-drm'
+		'--enable-vaapi-drm'
+		#'--disable-vaapi-drm'
 
 	# 'libva-wayland.so & glew-wayland' related options
 		#'--enable-vaapi-wayland'
 		'--disable-vaapi-wayland'
 
 	# 'libva-x11.so' related options
-		#'--enable-vaapi-x11'
-		'--disable-vaapi-x11'
+		'--enable-vaapi-x11'
+		#'--disable-vaapi-x11'
 
 	# 'libva-x11.so & libegl' related options
-		#'--enable-vaapi-x-egl'
-		'--disable-vaapi-x-egl'
+		'--enable-vaapi-x-egl'
+		#'--disable-vaapi-x-egl'
 
 	# 'libva-x11.so & libgl' related options
-		#'--enable-vaapi-glx'
-		'--disable-vaapi-glx'
+		'--enable-vaapi-glx'
+		#'--disable-vaapi-glx'
 
 	# 'libvdpau' related options
 		#'--enable-vdpau'
