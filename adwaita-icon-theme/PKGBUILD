@@ -91,7 +91,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname
 
 	# Run internal checks
 	make -k check
