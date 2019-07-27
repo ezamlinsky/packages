@@ -1,0 +1,664 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='xorg-server'
+pkgname=('xorg-server' 'xorg-server-common' 'xorg-server-devel' 'xorg-server-xdmx' 'xorg-server-xephyr' 'xorg-server-xnest' 'xorg-server-xvfb' 'xorg-server-xwayland')
+pkgver=1.20.5
+pkgrel=2
+url='http://xorg.freedesktop.org'
+license=('custom')
+arch=('x86_64')
+groups=('xorg')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'compositeproto'
+	'dbus'
+	'dri2proto'
+	'dri3proto'
+	'egl-wayland'
+	'fontsproto'
+	'glibc'
+	'libdmx'
+	'libdrm'
+	'libepoxy'
+	#'libgcrypt'
+	'libgl'
+	#'libmd'
+	'libpciaccess'
+	#'libselinux'
+	#'libsha1'
+	'libudev.so'
+	'libunwind'
+	'libx11'
+	'libxau'
+	'libxaw'
+	'libxcb'
+	'libxdmcp'
+	'libxext'
+	'libxfixes'
+	'libxfont2'
+	'libxi'
+	'libxkbfile'
+	'libxmu'
+	'libxrender'
+	'libxres'
+	'libxshmfence'
+	'libxt'
+	'libxtst'
+	'libxv'
+	'mesa'
+	'mesa-libgl'
+	#'nettle'
+	'openssl'
+	'pixman'
+	'presentproto'
+	'recordproto'
+	'resourceproto'
+	'scrnsaverproto'
+	'systemd-libs'
+	'videoproto'
+	'wayland'
+	'wayland-protocols'
+	'which'
+	'xcb-util'
+	'xcb-util-image'
+	'xcb-util-keysyms'
+	'xcb-util-renderutil'
+	'xcb-util-wm'
+	'xf86-input-libinput'
+	'xf86dgaproto'
+	'xf86driproto'
+	'xf86vidmodeproto'
+	'xineramaproto'
+	'xkeyboard-config'
+	'xorg-font-util'
+	'xorg-server-common'
+	'xorg-setxkbmap'
+	'xorg-util-macros'
+	'xorg-xauth'
+	'xorg-xkbcomp'
+	'xorgproto'
+	'xtrans'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('emptydirs')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://xorg.freedesktop.org/releases/individual/xserver/xorg-server-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/releases/individual/xserver/xorg-server-$pkgver.tar.bz2.sig"
+	'xwayland-config.h.meson.in::https://cgit.freedesktop.org/xorg/xserver/plain/include/xwayland-config.h.meson.in?id=xorg-server-1.20.0'
+	'xserver-autobind-hotplug.patch'
+	'0001-v2-FS-58644.patch'
+	'0002-fix-libshadow-2.patch'
+	'xvfb-run'
+	'xvfb-run.1'
+)
+sha512sums=(
+	'625f0626b122cf95600abe382c3217348999357a0e2d2443092f1b67cff1c98d7ef09303884ceaeac181e0555dc56b0d4d44bda45cc464dac2d9a50c5b32d631'
+	'SKIP'
+	'd707e0870367de2665c3b82f09564d17ed3f62c9e8b4bd471c11af1fb1e9249e306e92c7961a04e355756eec9f5271bc8e66999e56c73c31bc9da4127ff30a8e'
+	'd84f4d63a502b7af76ea49944d1b21e2030dfd250ac1e82878935cf631973310ac9ba1f0dfedf10980ec6c7431d61b7daa4b7bbaae9ee477b2c19812c1661a22'
+	'74e1aa0c101e42f0f25349d305641873b3a79ab3b9bb2d4ed68ba8e392b4db2701fcbc35826531ee2667d3ee55673e4b4fecc2a9f088141af29ceb400f72f363'
+	'0c7f7e43a2ba2372509f4a35e33a8a87a2e631c7e630c9c7c67ecaad00453b52c31d9dc26d1852ecd2fe1cb8c02cb716c1f39a4723473c38a0ef6e559bead271'
+	'55bbf520333f6e818b0125b37179a7039b69a0d3d2242b80a08da003d94cbf6c1fb912d880abcce318a85d7947e3eff8fbc4cdf57d7118572e8ebc56c4569af6'
+	'de5e2cb3c6825e6cf1f07ca0d52423e17f34d70ec7935e9dd24be5fb9883bf1e03b50ff584931bd3b41095c510ab2aa44d2573fd5feaebdcb59363b65607ff22'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/xserver-autobind-hotplug.patch
+	patch -Np1 -i $srcdir/0001-v2-FS-58644.patch
+	patch -Np1 -i $srcdir/0002-fix-libshadow-2.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib/xorg-server'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-docs'
+		'--enable-devel-docs'
+		'--disable-unit-tests'
+		'--disable-ipv6'
+		'--disable-tcp-transport'
+		'--disable-listen-tcp'
+		'--enable-unix-transport'
+		'--enable-listen-unix'
+		'--enable-input-thread'
+		'--enable-xtrans-send-fds'
+		'--enable-mitshm'
+		'--enable-xvmc'
+		'--enable-xace'
+		'--enable-xcsecurity'
+		'--enable-dbe'
+		'--enable-dpms'
+		'--enable-xfree86-utils'
+		'--enable-vgahw'
+		'--enable-vbe'
+		'--enable-int10-module'
+		'--enable-clientids'
+		'--enable-linux-acpi'
+		'--enable-linux-apm'
+		'--enable-suid-wrapper'
+		'--disable-install-setuid'
+		'--enable-xorg'
+		'--enable-dmx'
+		'--enable-xvfb'
+		'--enable-xnest'
+		'--enable-xephyr'
+		'--disable-xfbdev'
+		'--enable-kdrive'
+		'--enable-kdrive-kbd'
+		'--enable-kdrive-mouse'
+		'--enable-kdrive-evdev'
+		'--with-fontrootdir=/usr/share/fonts'
+		'--with-xkb-path=/usr/share/X11/xkb'
+		'--with-xkb-output=/var/lib/xkb'
+
+	# 'compositeproto' related options
+		'--enable-composite'
+		#'--disable-composite'
+
+	# 'dbus & libudev.so' related options
+		'--enable-systemd-logind'
+		#'--disable-systemd-logind'
+
+	# 'dri2proto' related options
+		'--enable-dri2'
+		#'--disable-dri2'
+
+	# 'dri3proto' related options
+		'--enable-dri3'
+		#'--disable-dri3'
+
+	# 'fontsproto' related options
+		'--enable-xf86bigfont'
+		#'--disable-xf86bigfont'
+
+	# 'libdrm' related options
+		'--enable-libdrm'
+		#'--disable-libdrm'
+
+	# 'libepoxy & mesa-libgl' related options
+		'--enable-glamor'
+		#'--disable-glamor'
+
+	# 'libgcrypt' related options
+		#'--with-sha1=libgcrypt'
+
+	# 'libgl' related options
+		'--enable-glx'
+		#'--disable-glx'
+
+	# 'libmd' related options
+		#'--with-sha1=libmd'
+
+	# 'libpciaccess' related options
+		'--enable-pciaccess'
+		#'--disable-pciaccess'
+
+	# 'libselinux' related options
+		#'--enable-xselinux'
+		'--disable-xselinux'
+
+	# 'libsha1' related options
+		#'--with-sha1=libsha1'
+
+	# 'systemd-libs' related options
+		'--with-systemd-daemon'
+		#'--without-systemd-daemon'
+
+	# 'libudev.so' related options
+		'--enable-config-udev'
+		#'--disable-config-udev'
+		'--enable-config-udev-kms'
+		#'--disable-config-udev-kms'
+
+	# 'libunwind' related options
+		'--enable-libunwind'
+		#'--disable-libunwind'
+
+	# 'libxdmcp' related options
+		'--enable-xdmcp'
+		#'--disable-xdmcp'
+		'--enable-xdm-auth-1'
+		#'--disable-xdm-auth-1'
+
+	# 'libxshmfence' related options
+		'--enable-xshmfence'
+		#'--disable-xshmfence'
+
+	# 'nettle' related options
+		#'--with-sha1=libnettle'
+
+	# 'openssl' related options
+		'--with-sha1=libcrypto'
+
+	# 'presentproto' related options
+		'--enable-present'
+		#'--disable-present'
+
+	# 'recordproto' related options
+		'--enable-record'
+		#'--disable-record'
+
+	# 'resourceproto' related options
+		'--enable-xres'
+		#'--disable-xres'
+
+	# 'scrnsaverproto' related options
+		'--enable-screensaver'
+		#'--disable-screensaver'
+
+	# 'videoproto' related options
+		'--enable-xv'
+		#'--disable-xv'
+
+	# 'wayland' related options
+		'--enable-xwayland'
+		#'--disable-xwayland'
+		'--enable-xwayland-eglstream'
+		#'--disable-xwayland-eglstream'
+
+	# 'xf86dgaproto' related options
+		'--enable-dga'
+		#'--disable-dga'
+
+	# 'xf86driproto' related options
+		'--enable-dri'
+		#'--disable-dri'
+
+	# 'xf86vidmodeproto' related options
+		'--enable-xf86vidmode'
+		#'--disable-xf86vidmode'
+
+	# 'xineramaproto' related options
+		'--enable-xinerama'
+		#'--disable-xinerama'
+	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-lto'
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xorg-server                                                            #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xorg-server() {
+	pkgdesc='Xorg X server'
+	depends=(
+		'dbus'
+		'glibc'
+		'libdrm'
+		'libepoxy'
+		#'libgcrypt'
+		'libgl'
+		#'libmd'
+		'libpciaccess'
+		#'libselinux'
+		#'libsha1'
+		'libunwind'
+		'libxau'
+		'libxdmcp'
+		'libxfont2'
+		'libxshmfence'
+		'mesa-libgl'
+		#'nettle'
+		'openssl'
+		'pixman'
+		'systemd-libs'
+		'xf86-input-libinput'
+		'xorg-server-common'
+	)
+	provides=(
+		'X-ABI-EXTENSION_VERSION=10.0'
+		'X-ABI-VIDEODRV_VERSION=24.0'
+		'X-ABI-XINPUT_VERSION=24.1'
+		'x-server'
+	)
+	conflicts=(
+		'glamor-egl'
+		'nvidia-utils<=331.20'
+		'xf86-video-modesetting'
+	)
+	replaces=(
+		'glamor-egl'
+		'xf86-video-modesetting'
+	)
+	install='xorg-server.install'
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/xorg-server/COPYING
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Create 'xorg.conf.d' directory
+	mkdir -p etc/X11/xorg.conf.d
+
+	# Split 'xorg-server-common' package
+	mkdir -p $srcdir/xorg-server-common/usr/{lib/xorg,share/man/man1}
+	mv usr/lib/xorg/protocol.txt \
+	$srcdir/xorg-server-common/usr/lib/xorg || true
+	mv usr/share/man/man1/Xserver.1 \
+	$srcdir/xorg-server-common/usr/share/man/man1 || true
+	mv var $srcdir/xorg-server-common || true
+
+	# Split 'xorg-server-xephyr' package
+	mkdir -p $srcdir/xorg-server-xephyr/usr/{bin,share/man/man1}
+	mv usr/bin/Xephyr $srcdir/xorg-server-xephyr/usr/bin || true
+	mv usr/share/man/man1/Xephyr.1 \
+	$srcdir/xorg-server-xephyr/usr/share/man/man1 || true
+
+	# Split 'xorg-server-xdmx' package
+	mkdir -p $srcdir/xorg-server-xdmx/usr/{bin,share/man/man1}
+	mv usr/bin/*dmx* $srcdir/xorg-server-xdmx/usr/bin || true
+	mv usr/share/man/man1/*dmx* \
+	$srcdir/xorg-server-xdmx/usr/share/man/man1 || true
+
+	# Split 'xorg-server-xvfb' package
+	mkdir -p $srcdir/xorg-server-xvfb/usr/{bin,share/man/man1}
+	mv usr/bin/Xvfb $srcdir/xorg-server-xvfb/usr/bin || true
+	mv usr/share/man/man1/Xvfb.1 \
+	$srcdir/xorg-server-xvfb/usr/share/man/man1 || true
+
+	# Split 'xorg-server-xnest' package
+	mkdir -p $srcdir/xorg-server-xnest/usr/{bin,share/man/man1}
+	mv usr/bin/Xnest $srcdir/xorg-server-xnest/usr/bin || true
+	mv usr/share/man/man1/Xnest.1 \
+	$srcdir/xorg-server-xnest/usr/share/man/man1 || true
+
+	# Split 'xorg-server-xwayland' package
+	mkdir -p $srcdir/xorg-server-xwayland/usr/bin
+	mv usr/bin/Xwayland $srcdir/xorg-server-xwayland/usr/bin || true
+
+	# Split 'xorg-server-devel' package
+	mkdir -p $srcdir/xorg-server-devel/usr/{lib,share}
+	mv usr/include $srcdir/xorg-server-devel/usr || true
+	mv usr/lib/pkgconfig $srcdir/xorg-server-devel/usr/lib || true
+	mv usr/share/aclocal $srcdir/xorg-server-devel/usr/share || true
+
+	# Remove non required files
+	#rm -rf usr/include
+	#rm -rf usr/lib/pkgconfig
+	#rm -rf usr/share/aclocal
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xorg-server-common                                                     #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xorg-server-common() {
+	pkgdesc='Xorg server common files'
+	depends=(
+		'xkeyboard-config'
+		'xorg-setxkbmap'
+		'xorg-xkbcomp'
+	)
+
+	# Copy files
+	mv $srcdir/xorg-server-common/* $pkgdir
+
+	# Install license file
+	install -Dm644 $pkgbase-$pkgver/COPYING $pkgdir/usr/share/licenses/xorg-server-common/COPYING
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xorg-server-xephyr                                                     #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xorg-server-xephyr() {
+	pkgdesc='A nested X server that runs as an X application'
+	depends=(
+		'glibc'
+		'libepoxy'
+		#'libgcrypt'
+		'libgl'
+		#'libmd'
+		'libunwind'
+		'libx11'
+		'libxau'
+		'libxcb'
+		'libxdmcp'
+		'libxfont2'
+		'libxshmfence'
+		#'nettle'
+		'openssl'
+		'pixman'
+		'systemd-libs'
+		'xcb-util'
+		'xcb-util-image'
+		'xcb-util-keysyms'
+		'xcb-util-renderutil'
+		'xcb-util-wm'
+		'xorg-server-common'
+	)
+
+	# Copy files
+	mv $srcdir/xorg-server-xephyr/* $pkgdir
+
+	# Install license file
+	install -Dm644 $pkgbase-$pkgver/COPYING $pkgdir/usr/share/licenses/xorg-server-xephyr/COPYING
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xorg-server-xdmx                                                       #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xorg-server-xdmx() {
+	pkgdesc='Distributed Multihead X Server and utilities'
+	depends=(
+		'glibc'
+		#'libgcrypt'
+		#'libmd'
+		'libunwind'
+		'libx11'
+		'libxau'
+		'libxaw'
+		'libxdmcp'
+		'libxext'
+		'libxfixes'
+		'libxfont2'
+		'libxi'
+		'libxmu'
+		'libxrender'
+		'libxt'
+		#'nettle'
+		'openssl'
+		'pixman'
+		'systemd-libs'
+		'xorg-server-common'
+	)
+
+	# Copy files
+	mv $srcdir/xorg-server-xdmx/* $pkgdir
+
+	# Install license file
+	install -Dm644 $pkgbase-$pkgver/COPYING $pkgdir/usr/share/licenses/xorg-server-xdmx/COPYING
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xorg-server-xvfb                                                       #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xorg-server-xvfb() {
+	pkgdesc='Virtual framebuffer X server'
+	depends=(
+		'glibc'
+		#'libgcrypt'
+		'libgl'
+		#'libmd'
+		'libunwind'
+		'libxau'
+		'libxdmcp'
+		'libxfont2'
+		#'nettle'
+		'openssl'
+		'pixman'
+		'systemd-libs'
+		'which'
+		'xorg-server-common'
+		'xorg-xauth'
+	)
+
+	# Copy files
+	mv $srcdir/xorg-server-xvfb/* $pkgdir
+
+	# Install 'xvfb-run' script
+	install -Dm755 $srcdir/xvfb-run $pkgdir/usr/bin/xvfb-run
+
+	# Install script manual
+	install -Dm644 $srcdir/xvfb-run.1 $pkgdir/usr/share/man/man1/xvfb-run.1
+
+	# Install license file
+	install -Dm644 $pkgbase-$pkgver/COPYING $pkgdir/usr/share/licenses/xorg-server-xvfb/COPYING
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xorg-server-xnest                                                      #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xorg-server-xnest() {
+	pkgdesc='A nested X server that runs as an X application'
+	depends=(
+		'glibc'
+		#'libgcrypt'
+		#'libmd'
+		'libunwind'
+		'libx11'
+		'libxau'
+		'libxdmcp'
+		'libxext'
+		'libxfont2'
+		#'nettle'
+		'openssl'
+		'pixman'
+		'systemd-libs'
+		'xorg-server-common'
+	)
+
+	# Copy files
+	mv $srcdir/xorg-server-xnest/* $pkgdir
+
+	# Install license file
+	install -Dm644 $pkgbase-$pkgver/COPYING $pkgdir/usr/share/licenses/xorg-server-xnest/COPYING
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xorg-server-xwayland                                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xorg-server-xwayland() {
+	pkgdesc='Run X clients under wayland'
+	depends=(
+		'glibc'
+		'libdrm'
+		'libepoxy'
+		#'libgcrypt'
+		'libgl'
+		#'libmd'
+		'libunwind'
+		'libxau'
+		'libxdmcp'
+		'libxfont2'
+		'libxshmfence'
+		'mesa-libgl'
+		#'nettle'
+		'openssl'
+		'pixman'
+		'systemd-libs'
+		'wayland'
+		'xorg-server-common'
+	)
+
+	# Copy files
+	mv $srcdir/xorg-server-xwayland/* $pkgdir
+
+	# Install license file
+	install -Dm644 $pkgbase-$pkgver/COPYING $pkgdir/usr/share/licenses/xorg-server-xwayland/COPYING
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Xorg-server-devel                                                      #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_xorg-server-devel() {
+	pkgdesc='Development files for the X.Org X server'
+	depends=(
+		'libpciaccess'
+		'mesa'
+		'xorg-util-macros'
+		'xorgproto'
+	)
+
+	# Copy files
+	mv $srcdir/xorg-server-devel/* $pkgdir
+
+	# Install license file
+	install -Dm644 $pkgbase-$pkgver/COPYING $pkgdir/usr/share/licenses/xorg-server-devel/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
