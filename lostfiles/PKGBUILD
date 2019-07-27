@@ -1,0 +1,58 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('lostfiles')
+pkgver=4.03
+pkgrel=1
+pkgdesc='Find orphaned files not owned by any Arch packages'
+url='https://github.com/graysky2/lostfiles'
+license=('GPL2')
+arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('bash')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("$pkgname-$pkgver.tar.xz::https://github.com/graysky2/lostfiles/archive/v$pkgver.tar.gz")
+sha256sums=('577a68a712f46bb75f31880519dcbb84b7be24598e8b2e0eb9037ff7dde3133b')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
