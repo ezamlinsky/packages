@@ -1,0 +1,227 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('xf86-video-intel')
+pkgver=2.99.917+865+g60022507
+pkgrel=1
+epoch=1
+pkgdesc='X.org Intel i810/i830/i915/945G/G965+ video drivers'
+url='https://01.org/linuxgraphics'
+license=('custom')
+arch=('x86_64')
+groups=('xorg-drivers')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libdrm'
+	'libpciaccess'
+	'libx11'
+	'libxcb'
+	'libxcursor'
+	'libxdamage'
+	'libxext'
+	'libxfixes'
+	'libxinerama'
+	'libxrandr'
+	'libxrender'
+	'libxshmfence'
+	'libxss'
+	'libxtst'
+	#'libxv'
+	#'libxvmc'
+	'pixman'
+	'systemd-libs'
+	#'xcb-util>=0.3.9'
+)
+makedepends=(
+	'X-ABI-VIDEODRV_VERSION=24.0'
+	'git'
+	'intel-gpu-tools'
+	'xorg-server-devel'
+)
+optdepends=(
+	'libxcursor: for intel-virtual-output'
+	'libxinerama: for intel-virtual-output'
+	'libxrandr: for intel-virtual-output'
+	'libxss: for intel-virtual-output'
+	'libxtst: for intel-virtual-output'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'xf86-video-intel-sna'
+	'xf86-video-intel-uxa'
+)
+conflicts=(
+	'X-ABI-VIDEODRV_VERSION<24'
+	'X-ABI-VIDEODRV_VERSION>=25'
+	'xf86-video-i810'
+	'xf86-video-intel-legacy'
+	'xf86-video-intel-sna'
+	'xf86-video-intel-uxa'
+	'xorg-server<1.20'
+)
+replaces=(
+	'xf86-video-intel-sna'
+	'xf86-video-intel-uxa'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+install='xf86-video-intel.install'
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=60022507b80e3c123db2c88b6e0f0f1dee5d3a4f # master
+source=(
+	"git+https://anongit.freedesktop.org/git/xorg/driver/xf86-video-intel#commit=$_commit"
+	'0001-SNA-fix-PRIME-output-support-since-xserver-1.20.patch'
+)
+sha256sums=(
+	'SKIP'
+	'7cdc310953379ede9693a387ecac6c803cc4c4461df5ad9ab875b35e90a552f5'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Apply patches
+	patch -p1 -i $srcdir/0001-SNA-fix-PRIME-output-support-since-xserver-1.20.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-backlight'
+		'--enable-backlight-helper'
+		'--enable-gen4asm'
+		'--enable-dri'
+		'--enable-dri1'
+		'--enable-dri2'
+		'--enable-dri3'
+		'--enable-create2'
+		'--enable-async-swap'
+		'--with-default-dri=3'
+		'--with-default-accel'
+
+	# 'libdrm && pixman' related options
+		'--enable-sna'
+		#'--disable-sna'
+		'--enable-uxa'
+		#'--disable-uxa'
+		'--enable-xaa'
+		#'--disable-xaa'
+		'--enable-dga'
+		#'--disable-dga'
+		'--enable-tear-free'
+		#'--disable-tear-free'
+
+	# 'libdrm && libx11 && libxcb && libxv && libxvmc && xcb-util' related options
+		#'--enable-xvmc'
+		'--disable-xvmc'
+
+	# 'libpciaccess' related options
+		'--enable-kms'
+		#'--disable-kms'
+		'--enable-ums'
+		#'--disable-ums'
+
+	# 'libxcursor && libxdamage && libxext && libxfixes && libxinerama && libxrandr && libxrender && libxshmfence && libxss && libxtst' related options
+		'--enable-tools'
+		#'--disable-tools'
+
+	# 'systemd-libs' related options
+		'--enable-udev'
+		#'--disable-udev'
+	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-lto'
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/xf86-video-intel/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
