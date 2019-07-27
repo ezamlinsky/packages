@@ -40,7 +40,7 @@ depends=(
 	#'libcaca'
 	#'libcdio'
 	#'libcdio-paranoia'
-	#'libdrm'
+	'libdrm'
 	#'libdvdnav'
 	#'libdvdread'
 	'libegl'
@@ -198,8 +198,8 @@ build() {
 		'--disable-cdda'
 
 	# 'libdrm' related options
-		#'--enable-drm'
-		'--disable-drm'
+		'--enable-drm'
+		#'--disable-drm'
 
 	# 'libdvdnav' related options
 		#'--enable-dvdnav'
@@ -272,8 +272,8 @@ build() {
 		#'--disable-gbm'
 
 	# 'mesa & libdrm & libegl' related options
-		#'--enable-egl-drm'
-		'--disable-egl-drm'
+		'--enable-egl-drm'
+		#'--disable-egl-drm'
 
 	# 'mujs' related options
 		#'--enable-javascript'
