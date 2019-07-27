@@ -55,7 +55,7 @@ depends=(
 	#'libclc'
 	#'libcodec2'
 	#'libdc1394'
-	#'libdrm'
+	'libdrm'
 	#'libfdk-aac.so'
 	'libfreetype.so'
 	'libgcrypt'
@@ -320,8 +320,8 @@ build() {
 		'--disable-libdc1394'
 
 	# 'libdrm' related options
-		#'--enable-libdrm'
-		'--disable-libdrm'
+		'--enable-libdrm'
+		#'--disable-libdrm'
 
 	# 'libfdk-aac.so' related options
 		#'--enable-libfdk-aac'
