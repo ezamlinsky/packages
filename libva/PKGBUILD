@@ -1,0 +1,118 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libva')
+pkgver=2.5.0
+pkgrel=1
+pkgdesc='Video Acceleration (VA) API for Linux'
+url='https://01.org/linuxmedia/vaapi'
+license=('MIT')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libdrm'
+	'libgl'
+	'libx11'
+	'libxext'
+	'libxfixes'
+	#'wayland'
+)
+makedepends=(
+	'git'
+	'libglvnd'
+	'mesa'
+	'meson'
+)
+optdepends=(
+	'libva-intel-driver: backend for Intel cards'
+	'libva-vdpau-driver: backend for Nvidia and AMD cards'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'libva-drm.so'
+	'libva-glx.so'
+	'libva-wayland.so'
+	'libva-x11.so'
+	'libva.so'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=('etc/libva.conf')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("git+https://github.com/intel/libva.git#tag=$pkgver")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'-Denable_docs=true'
+		'-Denable_va_messaging=true'
+
+	# 'libdrm' related options
+		'-Ddisable_drm=false'
+		#'-Ddisable_drm=true'
+
+	# 'libgl' related options
+		'-Dwith_glx=yes'
+
+	# 'libx11 && libxext && libxfixes && libdrm' related options
+		'-Dwith_x11=yes'
+
+	# 'wayland' related options
+		#'-Dwith_wayland=yes'
+		'-Dwith_wayland=no'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libva/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
