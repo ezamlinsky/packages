@@ -30,7 +30,7 @@ depends=(
 	'glib2'
 	'glibc'
 	'gtk-update-icon-cache'
-	'libcups'
+	#'libcups'
 	'libx11'
 	'libxcomposite'
 	'libxcursor'
@@ -90,6 +90,9 @@ prepare() {
 	# Fix python version
 	sed -i '1s/python$/&2/' gtk/gtk-builder-convert
 
+	# Fix automake version
+	sed -i 's/1.15/1.16/g' autogen.sh
+
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
 		NOCONFIGURE=1 ./autogen.sh
@@ -125,8 +128,8 @@ build() {
 		'--with-x'
 
 	# 'libcups' related options
-		'--enable-cups'
-		#'--disable-cups'
+		#'--enable-cups'
+		'--disable-cups'
 
 	# 'libxinerama' related options
 		'--enable-xinerama'
