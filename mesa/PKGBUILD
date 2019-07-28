@@ -1,0 +1,441 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='mesa'
+pkgname=('mesa' 'libva-mesa-driver' 'mesa-vdpau'  'opencl-mesa' 'vulkan-intel' 'vulkan-mesa-layer' 'vulkan-radeon')
+pkgver=19.1.3
+pkgrel=1
+url='https://www.mesa3d.org/'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'bash'
+	'clang'
+	'dri2proto'
+	'dri3proto'
+	'elfutils'
+	'expat'
+	'gcc-libs'
+	'glib2'
+	'glibc'
+	'glproto'
+	'glslang'
+	'gtk3'
+	'libclc'
+	'libdrm'
+	'libelf'
+	'libepoxy'
+	'libglvnd'
+	'libomxil-bellagio'
+	'libunwind'
+	'libva'
+	'libvdpau'
+	'libx11'
+	'libxcb'
+	'libxdamage'
+	'libxext'
+	'libxfixes'
+	'libxml2'
+	'libxrandr'
+	'libxshmfence'
+	'libxv'
+	'libxvmc'
+	'libxxf86vm'
+	'llvm'
+	'lm_sensors'
+	'meson'
+	'presentproto'
+	'python-mako'
+	'valgrind'
+	'wayland'
+	'wayland-protocols'
+	'zlib'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz"
+	"https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz.sig"
+	'LICENSE'
+	'glesv2.pc'
+)
+sha512sums=(
+	'787310c43089142209ff7db298489b0815b630577680d5ce1bc3f796eed3772ba41f03e5e773b77ae084c191ed4e365eac1753166ce60f12b8f5974d55762eeb'
+	'SKIP'
+	'f9f0d0ccf166fe6cb684478b6f1e1ab1f2850431c06aa041738563eb1808a004e52cdec823c103c9e180f03ffc083e95974d291353f0220fe52ae6d4897fecc7'
+	'e5db81538625a056328c2ba83f3e6418e0d579c261bcddf685036ad19e816dd002313c80a6c48cef0289d1e1b0bdbe733810ae9f53604e380486253642cff52c'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'-Dbuild-tests=false'
+		'-Dinstall-intel-gpu-tests=false'
+		'-Dxlib-lease=true'
+		'-Dasm=true'
+		'-Dopengl=true'
+		'-Degl=true'
+		'-Dgles1=true'
+		'-Dgles2=true'
+		'-Dgbm=true'
+		'-Ddri3=true'
+		'-Dshared-glapi=true'
+		'-Dgallium-va=true'
+		'-Dgallium-xa=true'
+		'-Dgallium-nine=true'
+		'-Dosmesa=gallium'
+		'-Dosmesa-bits=8'
+		'-Dgallium-extra-hud=true'
+		'-Dshader-cache=true'
+		'-Dvulkan-overlay-layer=true'
+		'-Dglx-direct=true'
+		'-Dglx-read-only-text=false'
+		'-Dglx=dri'
+		'-Dvulkan-drivers=intel,amd'
+		'-Ddri-drivers=i915,i965,nouveau'
+		'-Dgallium-drivers=r300,r600,radeonsi,nouveau,svga,virgl,swrast,swr'
+		'-Dswr-arches=avx,avx2'
+
+	# 'gtk3 && glib2 && libepoxy' related options
+		'-Dtools=intel-ui,xvmc'
+
+	# 'libclc' related options
+		'-Dgallium-opencl=icd'
+		#'-Dgallium-opencl=disabled'
+
+	# 'libdrm' related options
+		'-Dplatforms=x11,drm'
+
+	# 'libglvnd' related options
+		'-Dglvnd=true'
+		#'-Dglvnd=false'
+
+	# 'libomxil-bellagio' related options
+		#'-Dgallium-omx=bellagio'
+		'-Dgallium-omx=disabled'
+
+	# 'libunwind' related options
+		#'-Dlibunwind=true'
+		'-Dlibunwind=false'
+
+	# 'libvdpau' related options
+		'-Dgallium-vdpau=true'
+		#'-Dgallium-vdpau=false'
+
+	# 'libx11' related options
+		#'-Dplatforms=x11'
+
+	# 'libx11 && libdrm & wayland' related options
+		#'-Dplatforms=x11,drm,wayland'
+
+	# 'llvm-libs' related options
+		'-Dllvm=true'
+		#'-Dllvm=false'
+		'-Dshared-llvm=true'
+
+	# 'lm_sensors' related options
+		#'-Dlmsensors=true'
+		'-Dlmsensors=false'
+
+	# 'libselinux' related options
+		#'-Dselinux=true'
+		'-Dselinux=false'
+
+	# 'libxv && libxvmc' related options
+		'-Dgallium-xvmc=true'
+		#'-Dgallium-xvmc=false'
+
+	# 'valgrind' related options
+		#'-Dvalgrind=true'
+		'-Dvalgrind=false'
+
+	# 'wayland' related options
+		#'-Dplatforms=x11,wayland'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Mesa                                                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_mesa() {
+	pkgdesc='An open-source implementation of the OpenGL specification'
+	depends=(
+		'bash'
+		'expat'
+		'gcc-libs'
+		'glib2'
+		'glibc'
+		'gtk3'
+		'libdrm'
+		'libelf'
+		'libepoxy'
+		#'libomxil-bellagio'
+		'libx11'
+		'libxcb'
+		'libxdamage'
+		'libxext'
+		'libxfixes'
+		'libxshmfence'
+		'libxv'
+		'libxvmc'
+		'libxxf86vm'
+		'llvm-libs'
+		#'lm_sensors'
+		#'wayland'
+		'zlib'
+	)
+	optdepends=(
+		'opengl-man-pages: for the OpenGL API man pages'
+		'mesa-vdpau: for accelerated video playback'
+		'libva-mesa-driver: for accelerated video playback'
+	)
+	provides=(
+		'ati-dri'
+		'intel-dri'
+		'mesa-dri'
+		'mesa-libgl'
+		'nouveau-dri'
+		'opengl-driver'
+		'svga-dri'
+	)
+	conflicts=(
+		'ati-dri'
+		'intel-dri'
+		'mesa-dri'
+		'mesa-libgl'
+		'nouveau-dri'
+		'svga-dri'
+	)
+	replaces=(
+		'ati-dri'
+		'intel-dri'
+		'mesa-dri'
+		'mesa-libgl'
+		'nouveau-dri'
+		'svga-dri'
+	)
+	backup=('etc/drirc')
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'libva-mesa-driver' package
+	mkdir -p $srcdir/libva-mesa-driver/usr/lib/dri
+	mv usr/lib/dri/*_drv_video.so $srcdir/libva-mesa-driver/usr/lib/dri || true
+
+	# Split 'mesa-vdpau' package
+	mkdir -p $srcdir/mesa-vdpau/usr/lib/vdpau
+	mv usr/lib/vdpau/* $srcdir/mesa-vdpau/usr/lib/vdpau || true
+	rm -fr usr/lib/vdpau
+
+	# Split 'opencl-mesa' package
+	mkdir -p $srcdir/opencl-mesa/{etc/OpenCL/vendors,usr/lib/gallium-pipe}
+	mv etc/OpenCL/vendors/mesa.icd $srcdir/opencl-mesa/etc/OpenCL/vendors || true
+	mv usr/lib/gallium-pipe/pipe_*.so $srcdir/opencl-mesa/usr/lib/gallium-pipe || true
+	mv usr/lib/lib*OpenCL* $srcdir/opencl-mesa/usr/lib || true
+	rm -fr etc/OpenCL usr/lib/gallium-pipe
+
+	# Split 'vulkan-intel' package
+	mkdir -p $srcdir/vulkan-intel/usr/{lib,include/vulkan,share/vulkan/icd.d}
+	mv usr/share/vulkan/icd.d/intel_icd*.json $srcdir/vulkan-intel/usr/share/vulkan/icd.d || true
+	mv usr/lib/libvulkan_intel.so $srcdir/vulkan-intel/usr/lib/ || true
+	mv usr/include/vulkan/vulkan_intel.h $srcdir/vulkan-intel/usr/include/vulkan || true
+	rm -fr usr/include/vulkan
+
+	# Split 'vulkan-mesa-layer' package
+	mkdir -p $srcdir/vulkan-mesa-layer/usr/{lib,share/vulkan/explicit_layer.d}
+	mv usr/share/vulkan/explicit_layer.d/VkLayer_MESA_overlay.json $srcdir/vulkan-mesa-layer/usr/share/vulkan/explicit_layer.d || true
+	mv usr/lib/libVkLayer_MESA_overlay.so $srcdir/vulkan-mesa-layer/usr/lib || true
+
+	# Split 'vulkan-radeon' package
+	mkdir -p $srcdir/vulkan-radeon/usr/{lib,share/vulkan/icd.d}
+	mv usr/share/vulkan/icd.d/radeon_icd*.json $srcdir/vulkan-radeon/usr/share/vulkan/icd.d || true
+	mv usr/lib/libvulkan_radeon.so $srcdir/vulkan-radeon/usr/lib || true
+	rm -fr usr/share/vulkan
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libva-mesa-driver                                                      #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libva-mesa-driver() {
+	pkgdesc='VA-API implementation for gallium'
+	depends=(
+		'expat'
+		'gcc-libs'
+		'glibc'
+		'libdrm'
+		'libelf'
+		'libx11'
+		'libxcb'
+		'libxshmfence'
+		'llvm-libs'
+		'zlib'
+	)
+
+	# Copy files
+	mv $srcdir/libva-mesa-driver/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/LICENSE $pkgdir/usr/share/licenses/libva-mesa-driver/LICENSE
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Mesa-vdpau                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_mesa-vdpau() {
+	pkgdesc='Mesa VDPAU drivers'
+	depends=(
+		'expat'
+		'gcc-libs'
+		'glibc'
+		'libdrm'
+		'libelf'
+		'libx11'
+		'libxcb'
+		'libxshmfence'
+		'llvm-libs'
+		'zlib'
+	)
+
+	# Copy files
+	mv $srcdir/mesa-vdpau/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/LICENSE $pkgdir/usr/share/licenses/mesa-vdpau/LICENSE
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Opencl-mesa                                                            #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_opencl-mesa() {
+	pkgdesc='OpenCL support for AMD/ATI Radeon mesa drivers'
+	depends=(
+		'clang'
+		'expat'
+		'gcc-libs'
+		'glibc'
+		'libdrm'
+		'libelf'
+		'llvm-libs'
+		'zlib'
+	)
+	optdepends=('opencl-headers: headers necessary for OpenCL development')
+	provides=('opencl-driver')
+
+	# Copy files
+	mv $srcdir/opencl-mesa/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/LICENSE $pkgdir/usr/share/licenses/opencl-mesa/LICENSE
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Vulkan-intel                                                           #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_vulkan-intel() {
+	pkgdesc='Vulkan mesa driver for Intel videocards'
+	depends=(
+		'expat'
+		'gcc-libs'
+		'glibc'
+		'libdrm'
+		'libx11'
+		'libxcb'
+		'libxshmfence'
+		#'wayland'
+		'zlib'
+	)
+	provides=('vulkan-driver')
+
+	# Copy files
+	mv $srcdir/vulkan-intel/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/LICENSE $pkgdir/usr/share/licenses/vulkan-intel/LICENSE
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Vulkan-mesa-layer                                                      #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_vulkan-mesa-layer() {
+	pkgdesc='Vulkan overlay layer to display information about the application'
+	depends=(
+		'gcc-libs'
+		'glibc'
+	)
+
+	# Copy files
+	mv $srcdir/vulkan-mesa-layer/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/LICENSE $pkgdir/usr/share/licenses/vulkan-radeon/LICENSE
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Vulkan-radeon                                                          #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_vulkan-radeon() {
+	pkgdesc='Vulkan mesa driver for Radeon videocards'
+	depends=(
+		'expat'
+		'gcc-libs'
+		'glibc'
+		'libdrm'
+		'libelf'
+		'libx11'
+		'libxcb'
+		'libxshmfence'
+		'llvm-libs'
+		#'wayland'
+		'zlib'
+	)
+	provides=('vulkan-driver')
+
+	# Copy files
+	mv $srcdir/vulkan-radeon/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/LICENSE $pkgdir/usr/share/licenses/vulkan-radeon/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
