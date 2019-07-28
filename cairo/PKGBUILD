@@ -1,0 +1,218 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('cairo')
+pkgver=1.16.0
+pkgrel=2
+pkgdesc='2D graphics library with support for multiple output devices'
+url='https://cairographics.org/'
+license=('LGPL' 'MPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'directfb'
+	'fontconfig'
+	'freetype2'
+	'glib2'
+	'glibc'
+	#'libdrm'
+	'libglvnd'
+	'libpng'
+	'libx11'
+	'libxcb'
+	'libxrender'
+	'lzo'
+	#'mesa'
+	'pixman'
+	'zlib'
+)
+makedepends=(
+	'git'
+	'gtk-doc'
+	'librsvg'
+	'libspectre'
+	'poppler-glib'
+	'gtk2'
+)
+checkdepends=(
+	'gsfonts'
+	'ttf-dejavu'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=3ad43122b21a3299dd729dc8462d6b8f7f01142d  # tags/1.16.0^0
+source=(
+	"git+https://gitlab.freedesktop.org/cairo/cairo.git#commit=$_commit"
+	'0001-ft-Use-FT_Done_MM_Var-instead-of-free-when-available.patch'
+)
+sha1sums=(
+	'SKIP'
+	'9850a5b06e300055676ad1f5dfa90ecba0fe623c'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Apply patches
+	patch -Np1 -i $srcdir/0001-ft-Use-FT_Done_MM_Var-instead-of-free-when-available.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-full-testing'
+		'--disable-valgrind'
+		'--disable-gtk-doc'
+		'--enable-atomic'
+		'--enable-pthread=yes'
+		'--enable-trace=no'
+		'--enable-symbol-lookup=no'
+		'--enable-test-surfaces=yes'
+		'--enable-tee=yes'
+		'--with-x'
+
+	# 'directfb' related options
+		#'--enable-directfb=yes'
+		'--enable-directfb=no'
+
+	# 'fontconfig' related options
+		'--enable-fc=yes'
+		#'--enable-fc=no'
+
+	# 'freetype2' related options
+		'--enable-ft=yes'
+		#'--enable-ft=no'
+
+	# 'glib2' related options
+		'--enable-gobject=yes'
+		#'--enable-gobject=no'
+
+	# 'libdrm' related options
+		#'--enable-drm=yes'
+		'--enable-drm=no'
+
+	# 'libglvnd' related options
+		'--enable-gl=yes'
+		#'--enable-gl=no'
+		'--enable-egl=yes'
+		#'--enable-egl=no'
+		'--enable-glx=yes'
+		#'--enable-glx=no'
+
+	# 'libpng' related options
+		'--enable-png=yes'
+		#'--enable-png=no'
+
+	# 'librsvg' related options
+		'--enable-svg=yes'
+		#'--enable-svg=no'
+
+	# 'libspectre' related options
+		#'--enable-ps=yes'
+		'--enable-ps=no'
+
+	# 'libx11' && 'libxcb' related options
+		'--enable-xlib-xcb=yes'
+		#'--enable-xlib-xcb=no'
+
+	# 'libx11' && 'libxext' related options
+		'--enable-xlib=yes'
+		#'--enable-xlib=no'
+
+	# 'libxcb' related options
+		'--enable-xcb=yes'
+		#'--enable-xcb=no'
+		'--enable-xcb-shm=yes'
+		#'--enable-xcb-shm=no'
+
+	# 'libxrender' related options
+		'--enable-xlib-xrender=yes'
+		#'--enable-xlib-xrender=no'
+
+	# 'lzo' related options
+		'--enable-interpreter=yes'
+		#'--enable-interpreter=no'
+
+	# 'mesa' related options
+		#'--enable-gallium=yes'
+		'--enable-gallium=no'
+
+	# 'poppler-glib' related options
+		'--enable-pdf=yes'
+		#'--enable-pdf=no'
+
+	# 'zlib' related options
+		'--enable-script=yes'
+		#'--enable-script=no'
+		'--enable-xml=yes'
+		#'--enable-xml=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
