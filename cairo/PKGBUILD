@@ -149,8 +149,8 @@ build() {
 		#'--enable-svg=no'
 
 	# 'libspectre' related options
-		#'--enable-ps=yes'
-		'--enable-ps=no'
+		'--enable-ps=yes'
+		#'--enable-ps=no'
 
 	# 'libx11' && 'libxcb' related options
 		'--enable-xlib-xcb=yes'
