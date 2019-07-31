@@ -24,7 +24,6 @@ arch=('any')
 depends=(
 	'fontconfig'
 	'xorg-fonts-encodings'
-	'xorg-font-utils'
 )
 makedepends=(
 	'fontconfig'
