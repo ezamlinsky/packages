@@ -1,0 +1,58 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2018, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('node-gyp')
+pkgver=5.0.2
+pkgrel=1
+pkgdesc='Node.js native addon build tool'
+url='https://github.com/nodejs/node-gyp'
+license=('MIT')
+arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'nodejs'
+	'semver'
+)
+makedepends=('npm')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://registry.npmjs.org/node-gyp/-/node-gyp-$pkgver.tgz")
+noextract=("node-gyp-$pkgver.tgz")
+sha512sums=('b0d71be4eede27d5e234085667f504d9b5ac0499f725beeb6b232a30fe308de9e5af50f0cd9c5499bb6622b974e04534a797cddab53d5880d5faed046ec23ca1')
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Install files
+	npm install -g --user root --prefix $pkgdir/usr $srcdir/node-gyp-$pkgver.tgz
+
+	# Fix wrong 'node_modules' directory permissions
+	chmod -R u=rwX,go=rX $pkgdir
+
+	# Experimental dedup
+	rm -r $pkgdir/usr/lib/node_modules/node-gyp/node_modules/semver
+
+	# Install license file
+	mkdir -p $pkgdir/usr/share/licenses/node-gyp
+	ln -s ../../../lib/node_modules/node-gyp/LICENSE $pkgdir/usr/share/licenses/node-gyp/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
