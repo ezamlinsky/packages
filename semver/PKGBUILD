@@ -1,0 +1,49 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2018, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('semver')
+pkgver=6.3.0
+pkgrel=1
+pkgdesc='The semantic version parser used by npm'
+url='https://github.com/npm/node-semver'
+license=('ISC')
+arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('nodejs')
+makedepends=('npm')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://registry.npmjs.org/semver/-/semver-$pkgver.tgz")
+noextract=("semver-$pkgver.tgz")
+sha512sums=('6f7f5305a4d27d5eb206b6a953cf69e5f29e904da6fcdc270e870e56bb90152d7fbde320773b8f72738cdf833a0b0c56f231ff97111ae6b0680de530bb91c74f')
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Install files
+	npm install -g --user root --prefix $pkgdir/usr $srcdir/semver-$pkgver.tgz
+
+	# Install license file
+	mkdir -p $pkgdir/usr/share/licenses/semver
+	ln -s ../../../lib/node_modules/semver/LICENSE $pkgdir/usr/share/licenses/semver/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
