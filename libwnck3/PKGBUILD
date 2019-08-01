@@ -1,0 +1,113 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libwnck3')
+pkgver=3.32.0
+pkgrel=2
+pkgdesc='Library to manage X windows and workspaces (via pagers, tasklists, etc.)'
+url='https://gitlab.gnome.org/GNOME/libwnck'
+license=('LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'atk'
+	'cairo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk3'
+	'libx11'
+	'libxrender'
+	'libxres'
+	'pango'
+	'startup-notification'
+)
+makedepends=(
+	'git'
+	'gobject-introspection'
+	'gtk-doc'
+	'meson'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=d3a714db6af5c1a146effb8d8f827b8973bbb91c  # tags/3.32.0^0
+source=("git+https://gitlab.gnome.org/GNOME/libwnck.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd libwnck
+
+    # Fix startup-notification use
+    git cherry-pick -n bbf3286f66c79118b16ff429265bbc3e6ce283ad
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd libwnck
+
+	# Default configure options
+	config_opts=(
+		'-Dgtk_doc=false'
+		'-Dintrospection=disabled'
+		'-Dstartup_notification=enabled'
+		'-Dinstall_tools=true'
+		'-Ddeprecation_flags=false'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal tests
+	ninja -C build test
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd libwnck
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
