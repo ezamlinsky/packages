@@ -1,0 +1,153 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('libwebp')
+pkgver=1.0.3
+pkgrel=1
+pkgdesc='WebP library and conversion tools'
+url='https://developers.google.com/speed/webp/'
+license=('BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'giflib'
+	'glibc'
+	'libglvnd'
+	'libjpeg'
+	'libpng'
+	'libtiff'
+)
+makedepends=(
+	'freeglut'
+	'git'
+	'glu'
+	'mesa'
+)
+optdepends=('freeglut: vwebp viewer')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit=0fe1a89dbf1930fc2554dbe76adad5d962054ead  # tags/v1.0.3-rc1^0
+source=("git+https://chromium.googlesource.com/webm/libwebp#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-asserts'
+		'--enable-threading'
+		'--enable-near-lossless'
+		'--enable-swap-16bit-csp'
+		'--enable-sse4.1'
+		'--enable-sse2'
+		'--enable-sdl'
+		'--enable-libwebpmux'
+		'--enable-libwebpdemux'
+		'--enable-libwebpdecoder'
+		'--enable-libwebpextras'
+
+	# 'giflib' related options
+		'--enable-gif'
+		#'--disable-gif'
+
+	# 'libglvnd' related options
+		'--enable-gl'
+
+	# 'libjpeg' related options
+		'--enable-jpeg'
+		#'--disable-jpeg'
+
+	# 'libpng' related options
+		'--enable-png'
+
+	# 'libtiff' related options
+		'--enable-tiff'
+		#'--disable-tiff'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libwebp/COPYING
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
