@@ -96,6 +96,7 @@ build() {
 
 	# 'libglvnd' related options
 		'--enable-gl'
+		#'--disable-gl'
 
 	# 'libjpeg' related options
 		'--enable-jpeg'
@@ -103,6 +104,7 @@ build() {
 
 	# 'libpng' related options
 		'--enable-png'
+		#'--disable-png'
 
 	# 'libtiff' related options
 		'--enable-tiff'
