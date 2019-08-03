@@ -1,0 +1,150 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('ncurses')
+pkgver=6.1
+pkgrel=6
+pkgdesc='System V Release 4.0 curses emulation library'
+url='http://invisible-island.net/ncurses/ncurses.html'
+license=('MIT')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	'gpm'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'libformw.so'
+	'libmenuw.so'
+	'libncurses++w.so'
+	'libncursesw.so'
+	'libpanelw.so'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.gnu.org/pub/gnu/ncurses/ncurses-$pkgver.tar.gz"
+	"https://ftp.gnu.org/pub/gnu/ncurses/ncurses-$pkgver.tar.gz.sig"
+)
+md5sums=(
+	'98c889aaf8d23910d2b92d65be2e737a'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-assertions'
+		'--enable-pc-files'
+		'--enable-widec'
+		'--enable-sp-funcs'
+		'--enable-const'
+		'--enable-ext-colors'
+		'--enable-ext-putwin'
+		'--enable-sigwinch'
+		'--enable-tcap-names'
+		'--enable-pthreads-eintr'
+		'--enable-reentrant'
+		'--enable-ext-mouse'
+		'--with-termlib'
+		'--with-ticlib'
+		'--with-normal'
+		'--with-shared'
+		'--without-debug'
+		'--without-develop'
+		'--without-ada'
+		'--with-pthread'
+		'--with-pkg-config'
+		'--with-pkg-config-libdir=/usr/lib/pkgconfig'
+		'--with-manpage-format=normal'
+
+	# 'gcc-libs' related options
+		'--with-cxx-binding'
+		#'--without-cxx-binding'
+		'--with-cxx-shared'
+		#'--without-cxx-shared'
+
+	# 'gpm' related options
+		'--with-gpm'
+		#'--without-gpm'
+		'--without-dlsym'
+	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-lto'
+	export CXXFLAGS+="${CFLAGS}"
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/ncurses/LICENSE
+
+	# Create symbolic links for compatibility purposes
+	for lib in ncurses ncurses++ form panel menu; do
+		echo "INPUT(-l${lib}w)" > $pkgdir/usr/lib/lib${lib}.so
+		ln -s ${lib}w.pc $pkgdir/usr/lib/pkgconfig/${lib}.pc
+	done
+	for lib in tic tinfo; do
+		echo "INPUT(libncursesw.so.${pkgver:0:1})" > $pkgdir/usr/lib/lib${lib}.so
+		ln -s libncursesw.so.${pkgver:0:1} $pkgdir/usr/lib/lib${lib}.so.${pkgver:0:1}
+		ln -s ncursesw.pc $pkgdir/usr/lib/pkgconfig/${lib}.pc
+	done
+	echo "INPUT(-lncursesw)" > $pkgdir/usr/lib/libcursesw.so
+	ln -s libncurses.so $pkgdir/usr/lib/libcurses.so
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
