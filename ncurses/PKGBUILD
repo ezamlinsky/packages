@@ -80,8 +80,6 @@ build() {
 		'--enable-sigwinch'
 		'--enable-ext-mouse'
 		'--enable-tcap-names'
-		'--with-termlib'
-		'--with-ticlib'
 		'--with-normal'
 		'--with-shared'
 		'--without-debug'
@@ -102,10 +100,6 @@ build() {
 		#'--without-gpm'
 		'--without-dlsym'
 	)
-
-	# Change compile flags
-	export CFLAGS+=' -fno-lto'
-	export CXXFLAGS+="${CFLAGS}"
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
