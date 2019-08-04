@@ -10,45 +10,48 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgname=('libsoup')
-pkgver=2.66.2
+pkgname=('libpsl')
+pkgver=0.21.0
 pkgrel=1
-pkgdesc='HTTP client/server library for GNOME'
-url='https://wiki.gnome.org/Projects/libsoup'
-license=('LGPL')
+pkgdesc='Public Suffix List library'
+url='https://github.com/rockdaboot/libpsl'
+license=('MIT')
 arch=('x86_64')
 
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'glib2'
-	#'glib-networking'
 	'glibc'
-	'libpsl'
-	'libxml2'
-	'sqlite'
-	#'krb5'
+	#'libidn'
+	#'libidn2'
+	#'libunistring'
 )
 makedepends=(
-	'git'
 	'gtk-doc'
-	'intltool'
+	'libxslt'
+	'publicsuffix-list'
 	'python'
-	'vala'
-	'meson'
 )
-checkdepends=(
-	'apache'
-	'php-apache'
-)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libpsl.so')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=716acf96c8368ad17c6a257890387659def591e5  # tags/2.67.1~20
-source=("git+https://gitlab.gnome.org/GNOME/libsoup.git#commit=$_commit")
-sha256sums=('SKIP')
+source=(
+	"https://github.com/rockdaboot/libpsl/releases/download/libpsl-$pkgver/libpsl-$pkgver.tar.gz"
+	'libpsl-gtk-doc-1.30-fix.patch::https://github.com/rockdaboot/libpsl/commit/87d1add318b5e5d09977f7f374e923577b6ff3be.patch'
+	'libpsl-0.21.0-build-fix.patch::https://github.com/rockdaboot/libpsl/commit/9347024221f4a9d63f9dcafcda13362a7c8d92fe.patch'
+)
+sha512sums=(
+	'165c4f0b0640a813d512bd916e1532e32e43c8c81a5efd048f3a5b07b1b3c9129b4c4b5008b8b11a7c1b3914caea17564321389cd350bf1d687d53a97f2afa4d'
+	'9cca44a70c7e26bc6016767bce8888e5902c97eff92d004ca2ab659ee289a9e079fab62820f0f684ac25922260175c74c08c1dfca6dd1db6333c37edf38b8048'
+	'692d6dd6f64653f6e355df0b6cfe519a5c202d966deab066123e814591692a28a805fe794dc57dd6f9ab357b4e0dd8dfdf842239ec39f303fc33d98019e7f24e'
+)
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -56,7 +59,11 @@ sha256sums=('SKIP')
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/libpsl-gtk-doc-1.30-fix.patch
+	patch -p1 -i $srcdir/libpsl-0.21.0-build-fix.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -70,34 +77,48 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname
+	cd $pkgname-$pkgver
 
 	# Default configure options
 	config_opts=(
-		'-Dntlm=false'
-		'-Dgnome=true'
-		'-Dgtk_doc=true'
-		'-Dtests=false'
-		'-Dintrospection=false'
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-gtk-doc'
+		'--enable-man'
+		'--with-psl-file=/usr/share/publicsuffix/effective_tld_names.dat'
+		'--with-psl-testfile=/usr/share/publicsuffix/test_psl.txt'
 
-	# 'glib-networking' related options
-		#'-Dtls_check=true'
-		'-Dtls_check=false'
+	# 'libicu' related options
+		#'--enable-runtime=libidn'
+		'--disable-runtime'
+		#'--enable-builtin=libidn'
+		'--disable-builtin'
 
-	# 'krb5' related options
-		#'-Dgssapi=true'
-		'-Dgssapi=false'
-
-	# 'vala' related options
-		#'-Dvapi=true'
-		'-Dvapi=false'
+	# 'libicu2' related options
+		#'--enable-runtime=libidn2'
+		'--disable-runtime'
+		#'--enable-builtin=libidn2'
+		'--disable-builtin'
 	)
 
 	# Run package configuration script
-	arch-meson build "${config_opts[@]}"
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
 
 	# Build package
-	ninja -C build
+	make
 }
 
 #==============================================================================#
@@ -106,10 +127,10 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgname
+	cd $pkgname-$pkgver
 
-	# Run internal tests
-	ninja -C build test
+	# Run internal checks
+	make -k check
 }
 
 #==============================================================================#
@@ -118,10 +139,13 @@ check() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname
+	cd $pkgname-$pkgver
 
 	# Install files
-	DESTDIR=$pkgdir ninja -C build install
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/libpsl/LICENSE
 }
 
 ################################################################################
