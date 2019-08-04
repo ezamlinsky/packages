@@ -1,0 +1,186 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('openvpn')
+pkgver=2.4.7
+pkgrel=1
+pkgdesc='An easy-to-use, robust and highly configurable VPN (Virtual Private Network)'
+url='https://openvpn.net/index.php/open-source.html'
+license=('custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'iproute2'
+	#'libselinux'
+	'lz4'
+	'lzo'
+	#'mbedtls'
+	'openssl'
+	'pam'
+	'pkcs11-helper'
+	'systemd-libs'
+)
+makedepends=(
+	'git'
+	'systemd'
+)
+optdepends=(
+	'easy-rsa: easy CA and certificate handling'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('emptydirs')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("git+https://github.com/OpenVPN/openvpn.git#tag=v${pkgver}?signed")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run automatic configure script
+	autoreconf -fi
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--enable-crypto'
+		'--enable-server'
+		'--enable-management'
+		'--enable-pf'
+		'--enable-port-share'
+		'--enable-fragment'
+		'--enable-multihome'
+		'--enable-plugins'
+		'--enable-plugin-down-root'
+		'--enable-def-auth'
+		'--enable-async-push'
+		'--enable-ofb-cfb'
+		'--enable-x509-alt-username'
+
+	# 'iproute2' related options
+		'--enable-iproute2'
+		#'--disable-iproute2'
+
+	# 'libselinux' related options
+		#'--enable-selinux'
+		'--disable-selinux'
+
+	# 'lz4' related options
+		'--enable-lz4'
+		#'--disable-lz4'
+
+	# 'lzo' related options
+		'--enable-lzo'
+		#'--disable-lzo'
+
+	# 'mbedtls' related options
+		#'--with-crypto-library=mbedtls'
+
+	# 'openssl' related options
+		'--with-crypto-library=openssl'
+
+	# 'pam' related options
+		'--enable-plugin-auth-pam'
+		#'--disable-plugin-auth-pam'
+
+	# 'pkcs11-helper' related options
+		'--enable-pkcs11'
+		#'--disable-pkcs11'
+
+	# 'systemd-libs' related options
+		'--enable-systemd'
+		#'--disable-systemd'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Create empty configuration directories
+	mkdir -p $pkgdir/etc/openvpn/{client,server}
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/openvpn/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
