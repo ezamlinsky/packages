@@ -1,0 +1,142 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('pkcs11-helper')
+pkgver=1.25.1
+pkgrel=1
+pkgdesc='A library that simplifies the interaction with PKCS11 providers for end-user applications using a simple API and optional OpenSSL engine'
+url='https://github.com/OpenSC/pkcs11-helper'
+license=('GPL' 'BSD')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'gnutls'
+	#'mbedtls'
+	'nss'
+	'openssl'
+)
+makedepends=('doxygen')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("https://github.com/OpenSC/pkcs11-helper/releases/download/pkcs11-helper-$pkgver/pkcs11-helper-$pkgver.tar.bz2")
+sha256sums=('10dd8a1dbcf41ece051fdc3e9642b8c8111fe2c524cb966c0870ef3413c75a77')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debug'
+		'--disable-tests'
+		'--enable-doc'
+		'--enable-threading'
+		'--enable-token'
+		'--enable-data'
+		'--enable-certificate'
+		'--enable-slotevent'
+
+	# 'gnutls' related options
+		'--enable-crypto-engine-gnutls'
+		#'--disable-crypto-engine-gnutls'
+
+	# 'mbedtls' related options
+		'--enable-crypto-engine-mbedtls'
+		#'--disable-crypto-engine-mbedtls'
+
+	# 'nss' related options
+		'--enable-crypto-engine-nss'
+		#'--disable-crypto-engine-nss'
+
+	# 'openssl' related options
+		'--enable-openssl'
+		#'--disable-openssl'
+		'--enable-crypto-engine-openssl'
+		#'--disable-crypto-engine-openssl'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/pkcs11-helper/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
