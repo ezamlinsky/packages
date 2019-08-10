@@ -30,6 +30,7 @@ makedepends=(
 	'curl'
 	'dbus'
 	'docbook-xsl'
+	'gettext'
 	'git'
 	'glib2'
 	'gnu-efi-libs'
