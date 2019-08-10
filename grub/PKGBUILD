@@ -1,0 +1,252 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('grub')
+pkgver=2.04
+pkgrel=2
+epoch=2
+pkgdesc='GNU GRand Unified Bootloader (2)'
+url='https://www.gnu.org/software/grub/'
+license=('GPL3')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'device-mapper'
+	#'freetype2'
+	#'fuse2'
+	'glibc'
+	'sh'
+	'xz'
+)
+makedepends=(
+	'autogen'
+	'gettext'
+	'git'
+	'help2man'
+	'python'
+	'rsync'
+	'texinfo'
+	'ttf-dejavu'
+)
+optdepends=(
+	'dosfstools: For grub-mkrescue FAT FS and EFI support'
+	'efibootmgr: For grub-install EFI support'
+	'libisoburn: Provides xorriso for generating grub rescue iso using grub-mkrescue'
+	'mtools: For grub-mkrescue FAT FS support'
+	'os-prober: To detect other OSes when generating grub.cfg in BIOS systems'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	"grub-efi-x86_64"
+	'grub-bios'
+	'grub-common'
+	'grub-emu'
+)
+conflicts=(
+	"grub-efi-x86_64"
+	'grub-bios'
+	'grub-common'
+	'grub-emu'
+	'grub-legacy'
+)
+replaces=(
+	"grub-efi-x86_64"
+	'grub-bios'
+	'grub-common'
+	'grub-emu'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/default/grub'
+	'etc/grub.d/40_custom'
+)
+install='grub.install'
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit='136763a4cc9ca3a4f59d05b79eede2159d6f441e'
+_gnulib='9ce9be2ef0cb1180e35dfe9dfbbe90d774b374bd'
+_unifont='12.1.02'
+source=(
+	"git+https://git.savannah.gnu.org/git/grub.git#tag=grub-${pkgver}?signed"
+	"git+https://git.savannah.gnu.org/git/grub-extras.git#commit=$_commit"
+	"git+https://git.savannah.gnu.org/git/gnulib.git#commit=$_gnulib"
+	"https://ftp.gnu.org/gnu/unifont/unifont-$_unifont/unifont-$_unifont.bdf.gz"
+	"https://ftp.gnu.org/gnu/unifont/unifont-$_unifont/unifont-$_unifont.bdf.gz.sig"
+	'0003-10_linux-detect-archlinux-initramfs.patch'
+	'0004-add-GRUB_COLOR_variables.patch'
+	'grub.default'
+)
+sha256sums=(
+	'SKIP'
+	'SKIP'
+	'SKIP'
+	'04d652be1e28a6d464965c75c71ac84633085cd0960c2687466651c34c94bd89'
+	'SKIP'
+	'171415ab075d1ac806f36c454feeb060f870416f24279b70104bba94bd6076d4'
+	'a5198267ceb04dceb6d2ea7800281a42b3f91fd02da55d2cc9ea20d47273ca29'
+	'b8fe532668cb12c34d2a26221298f2459fac7c5578a14476a2af8c20aed5c101'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Apply patches
+	patch -p1 -i $srcdir/0003-10_linux-detect-archlinux-initramfs.patch
+	patch -p1 -i $srcdir/0004-add-GRUB_COLOR_variables.patch
+
+	# Fix DejaVuSans.ttf location so that grub-mkfont can create *.pf2 files for starfield theme
+	sed 's|/usr/share/fonts/dejavu|/usr/share/fonts/dejavu /usr/share/fonts/TTF|g' -i configure.ac
+
+	# Fix mkinitcpio 'rw' FS#36275
+	sed 's| ro | rw |g' -i util/grub.d/10_linux.in
+
+	# Fix OS naming FS#33393
+	sed 's|GNU/Linux|Linux|' -i util/grub.d/10_linux.in
+
+	# Run bootstrap
+	./bootstrap	--gnulib-srcdir=$srcdir/gnulib --no-git
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Add the grub-extra sources for bios build
+	mkdir $pkgname-extras
+	cp -r $srcdir/$pkgname-extras/915resolution $pkgname-extras/915resolution
+	export GRUB_CONTRIB=$srcdir/$pkgname/grub-extras/
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-efiemu'
+		'--disable-werror'
+		'--enable-threads=posix'
+		'--enable-cache-stats'
+		'--enable-boot-time'
+		'--target=x86_64'
+		'--with-platform=pc'
+		'--with-bootdir=/boot'
+		'--with-grubdir=grub'
+		'--without-included-regex'
+
+	# 'device-mapper' related options
+		'--enable-device-mapper'
+		#'--disable-device-mapper'
+
+	# 'freetype2' related options
+		#'--enable-grub-mkfont'
+		'--disable-grub-mkfont'
+		#'--enable-grub-themes'
+		'--disable-grub-themes'
+
+	# 'fuse2' related options
+		#'--enable-grub-mount'
+		'--disable-grub-mount'
+
+	# 'xz' related options
+		'--enable-liblzma'
+		#'--disable-liblzma'
+	)
+
+	# Change compile flags
+	unset CPPFLAGS
+	unset CFLAGS
+	unset CXXFLAGS
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir bashcompletiondir=/usr/share/bash-completion/completions install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/package_name/LICENSE
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Remove gdb debugging related files
+	rm -f usr/lib/grub/i386-pc/*.module || true
+	rm -f usr/lib/grub/i386-pc/*.image || true
+	rm -f usr/lib/grub/i386-pc/{kernel.exec,gdb_grub,gmodule.pl} || true
+
+	# Install /etc/default/grub (used by grub-mkconfig)
+	install -Dm644 $srcdir/grub.default etc/default/grub
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
