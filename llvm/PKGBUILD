@@ -1,0 +1,237 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='llvm'
+pkgname=('llvm' 'llvm-libs' 'llvm-ocaml')
+pkgver=8.0.1
+pkgrel=1
+url='https://llvm.org/'
+license=('custom:University of Illinois/NCSA Open Source License')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'cmake'
+	'doxygen'
+	'libedit'
+	'libffi'
+	'libxml2'
+	'ncurses'
+	'ninja'
+	'ocaml'
+	'ocaml-ctypes'
+	'ocaml-findlib'
+	'ocaml-findlib'
+	'python-recommonmark'
+	'python-sphinx'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/$pkgname-$pkgver.src.tar.xz"
+	"https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/$pkgname-$pkgver.src.tar.xz.sig"
+	'llvm-config.h'
+)
+sha256sums=(
+	'44787a6d02f7140f145e2250d56c9f849334e11f9ae379827510ed72f12b75e7'
+	'SKIP'
+	'597dc5968c695bbdbb0eac9e8eb5117fcd2773bc91edf5ec103ecffffab8bc48'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver.src
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS -fno-lto'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS -fno-lto'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		"-DFFI_INCLUDE_DIR=$(pkg-config --variable=includedir libffi)"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DLLVM_BUILD_RUNTIME=ON'
+		'-DLLVM_BUILD_RUNTIMES=ON'
+		'-DLLVM_BUILD_TOOLS=ON'
+		'-DLLVM_BUILD_UTILS=ON'
+		'-DLLVM_BUILD_DOCS=ON'
+		'-DLLVM_BUILD_TESTS=ON'
+		'-DLLVM_BUILD_LLVM_DYLIB=ON'
+		'-DLLVM_LINK_LLVM_DYLIB=ON'
+		'-DLLVM_ENABLE_ASSERTIONS=OFF'
+		'-DLLVM_ENABLE_BACKTRACES=OFF'
+		'-DLLVM_ENABLE_THREADS=ON'
+		'-DLLVM_ENABLE_PIC=ON'
+		'-DLLVM_ENABLE_LTO=OFF'
+		'-DLLVM_ENABLE_RTTI=ON'
+		'-DLLVM_ENABLE_DOXYGEN=OFF'
+		'-DLLVM_ENABLE_SPHINX=ON'
+		'-DLLVM_INSTALL_UTILS=ON'
+		'-DLLVM_OPTIMIZED_TABLEGEN=ON'
+		'-DLLVM_BINUTILS_INCDIR=/usr/include'
+		'-DSPHINX_WARNINGS_AS_ERRORS=OFF'
+		'-DSPHINX_OUTPUT_HTML=OFF'
+		'-DSPHINX_OUTPUT_MAN=ON'
+
+	# 'gcc-libs' related options
+		'-DLLVM_ENABLE_LIBCXX=ON'
+		#'-DLLVM_ENABLE_LIBCXX=OFF'
+
+	# 'libedit' related options
+		'-DLLVM_ENABLE_LIBEDIT=ON'
+		#'-DLLVM_ENABLE_LIBEDIT=OFF'
+
+	# 'libffi' related options
+		'-DLLVM_ENABLE_FFI=ON'
+		#'-DLLVM_ENABLE_FFI=OFF'
+
+	# 'libxml2' related options
+		'-DLLVM_ENABLE_LIBXML2=ON'
+		#'-DLLVM_ENABLE_LIBXML2=OFF'
+
+	# 'ncurses' related options
+		'-DLLVM_ENABLE_TERMINFO=ON'
+		#'-DLLVM_ENABLE_TERMINFO=OFF'
+
+	# 'zlib' related options
+		'-DLLVM_ENABLE_ZLIB=ON'
+		#'-DLLVM_ENABLE_ZLIB=OFF'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. -G Ninja "${config_opts[@]}"
+
+	# Build package
+	ninja all ocaml_doc
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver.src/build
+
+	# Run internal checks
+	ninja check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Llvm                                                                   #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_llvm() {
+	pkgdesc='Collection of modular and reusable compiler and toolchain technologies'
+	depends=(
+		'gcc-libs'
+		'glibc'
+		'llvm-libs'
+		'ncurses'
+		'perl'
+		'zlib'
+	)
+	optdepends=('python-setuptools: for using lit (LLVM Integrated Tester)')
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver.src/build
+
+	# Install files
+	DESTDIR=$pkgdir ninja install
+
+	# Install license file
+	install -Dm644 ../LICENSE.TXT $pkgdir/usr/share/licenses/llvm/LICENSE
+
+	# Include lit for running tests with clang and friends
+	pushd ../utils/lit
+	python3 setup.py install --root=$pkgdir -O1
+	popd
+
+	# Remove documentation sources
+	rm -fr $pkgdir/usr/share/doc/llvm/html/{_sources,.buildinfo}
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'llvm-libs' package
+	mkdir -p $srcdir/llvm-libs/usr/lib/bfd-plugins
+	mv usr/lib/lib{LLVM,LTO}*.so* $srcdir/llvm-libs/usr/lib || true
+	mv usr/lib/LLVMgold.so $srcdir/llvm-libs/usr/lib || true
+
+	# Split 'llvm-ocaml' package
+	mkdir -p $srcdir/llvm-ocaml/usr/{lib,share/doc/llvm-ocaml}
+	mv usr/lib/ocaml $srcdir/llvm-ocaml/usr/lib || true
+	mv usr/share/doc/llvm/ocaml-html $srcdir/llvm-ocaml/usr/share/doc/llvm-ocaml/html || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Llvm-libs                                                              #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_llvm-libs() {
+	pkgdesc='LLVM runtime libraries'
+	depends=(
+		'gcc-libs'
+		'glibc'
+		'libedit'
+		'libffi'
+		'libxml2'
+		'ncurses'
+		'zlib'
+	)
+
+	# Copy files
+	mv $srcdir/llvm-libs/* $pkgdir
+
+	# Create additional symlink for 'LLVMgold.so'
+	ln -s ../LLVMgold.so $pkgdir/usr/lib/bfd-plugins/LLVMgold.so
+
+	# Install license file
+	install -Dm644 $srcdir/llvm-$pkgver.src/LICENSE.TXT \
+	$pkgdir/usr/share/licenses/llvm-libs/LICENSE
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Llvm-ocaml                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_llvm-ocaml() {
+	pkgdesc='OCaml bindings for LLVM'
+	depends=(
+		'llvm'
+		'ocaml-ctypes'
+		'ocaml=4.07.1'
+	)
+
+	# Copy files
+	mv $srcdir/llvm-ocaml/* $pkgdir
+
+	# Install license file
+	install -Dm644 $srcdir/llvm-$pkgver.src/LICENSE.TXT \
+	$pkgdir/usr/share/licenses/llvm-ocaml/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
