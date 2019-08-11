@@ -1,0 +1,279 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='gcc'
+pkgname=('gcc' 'gcc-libs')
+pkgver=9.1.0
+pkgrel=2
+url='https://gcc.gnu.org'
+license=('GPL' 'LGPL' 'FDL' 'custom')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'binutils'
+	'doxygen'
+	'gmp'
+	'isl'
+	'libmpc'
+	'mpfr'
+	'python'
+	'zlib'
+)
+checkdepends=(
+	'dejagnu'
+	'inetutils'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.gnu.org/gnu/gcc/gcc-$pkgver/gcc-$pkgver.tar.xz"
+	"https://ftp.gnu.org/gnu/gcc/gcc-$pkgver/gcc-$pkgver.tar.xz.sig"
+	'c89'
+	'c99'
+	'bz90397.patch'
+	'bz90949.patch'
+)
+sha256sums=(
+	'79a66834e96a6050d8fe78db2c3b32fb285b230b855d0a66288235bc04b327a0'
+	'SKIP'
+	'de48736f6e4153f03d0a5d38ceb6c6fdb7f054e8f47ddd6af0a3dbf14f27b931'
+	'2513c6d9984dd0a2058557bf00f06d8d5181734e41dcfe07be7ed86f2959622a'
+	'cc20d05bcc6cb35bf0944b391f0b0380af375f2a8a03ce1cd67835884bc41fac'
+	'c860819e730faf1621e1286ebe3a0179df6e25182b81a9ca0a3db02633982a14'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgbase-${pkgver//+/-}
+
+	# Apply patches
+	patch -p0 -i $srcdir/bz90397.patch
+	patch -p0 -i $srcdir/bz90949.patch
+
+	# Hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
+	sed '/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/' -i {libiberty,gcc}/configure
+
+	# Set correct library directory
+	sed  's/lib64/lib/' -i gcc/config/i386/t-linux64
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-${pkgver//+/-}
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-werror'
+		'--disable-multilib'
+		'--disable-bootstrap'
+		'--disable-debug'
+		'--disable-libstdcxx-pch'
+		'--disable-libunwind-exceptions'
+		'--enable-cet=auto'
+		'--enable-ld=yes'
+		'--enable-gold=yes'
+		'--enable-decimal-float=yes'
+		'--enable-compressed-debug-sections=all'
+		'--enable-languages=c,c++,lto'
+		'--enable-threads=posix'
+		'--enable-symvers=gnu'
+		'--enable-clocale=gnu'
+		'--enable-checking=release'
+		'--enable-plugin'
+		'--enable-lto'
+		'--enable-secureplt'
+		'--enable-multibyte'
+		'--enable-host-shared'
+		'--enable-linux-futex'
+		'--enable-tls'
+		'--enable-libssp'
+		'--enable-libmpx'
+		'--enable-install-libiberty'
+		'--enable-linker-build-id'
+		'--enable-default-pie'
+		'--enable-default-ssp'
+		'--enable-gnu-indirect-function'
+		'--enable-gnu-unique-object'
+		'--enable-initfini-array'
+		'--enable-__cxa_atexit'
+		'--with-pic'
+		'--with-demangler-in-ld'
+		'--with-linker-hash-style=gnu'
+		'--with-diagnostics-color=auto'
+		'--with-bugurl=https://bugs.archlinux.org'
+
+	# 'isl' related options
+		'--with-isl'
+		#'--without-isl'
+
+	# 'zlib' related options
+		'--with-system-zlib'
+		#'--without-system-zlib'
+	)
+
+	# Change compile flags
+	export CFLAGS='-march=native -O3 -pipe'
+	export CXXFLAGS="${CFLAGS}"
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Build package
+	make
+
+	# Build documentation
+	make -C $CHOST/libstdc++-v3/doc doc-man-doxygen
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase-${pkgver//+/-}
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gcc                                                                    #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gcc() {
+	pkgdesc='The GNU Compiler Collection - C and C++ frontends'
+	groups=('base-devel')
+	depends=(
+		"gcc-libs=$pkgver-$pkgrel"
+		'binutils>=2.28'
+		'glibc'
+		'gmp'
+		'isl'
+		'libmpc'
+		'mpfr'
+		'zlib'
+	)
+	provides=('gcc-multilib')
+	replaces=('gcc-multilib')
+
+	# Change directory to source directory
+	cd $pkgbase-${pkgver//+/-}
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install the libstdc++ man pages
+	make DESTDIR=$pkgdir -C $CHOST/libstdc++-v3/doc doc-install-man
+
+	# Install POSIX conformance launcher scripts for c89 and c99
+	install -Dm755 $srcdir/c89 $pkgdir/usr/bin/c89
+	install -Dm755 $srcdir/c99 $pkgdir/usr/bin/c99
+
+	# Install additional symlinks to gcc
+	ln -s gcc $pkgdir/usr/bin/cc
+
+	# Set BFD plugins
+	mkdir -p $pkgdir/usr/lib/bfd-plugins
+	ln -s /usr/lib/gcc/$CHOST/${pkgver%%+*}/liblto_plugin.so \
+	$pkgdir/usr/lib/bfd-plugins/liblto_plugin.so
+
+	# Set auto loadable modules for GDB
+	mkdir -p $pkgdir/usr/share/gdb/auto-load/usr/lib/
+	mv $pkgdir/usr/lib/libstdc++.so.6.*-gdb.py $pkgdir/usr/share/gdb/auto-load/usr/lib
+
+	# Install Runtime Library Exception
+	install -Dm644 COPYING.RUNTIME $pkgdir/usr/share/licenses/gcc/RUNTIME.LIBRARY.EXCEPTION
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'gcc-libs' package
+	mkdir -p $srcdir/gcc-libs/usr/{lib,share/info}
+	mv usr/lib/libasan.so* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libatomic* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libcilkrts* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libgcc_s* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libgomp* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libitm* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/liblsan.so* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libmpx* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libmpxwrappers* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libquadmath* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libsanitizer* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libssp* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libstdc++* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libtsan* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libubsan* $srcdir/gcc-libs/usr/lib || true
+	mv usr/share/info/libgomp* $srcdir/gcc-libs/usr/share/info || true
+	mv usr/share/info/libitm* $srcdir/gcc-libs/usr/share/info || true
+	mv usr/share/info/libquadmath* $srcdir/gcc-libs/usr/share/info || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Gcc-libs                                                               #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_gcc-libs() {
+	pkgdesc='Runtime libraries shipped by GCC'
+	groups=('base')
+	depends=('glibc>=2.27')
+	provides=(
+		'gcc-libs-multilib'
+		'libasan.so'
+		'liblsan.so'
+		'libtsan.so'
+		'libubsan.so'
+	)
+	replaces=('gcc-libs-multilib')
+
+	# Copy files
+	mv $srcdir/gcc-libs/* $pkgdir
+
+	# Install Runtime Library Exception
+	install -Dm644 $pkgbase-${pkgver//+/-}/COPYING.RUNTIME \
+	$pkgdir/usr/share/licenses/gcc-libs/RUNTIME.LIBRARY.EXCEPTION
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
