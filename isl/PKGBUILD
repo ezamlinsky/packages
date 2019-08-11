@@ -1,0 +1,141 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('isl')
+pkgver=0.21
+pkgrel=1
+pkgdesc='Library for manipulating sets and relations of integer points bounded by linear constraints'
+url='http://isl.gforge.inria.fr/'
+license=('MIT')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	#'clang'
+	'glibc'
+	'gmp'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+conflicts=(
+	'isl-git'
+	'isl14'
+	'isl15'
+	'isl16'
+	'isl17'
+	'isl19'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=("http://isl.gforge.inria.fr/isl-$pkgver.tar.gz")
+sha256sums=('6d670e6b90ef220c80f79e538aa512e9eda77214058d668c77931143dc9374a2')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run automatic configure script
+	autoreconf -fi
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--with-int=gmp'
+
+	# 'gmp' related options
+		'--with-gmp=system'
+		#'--with-gmp=build'
+
+	# 'clang' related options
+		#'--with-clang=system'
+		'--with-clang=no'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install init script
+	mkdir -p $pkgdir/usr/share/gdb/auto-load/usr/lib/
+	mv $pkgdir/usr/lib/libisl.so.*-gdb.py $pkgdir/usr/share/gdb/auto-load/usr/lib/
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/isl/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
