@@ -105,7 +105,7 @@ depends=(
 	#'openh264'
 	'openjpeg2'
 	'openssl'
-	#'opus'
+	'opus'
 	#'rockchip-mpp'
 	#'rubberband'
 	#'sdl2'
@@ -504,8 +504,8 @@ build() {
 		#'--disable-openssl'
 
 	# 'opus' related options
-		#'--enable-libopus'
-		'--disable-libopus'
+		'--enable-libopus'
+		#'--disable-libopus'
 
 	# 'rockchip-mpp & libdrm' related options
 		#'--enable-rkmpp'
