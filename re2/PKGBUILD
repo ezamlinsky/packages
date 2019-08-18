@@ -18,7 +18,6 @@ pkgdesc='Fast, safe, thread-friendly regular expression engine'
 url='https://github.com/google/re2'
 license=('BSD')
 arch=('x86_64')
-#groups=()
 
 #==============================================================================#
 #       Package dependencies                                                   #
@@ -91,6 +90,13 @@ package() {
 
 	# Install license file
 	install -Dm644 ../LICENSE $pkgdir/usr/share/licenses/re2/LICENSE
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Install additional links
+	ln -s libre2.so usr/lib/libre2.so.0
+	ln -s libre2.so usr/lib/libre2.so.0.0.0
 }
 
 ################################################################################
