@@ -10,12 +10,11 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgname=('re2')
-_re2ver=2019-08-01
-pkgver=${_re2ver//-}
+pkgname=('snappy')
+pkgver=1.1.7
 pkgrel=1
-pkgdesc='Fast, safe, thread-friendly regular expression engine'
-url='https://github.com/google/re2'
+pkgdesc='A fast compressor/decompressor library'
+url='https://google.github.io/snappy/'
 license=('BSD')
 arch=('x86_64')
 
@@ -26,12 +25,23 @@ depends=(
 	'gcc-libs'
 	'glibc'
 )
+makedepends=(
+	'clang'
+	'cmake'
+)
+checkdepends=('zlib')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("re2-$pkgver.tar.gz::https://github.com/google/re2/archive/${_re2ver}.tar.gz")
-sha256sums=('38bc0426ee15b5ed67957017fd18201965df0721327be13f60496f2b356e3e01')
+source=(
+	"https://github.com/google/snappy/archive/$pkgver.tar.gz"
+	'snappy.pc'
+)
+md5sums=(
+	'ee9086291c9ae8deb4dac5e0b85bf54a'
+	'4b491e29a8142fedd11472306f5c1192'
+)
 
 #==============================================================================#
 #       Package building sequence                                              #
@@ -39,7 +49,7 @@ sha256sums=('38bc0426ee15b5ed67957017fd18201965df0721327be13f60496f2b356e3e01')
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$_re2ver
+	cd $pkgname-$pkgver
 
 	# Default configure options
 	config_opts=(
@@ -50,9 +60,7 @@ build() {
 		'-DCMAKE_INSTALL_LIBDIR=lib'
 		'-DCMAKE_BUILD_TYPE=Release'
 		'-DBUILD_SHARED_LIBS=ON'
-		'-DBUILD_TESTING=ON'
-		'-DRE2_BUILD_TESTING=ON'
-		'-DUSEPCRE=OFF'
+		'-DSNAPPY_BUILD_TESTS:BOOL=ON'
 	)
 
 	# Create build directory
@@ -71,7 +79,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgname-$_re2ver/build
+	cd $pkgname-$pkgver/build
 
 	# Run internal checks
 	make test
@@ -83,20 +91,19 @@ check() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$_re2ver/build
+	cd $pkgname-$pkgver/build
 
 	# Install files
 	make DESTDIR=$pkgdir install
 
 	# Install license file
-	install -Dm644 ../LICENSE $pkgdir/usr/share/licenses/re2/LICENSE
+	install -Dm644 ../COPYING $pkgdir/usr/share/licenses/snappy/LICENSE
 
 	# Change directory to target directory
 	cd $pkgdir
 
-	# Install additional links
-	ln -s libre2.so usr/lib/libre2.so.0
-	ln -s libre2.so usr/lib/libre2.so.0.0.0
+	# Install missing 'snappy.pc' file
+	install -Dm644 $srcdir/snappy.pc $pkgdir/usr/lib/pkgconfig/snappy.pc
 }
 
 ################################################################################
