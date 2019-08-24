@@ -27,6 +27,7 @@ depends=(
 	#'gd'
 	#'libselinux'
 	'linux-api-headers>=4.10'
+	#'nss'
 	'tzdata'
 )
 makedepends=(
@@ -103,16 +104,19 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-werror'
-		'--disable-multilib'
+		'--disable-multi-arch'
 		'--enable-stackguard-randomization'
-		'--enable-stack-protector=strong'
+		#'--enable-stack-protector=strong'
 		'--enable-lock-elision=yes'
 		'--enable-tunables=yes'
 		'--enable-add-ons'
 		'--enable-bind-now'
 		'--enable-static-pie'
 		'--enable-mathvec'
+		'--enable-crypt'
 		'--enable-cet'
+		'--enable-nscd'
+		'--enable-build-nscd'
 		'--with-headers=/usr/include'
 		'--with-bugurl=https://bugs.archlinux.org'
 
@@ -123,6 +127,11 @@ build() {
 	# 'libselinux' related options
 		#'--with-selinux'
 		'--without-selinux'
+
+	# 'nss' related options
+		#'--enable-nss-crypt'
+		'--disable-nss-crypt'
+		#'--enable-static-nss'
 	)
 
 	# Change directory to build directory
