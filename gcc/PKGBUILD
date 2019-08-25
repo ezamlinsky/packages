@@ -102,10 +102,11 @@ build() {
 		'--disable-static'
 		'--disable-werror'
 		'--disable-multilib'
+		'--disable-multiarch'
 		'--disable-bootstrap'
 		'--disable-debug'
-		'--disable-libstdcxx-pch'
 		'--disable-libunwind-exceptions'
+		'--disable-vtable-verify'
 		'--enable-cet=auto'
 		'--enable-ld=yes'
 		'--enable-gold=yes'
@@ -116,15 +117,17 @@ build() {
 		'--enable-symvers=gnu'
 		'--enable-clocale=gnu'
 		'--enable-checking=release'
+		'--enable-coverage=noopt'
 		'--enable-plugin'
 		'--enable-lto'
-		'--enable-secureplt'
+		'--enable-nls'
 		'--enable-multibyte'
 		'--enable-host-shared'
 		'--enable-linux-futex'
 		'--enable-tls'
 		'--enable-libssp'
 		'--enable-libmpx'
+		'--enable-libquadmath'
 		'--enable-install-libiberty'
 		'--enable-linker-build-id'
 		'--enable-default-pie'
@@ -133,15 +136,44 @@ build() {
 		'--enable-gnu-unique-object'
 		'--enable-initfini-array'
 		'--enable-__cxa_atexit'
+		'--enable-c99'
+		'--enable-cstdio=stdio'
+		'--enable-clocale=auto'
+		'--enable-long-long'
+		'--enable-wchar_t'
+		'--enable-extern-template'
+		'--disable-concept-checks'
+		'--disable-fully-dynamic-string'
+		'--disable-libstdcxx-pch'
+		'--disable-libstdcxx-debug'
+		'--enable-libstdcxx-verbose'
+		'--enable-libstdcxx-visibility'
+		'--enable-libstdcxx-dual-abi'
+		'--enable-libstdcxx-threads'
+		'--enable-libstdcxx-filesystem-ts'
+		'--enable-libstdcxx-allocator=auto'
+		'--with-libstdcxx-lock-policy=auto'
 		'--with-pic'
 		'--with-demangler-in-ld'
 		'--with-linker-hash-style=gnu'
 		'--with-diagnostics-color=auto'
 		'--with-bugurl=https://bugs.archlinux.org'
 
+	# 'gmp' related options
+		'--with-gmp'
+		#'--without-gmp'
+
 	# 'isl' related options
 		'--with-isl'
 		#'--without-isl'
+
+	# 'mpc' related options
+		'--with-mpc'
+		#'--without-mpc'
+
+	# 'mpfr' related options
+		'--with-mpfr'
+		#'--without-mpfr'
 
 	# 'zlib' related options
 		'--with-system-zlib'
@@ -230,13 +262,13 @@ package_gcc() {
 
 	# Split 'gcc-libs' package
 	mkdir -p $srcdir/gcc-libs/usr/{lib,share/info}
-	mv usr/lib/libasan.so* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/libasan* $srcdir/gcc-libs/usr/lib || true
 	mv usr/lib/libatomic* $srcdir/gcc-libs/usr/lib || true
 	mv usr/lib/libcilkrts* $srcdir/gcc-libs/usr/lib || true
 	mv usr/lib/libgcc_s* $srcdir/gcc-libs/usr/lib || true
 	mv usr/lib/libgomp* $srcdir/gcc-libs/usr/lib || true
 	mv usr/lib/libitm* $srcdir/gcc-libs/usr/lib || true
-	mv usr/lib/liblsan.so* $srcdir/gcc-libs/usr/lib || true
+	mv usr/lib/liblsan* $srcdir/gcc-libs/usr/lib || true
 	mv usr/lib/libmpx* $srcdir/gcc-libs/usr/lib || true
 	mv usr/lib/libmpxwrappers* $srcdir/gcc-libs/usr/lib || true
 	mv usr/lib/libquadmath* $srcdir/gcc-libs/usr/lib || true
