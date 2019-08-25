@@ -23,9 +23,10 @@ groups=('base')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'readline>=7.0'
-	'ncurses'
+	#'ncurses'
 )
 optdepends=('bash-completion: for tab completion')
 
