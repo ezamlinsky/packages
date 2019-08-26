@@ -23,6 +23,7 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'perl'
 	#'lksctp-tools'
