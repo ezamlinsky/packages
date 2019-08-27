@@ -124,7 +124,10 @@ check() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_zlib() {
 	pkgdesc='Compression library implementing the deflate compression method found in gzip and PKZIP'
-	depends=('glibc')
+	depends=(
+		'gcc-libs'
+		'glibc'
+	)
 
 	# Change directory to source directory
 	cd $pkgbase-$pkgver
@@ -142,6 +145,7 @@ package_zlib() {
 package_minizip() {
 	pkgdesc='Mini zip and unzip based on zlib'
 	depends=(
+		'gcc-libs'
 		'glibc'
 		'zlib'
 	)
