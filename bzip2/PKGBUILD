@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('bzip2')
-pkgver=1.0.7
+pkgver=1.0.8
 pkgrel=2
 pkgdesc='A high-quality data compression program'
 url='https://sourceware.org/bzip2/'
@@ -23,6 +23,7 @@ groups=('base')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'grep'
 	'less'
@@ -38,7 +39,7 @@ source=(
 	'bzip2-ldflags.patch'
 )
 sha256sums=(
-	'e768a87c5b1a79511499beb41500bcc4caf203726fff46a6f5f9ad27fe08ab2b'
+	'ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269'
 	'SKIP'
 	'fd7b402b94d42a642bd13430bf489077017de3dbbef9fb4656ccb6fb3c751504'
 )
@@ -50,9 +51,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -Np1 -i $srcdir/bzip2-ldflags.patch
 
 	# Set correct CFLAGS
 	sed -e "s/-O2/$CFLAGS/" -i Makefile
