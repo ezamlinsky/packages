@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase=('glib2')
 pkgname=('glib2' 'glib2-docs')
-pkgver=2.60.4
+pkgver=2.60.6
 pkgrel=1
 url='https://wiki.gnome.org/Projects/GLib'
 arch=('x86_64')
@@ -129,6 +129,7 @@ package_glib2() {
 	depends=(
 		'attr'
 		#'gamin'
+		'gcc-libs'
 		'glibc'
 		'libelf'
 		'libffi'
