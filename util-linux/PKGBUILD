@@ -194,6 +194,7 @@ package_util-linux() {
 	depends=(
 #		'audit'
 		'coreutils'
+		'gcc-libs'
 		'glibc'
 		'libcap-ng'
 #		'libselinux'
@@ -280,7 +281,10 @@ package_util-linux() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_libutil-linux() {
 	pkgdesc='Util-linux runtime libraries'
-	depends=('glibc')
+	depends=(
+		'gcc-libs'
+		'glibc'
+	)
 	provides=(
 		'glibc'
 		'libblkid.so'
