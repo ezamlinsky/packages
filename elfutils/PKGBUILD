@@ -143,6 +143,7 @@ package_libelf() {
 	pkgdesc='Libraries to handle ELF object files and DWARF debugging information'
 	depends=(
 		'bzip2'
+		'gcc-libs'
 		'glibc'
 		'xz'
 		'zlib'
