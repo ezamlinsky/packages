@@ -13,7 +13,7 @@
 pkgbase='systemd'
 pkgname=('systemd' 'systemd-libs' 'systemd-resolvconf' 'systemd-sysvcompat')
 pkgver=242.84
-pkgrel=1
+pkgrel=2
 url='https://www.github.com/systemd/systemd'
 arch=('x86_64')
 
@@ -431,6 +431,7 @@ package_systemd() {
 		'cryptsetup'
 		'curl'
 		'dbus'
+		'gcc-libs'
 		'glibc'
 		#'gnutls'
 		'hwids'
@@ -609,6 +610,7 @@ package_systemd-libs() {
 	pkgdesc='Systemd client libraries'
 	license=('LGPL2.1')
 	depends=(
+		'gcc-libs'
 		'glibc'
 		'libgcrypt'
 		'lz4'
