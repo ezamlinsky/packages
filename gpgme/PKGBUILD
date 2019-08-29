@@ -165,6 +165,7 @@ package_qgpgme() {
 package_python-gpgme() {
 	pkgdesc='Python bindings for GPGme'
 	depends=(
+		'gcc-libs'
 		'glibc'
 		'gpgme'
 		'python'
