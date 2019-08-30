@@ -28,6 +28,7 @@ depends=(
 	#'audit'
 	'bash'
 	'cracklib'
+	'gcc-libs'
 	'glibc'
 	#'libselinux'
 	'pam'
