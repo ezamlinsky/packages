@@ -22,8 +22,10 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'pam'
+	'sh'
 )
 makedepends=('check')
 
@@ -94,8 +96,6 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--enable-vlock'
-		'--enable-libkeymap'
 		'--enable-optional-progs'
 		'--disable-tests'
 	)
