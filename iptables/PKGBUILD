@@ -23,6 +23,7 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'libmnl'
 	#'libnetfilter_conntrack'
@@ -145,6 +146,10 @@ build() {
 		#'--enable-connlabel'
 		'--disable-connlabel'
 	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-stack-protector'
+	export CXXFLAGS+="${CFLAGS}"
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
