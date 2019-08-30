@@ -27,6 +27,7 @@ depends=(
 	'bash'
 	'device-mapper'
 	#'gcrypt'
+	'gcc-libs'
 	'glibc'
 	'json-c'
 	#'libpwquality'
