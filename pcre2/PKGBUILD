@@ -24,6 +24,7 @@ arch=('x86_64')
 depends=(
 	'bash'
 	'bzip2'
+	'gcc-libs'
 	'glibc'
 	#'libedit'
 	'readline'
