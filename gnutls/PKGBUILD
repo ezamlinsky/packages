@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('gnutls')
-pkgver=3.6.8
-pkgrel=2
+pkgver=3.6.9
+pkgrel=1
 pkgdesc='A library which provides a secure layer over a reliable transport layer'
 url='https://www.gnutls.org/'
 license=('GPL3' 'LGPL2.1')
@@ -45,7 +45,7 @@ source=(
 	"https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/gnutls-$pkgver.tar.xz.sig"
 )
 sha256sums=(
-	'aa81944e5635de981171772857e72be231a7e0f559ae0292d2737de475383e83'
+	'4331fca55817ecdd74450b908a6c29b4f05bb24dd13144c6284aa34d872e1fcb'
 	'SKIP'
 )
 
