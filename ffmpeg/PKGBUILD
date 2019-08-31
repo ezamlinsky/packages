@@ -25,7 +25,7 @@ arch=('x86_64')
 depends=(
 	'alsa-lib'
 	#'aom'
-	'bzip2'
+	#'bzip2'
 	'cairo'
 	#'celt'
 	#'chromaprint'
@@ -87,7 +87,7 @@ depends=(
 	'libvorbis.so'
 	'libvorbisenc.so'
 	'libvpx.so'
-	#'libwebp'
+	'libwebp'
 	'libx11'
 	'libx264.so'
 	'libx265.so'
@@ -206,8 +206,8 @@ build() {
 		#'--disable-alsa'
 
 	# 'bzip2' related options
-		'--enable-bzlib'
-		#'--disable-bzlib'
+		#'--enable-bzlib'
+		'--disable-bzlib'
 
 	# 'celt' related options
 		#'--enable-libcelt'
@@ -432,8 +432,8 @@ build() {
 		#'--disable-libvpx'
 
 	# 'libwebp' related options
-		#'--enable-libwebp'
-		'--disable-libwebp'
+		'--enable-libwebp'
+		#'--disable-libwebp'
 
 	# 'libx11 & libxv & libxext' related options
 		'--enable-xlib'
@@ -597,6 +597,10 @@ build() {
 		#'--enable-libzvbi'
 		'--disable-libzvbi'
 	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-stack-protector'
+	export CXXFLAGS+="${CFLAGS}"
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
