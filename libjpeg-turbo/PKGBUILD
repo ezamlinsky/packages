@@ -21,7 +21,10 @@ arch=('x86_64')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=('glibc')
+depends=(
+	'gcc-libs'
+	'glibc'
+)
 makedepends=(
 	'cmake'
 	'nasm'
@@ -68,7 +71,7 @@ build() {
 		'-DWITH_12BIT=OFF'
 		'-DWITH_ARITH_DEC=ON'
 		'-DWITH_ARITH_ENC=ON'
-		'-DWITH_JAVA=ON'
+		'-DWITH_JAVA=OFF'
 		'-DWITH_JPEG8=ON'
 		'-DWITH_MEM_SRCDST=ON'
 		'-DWITH_SIMD=ON'
