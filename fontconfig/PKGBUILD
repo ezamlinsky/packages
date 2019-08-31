@@ -23,10 +23,11 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'expat'
 	'freetype2'
+	'gcc-libs'
 	'glibc'
 	'libutil-linux'
-	'expat'
 	#'libxml2'
 )
 makedepends=(
