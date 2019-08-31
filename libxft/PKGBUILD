@@ -24,6 +24,7 @@ arch=('x86_64')
 depends=(
 	'fontconfig'
 	'freetype2'
+	'gcc-libs'
 	'glibc'
 	'libx11'
 	'libxrender'
