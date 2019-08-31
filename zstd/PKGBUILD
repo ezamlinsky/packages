@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='zstd'
-pkgver=1.4.0
+pkgver=1.4.3
 pkgrel=1
 pkgdesc='Zstandard - Fast real-time compression algorithm'
 url='https://www.zstd.net/'
@@ -34,7 +34,7 @@ makedepends=('gtest')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("$pkgname-$pkgver.tar.gz::https://github.com/facebook/zstd/archive/v${pkgver}.tar.gz")
-sha256sums=('63be339137d2b683c6d19a9e34f4fb684790e864fee13c7dd40e197a64c705c1')
+sha256sums=('5eda3502ecc285c3c92ee0cc8cd002234dee39d539b3f692997a0e80de1d33de')
 
 #==============================================================================#
 #       Package building sequence                                              #
