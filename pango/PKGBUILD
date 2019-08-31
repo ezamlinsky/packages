@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('pango')
-pkgver=1.43.0
-pkgrel=2
+pkgver=1.44.5
+pkgrel=1
 epoch=1
 pkgdesc='A library for layout and rendering of text'
 url='https://www.pango.org/'
@@ -27,6 +27,7 @@ depends=(
 	'fontconfig'
 	'freetype2'
 	'fribidi'
+	'gcc-libs'
 	'glib2'
 	'glibc'
 	'harfbuzz'
@@ -49,21 +50,9 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=26f1135f374f3ad5eb963dcdf016542fbbda361b  # tags/1.43.0^0
+_commit=90530067158560a3ce0e2fb0a8b5020c735d7239  # tags/1.44.5^0
 source=("git+https://gitlab.gnome.org/GNOME/pango.git#commit=$_commit")
 sha256sums=('SKIP')
-
-#==============================================================================#
-#       Package preparation sequence                                           #
-#==============================================================================#
-prepare() {
-
-	# Change directory to source directory
-	cd $pkgname
-
-	# Fix .pc
-	git cherry-pick -n d0cb6be7431d1a3c711bd45bcf05b34601604037
-}
 
 #==============================================================================#
 #       Package building sequence                                              #
