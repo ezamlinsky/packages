@@ -25,6 +25,7 @@ groups=('base')
 depends=(
 	'acl'
 	'attr'
+	'gcc-libs'
 	'glibc'
 	'gmp'
 	'libcap'
