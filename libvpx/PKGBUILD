@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libvpx')
-pkgver=1.8.0
+pkgver=1.8.1
 pkgrel=1
 pkgdesc='VP8 and VP9 codec'
 url='https://www.webmproject.org/'
@@ -36,7 +36,7 @@ provides=('libvpx.so')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://codeload.github.com/webmproject/libvpx/zip/v${pkgver}")
-sha256sums=('e8577a6acf5a168b13fc6f64d829e8ea86e917bcddf75f452bd46c69d2a6445f')
+sha256sums=('SKIP')
 
 #==============================================================================#
 #       Package building sequence                                              #
@@ -75,7 +75,7 @@ build() {
 	)
 
 	# Change compile flags
-	export CFLAGS+=' -fno-lto'
+	export CFLAGS+=' -fno-stack-protector -fno-lto'
 	export CXXFLAGS+="${CFLAGS}"
 
 	# Run package configuration script
