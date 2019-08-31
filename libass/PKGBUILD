@@ -22,11 +22,12 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'libfreetype.so'
-	'fribidi'
-	'glibc'
 	'fontconfig'
+	'fribidi'
+	'gcc-libs'
+	'glibc'
 	'harfbuzz'
+	'libfreetype.so'
 )
 makedepends=('nasm')
 
@@ -64,13 +65,13 @@ build() {
 		'--disable-require-system-font-provider'
 		'--enable-asm'
 
-		# 'fontconfig' related options
-			'--enable-fontconfig'
-			#'--disable-fontconfig'
+	# 'fontconfig' related options
+		'--enable-fontconfig'
+		#'--disable-fontconfig'
 
-		# 'harfbuzz' related options
-			'--enable-harfbuzz'
-			#'--disable-harfbuzz'
+	# 'harfbuzz' related options
+		'--enable-harfbuzz'
+		#'--disable-harfbuzz'
 	)
 
 	# Run package configuration script
