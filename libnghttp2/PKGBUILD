@@ -21,7 +21,13 @@ arch=('x86_64')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=('glibc')
+depends=(
+	'gcc-libs'
+	'glibc'
+)
+makedepends=(
+	#'jemalloc'
+)
 
 #==============================================================================#
 #        Package relations                                                     #
@@ -74,9 +80,12 @@ build() {
 		'--enable-threads'
 		'--enable-lib-only'
 		'--with-libxml2'
-		'--with-jemalloc'
 		'--with-systemd'
 		'--with-boost=yes'
+
+	# 'jemalloc' related options
+		#'--with-jemalloc'
+		'--without-jemalloc'
 	)
 
 	# Run package configuration script
