@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('lcms2')
 pkgver=2.9
-pkgrel=1
+pkgrel=2
 pkgdesc='Small-footprint color management engine, version 2'
 url='http://www.littlecms.com'
 license=('MIT')
@@ -22,6 +22,7 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'libjpeg'
 	'libtiff'
