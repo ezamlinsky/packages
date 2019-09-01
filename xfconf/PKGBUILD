@@ -28,6 +28,7 @@ groups=('xfce4')
 depends=(
 	'dbus'
 	'dbus-glib'
+	'gcc-libs'
 	'glib2'
 	'glibc'
 	'libxfce4util'
