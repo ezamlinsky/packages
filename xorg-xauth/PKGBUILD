@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xorg-xauth')
-pkgver=1.0.10
-pkgrel=2
+pkgver=1.1
+pkgrel=1
 pkgdesc='X.Org authorization settings program'
 url='https://xorg.freedesktop.org/'
 license=('custom')
@@ -23,6 +23,7 @@ groups=('xorg' 'xorg-apps')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'libx11'
 	'libxau'
@@ -38,8 +39,8 @@ source=(
 	"https://xorg.freedesktop.org/releases/individual/app/xauth-$pkgver.tar.bz2"
 	"https://xorg.freedesktop.org/releases/individual/app/xauth-$pkgver.tar.bz2.sig"
 )
-sha256sums=(
-	'5afe42ce3cdf4f60520d1658d2b17face45c74050f39af45dccdc95e73fafc4d'
+sha512sums=(
+	'b6ecd59a853a491ef45bf8cfbff63bed36645f81cb79ae9d18458b57f7502bccf92f0d979d3337578518646f680ad379e67b1dac15a927cbb11372733e7a3a0c'
 	'SKIP'
 )
 
