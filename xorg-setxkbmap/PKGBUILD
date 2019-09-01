@@ -23,6 +23,7 @@ groups=('xorg' 'xorg-apps')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'libx11'
 	'libxkbfile'
