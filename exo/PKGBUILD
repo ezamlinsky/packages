@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('exo')
-pkgver=0.12.6
+pkgver=0.12.8
 pkgrel=1
 pkgdesc='Application library for Xfce'
 url='http://www.xfce.org/'
@@ -25,6 +25,7 @@ groups=('xfce4')
 depends=(
 	'atk'
 	'cairo'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
@@ -45,7 +46,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://archive.xfce.org/src/xfce/exo/${pkgver%.*}/exo-$pkgver.tar.bz2")
-sha256sums=('1417fffc593225d61ba57b050ae2ce66ef37615c9ec66944db32019761441003')
+sha256sums=('3400a2e64aa41ede25bedaca4909bde7ea4f8698d9598d1b80f02a40ac89fcde')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
