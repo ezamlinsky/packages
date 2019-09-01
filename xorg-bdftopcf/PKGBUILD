@@ -22,7 +22,10 @@ groups=('xorg' 'xorg-apps')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=('glibc')
+depends=(
+	'gcc-libs'
+	'glibc'
+)
 makedepends=(
 	'fontsproto'
 	'xorg-util-macros'
