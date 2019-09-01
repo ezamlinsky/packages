@@ -141,6 +141,7 @@ package_libcanberra() {
 	pkgdesc='A small and lightweight implementation of the XDG Sound Theme Specification'
 	depends=(
 		'alsa-lib'
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		'gtk2'
@@ -193,6 +194,7 @@ package_libcanberra-pulse() {
 	pkgdesc='PulseAudio plugin for libcanberra'
 	depends=(
 		"libcanberra=$pkgver-$pkgrel"
+		'gcc-libs'
 		'glibc'
 		'libpulse'
 	)
@@ -208,6 +210,7 @@ package_libcanberra-gstreamer() {
 	pkgdesc='GStreamer plugin for libcanberra'
 	depends=(
 		"libcanberra=$pkgver-$pkgrel"
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		'gstreamer'
