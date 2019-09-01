@@ -25,6 +25,7 @@ groups=('base' 'base-devel')
 depends=(
 	'acl'
 	'attr'
+	'gcc-libs'
 	'glibc'
 	#'libselinux'
 )
