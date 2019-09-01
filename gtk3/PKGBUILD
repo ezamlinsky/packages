@@ -125,6 +125,7 @@ package_gtk3() {
 		'fontconfig'
 		'freetype2'
 		'fribidi'
+		'gcc-libs'
 		'gdk-pixbuf2'
 		'glib2'
 		'glibc'
@@ -182,6 +183,7 @@ package_gtk3() {
 package_gtk-update-icon-cache() {
 	pkgdesc='GTK+ icon cache updater'
 	depends=(
+		'gcc-libs'
 		'gdk-pixbuf2'
 		'glib2'
 		'glibc'
