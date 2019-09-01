@@ -24,6 +24,7 @@ arch=('x86_64')
 depends=(
 	'atk'
 	'cairo'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
@@ -35,8 +36,8 @@ depends=(
 	'libx11'
 	'libxfce4util'
 	'pango'
-	'xfconf'
 	'startup-notification'
+	'xfconf'
 )
 makedepends=(
 	'gobject-introspection'
