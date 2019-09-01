@@ -26,6 +26,7 @@ depends=(
 	'archlinux-keyring'
 	'bash'
 	'curl'
+	'gcc-libs'
 	'glibc'
 	'gpgme'
 	'libarchive'
