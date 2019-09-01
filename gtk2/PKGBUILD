@@ -26,6 +26,7 @@ depends=(
 	'cairo'
 	'desktop-file-utils'
 	'fontconfig'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
@@ -172,8 +173,9 @@ package() {
 	# Add vendor's hooks
 	install -Dm644 $srcdir/gtk-query-immodules-2.0.hook usr/share/libalpm/hooks/gtk-query-immodules-2.0.hook
 
-	# Remove 'gtk-update-icon-cache' file
+	# Remove 'gtk-update-icon-cache' related files
 	rm usr/bin/gtk-update-icon-cache
+	rm usr/share/man/man1/gtk-update-icon-cache.1
 }
 
 ################################################################################
