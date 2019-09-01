@@ -22,12 +22,12 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'glibc'
 	'acl'
-#	'attr'
 	'bzip2'
 	'expat'
-	#'libxml2'
+	'gcc-libs'
+	'glibc'
+	#'libxml2'#
 	'lz4'
 	'lzo'
 	#'nettle'
