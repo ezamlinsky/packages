@@ -25,6 +25,7 @@ groups=('xorg-apps' 'xorg')
 depends=(
 	'bzip2'
 	'freetype2'
+	'gcc-libs'
 	'glibc'
 	'libfontenc'
 	'zlib'
