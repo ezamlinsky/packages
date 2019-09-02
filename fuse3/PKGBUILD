@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='fuse3'
 pkgname=('fuse3' 'fuse-common')
-pkgver=3.6.1
+pkgver=3.6.2
 pkgrel=1
 url='https://github.com/libfuse/libfuse'
 license=('GPL2')
@@ -36,7 +36,7 @@ source=(
 	'fuse.conf'
 )
 sha1sums=(
-	'ca1618e0312ab480a903654688516f4a3e5040a9'
+	'2bdef7a3f1f9e63fed87559c6e77d27e5f2c2e0c'
 	'SKIP'
 	'3b42e37a741d4651099225987dc40e7f02a716ad'
 )
@@ -77,6 +77,7 @@ build() {
 package_fuse3() {
 	pkgdesc='A library that makes it possible to implement a filesystem in a userspace program.'
 	depends=(
+		'gcc-libs'
 		'glibc'
 		'fuse-common'
 	)
@@ -108,8 +109,9 @@ package_fuse3() {
 package_fuse-common() {
 	pkgdesc='Common files for fuse2/3 packages'
 	depends=(
-		'glibc'
 		'fuse3'
+		'gcc-libs'
+		'glibc'
 	)
 	backup=('etc/fuse.conf')
 
