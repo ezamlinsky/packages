@@ -25,6 +25,7 @@ groups=('base')
 depends=(
 	'bash'
 	#'db'
+	'gcc-libs'
 	'gdbm'
 	'glibc'
 	'groff'
