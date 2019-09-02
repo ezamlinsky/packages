@@ -111,12 +111,12 @@ package_vte3() {
 		'gdk-pixbuf2'
 		'glib2'
 		'glibc'
+		'gnutls'
 		'gtk3'
 		'pango'
 		'pcre2'
 		'vte-common'
 		'zlib'
-		'gnutls'
 	)
 
 	# Change directory to source directory
