@@ -24,13 +24,14 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'bzip2'
 	'fontsproto'
+	'freetype2'
+	'gcc-libs'
 	'glibc'
 	'libfontenc'
 	'xproto'
 	'zlib'
-	'bzip2'
-	'freetype2'
 )
 makedepends=(
 	'xorg-util-macros'
