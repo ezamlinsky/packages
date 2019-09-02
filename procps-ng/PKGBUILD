@@ -23,6 +23,7 @@ groups=('base')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	#'libselinux'
 	'ncurses'
