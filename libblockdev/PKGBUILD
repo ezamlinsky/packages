@@ -25,6 +25,7 @@ depends=(
 	'cryptsetup'
 	#'device-mapper'
 	#'dmraid'
+	'gcc-libs'
 	'glib2'
 	'glibc'
 	'kmod'
