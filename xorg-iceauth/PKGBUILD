@@ -23,6 +23,7 @@ groups=('xorg-apps' 'xorg')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'libice'
 )
