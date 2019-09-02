@@ -28,6 +28,7 @@ depends=(
 	'dbus-glib'
 	'desktop-file-utils'
 	'exo'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
@@ -43,6 +44,7 @@ depends=(
 	'libxfce4util'
 	'pango'
 	'pcre'
+	'sh'
 	'xfce4-panel'
 	'xfconf'
 )
