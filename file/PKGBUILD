@@ -23,6 +23,7 @@ groups=('base' 'base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	#'libseccomp'
 	'zlib'
