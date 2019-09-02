@@ -30,6 +30,7 @@ depends=(
 	'desktop-file-utils'
 	'exo'
 	'garcon'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
