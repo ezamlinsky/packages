@@ -25,6 +25,7 @@ groups=('xfce4')
 depends=(
 	'cairo'
 	'dbus-glib'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
