@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('linux-firmware')
-pkgver=20190628.70e4394
+pkgver=20190815.07b925b
 pkgrel=1
 pkgdesc='Firmware files for Linux'
 url='http://git.kernel.org/?p=linux/kernel/git/firmware/linux-firmware.git;a=summary'
@@ -63,7 +63,7 @@ options=(!strip)
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=70e43940b05e8d6e0c5f15b5e2d67760f1581ece
+_commit=07b925b450bfb4cf3e141c612ec5b104658cd020
 source=("git+https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git#commit=${_commit}")
 md5sums=('SKIP')
 
@@ -77,9 +77,6 @@ package() {
 
 	# Install files
 	make FIRMWAREDIR=/usr/lib/firmware DESTDIR=$pkgdir install
-
-	# Remove non required files
-	rm $pkgdir/usr/lib/firmware/{Makefile,README,configure,GPL-3}
 
 	# Trigger a microcode reload for configurations not using early updates
 	mkdir -p $pkgdir/usr/lib/tmpfiles.d
