@@ -50,6 +50,10 @@ prepare() {
 	# Apply patches
 	patch -p1 -i $srcdir/zipnote.patch
 
+	# Change compile flags
+	export CFLAGS+=' -fno-stack-protector'
+	export CXXFLAGS+="${CFLAGS}"
+
 	# Set correct CFLAGS
 	sed -e "s/CFLAGS_NOOPT =/CFLAGS_NOOPT = $CFLAGS/" -i unix/Makefile
 
