@@ -24,6 +24,7 @@ arch=('x86_64')
 depends=(
 	'atk'
 	'cairo'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
