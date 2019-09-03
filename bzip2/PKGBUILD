@@ -52,6 +52,10 @@ prepare() {
 	# Change directory to source directory
 	cd $pkgname-$pkgver
 
+	# Change compile flags
+	export CFLAGS+=' -fno-stack-protector'
+	export CXXFLAGS+="${CFLAGS}"
+
 	# Set correct CFLAGS
 	sed -e "s/-O2/$CFLAGS/" -i Makefile
 	sed -e "s/-O2/$CFLAGS/" -i Makefile-libbz2_so
