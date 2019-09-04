@@ -29,6 +29,7 @@ depends=(
 	'desktop-file-utils'
 	'enchant'
 	'expat'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
