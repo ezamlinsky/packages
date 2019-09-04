@@ -28,6 +28,7 @@ depends=(
 	'dbus-glib'
 	'exo'
 	'garcon'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
