@@ -219,6 +219,7 @@ package_wxgtk3() {
 		#'gtk2'
 		'gtk3'
 		'libglvnd'
+		'libjpeg-turbo'
 		#'libmspack'
 		'libnotify'
 		'libpng'
