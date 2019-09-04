@@ -350,6 +350,7 @@ package_xorg-server() {
 	pkgdesc='Xorg X server'
 	depends=(
 		'dbus'
+		'gcc-libs'
 		'glibc'
 		'libdrm'
 		'libepoxy'
@@ -476,6 +477,7 @@ package_xorg-server-common() {
 package_xorg-server-xephyr() {
 	pkgdesc='A nested X server that runs as an X application'
 	depends=(
+		'gcc-libs'
 		'glibc'
 		'libepoxy'
 		#'libgcrypt'
@@ -513,7 +515,9 @@ package_xorg-server-xephyr() {
 package_xorg-server-xdmx() {
 	pkgdesc='Distributed Multihead X Server and utilities'
 	depends=(
+		'gcc-libs'
 		'glibc'
+		'libdmx'
 		#'libgcrypt'
 		#'libmd'
 		#'libunwind'
@@ -548,6 +552,7 @@ package_xorg-server-xdmx() {
 package_xorg-server-xvfb() {
 	pkgdesc='Virtual framebuffer X server'
 	depends=(
+		'gcc-libs'
 		'glibc'
 		#'libgcrypt'
 		'libgl'
@@ -584,6 +589,7 @@ package_xorg-server-xvfb() {
 package_xorg-server-xnest() {
 	pkgdesc='A nested X server that runs as an X application'
 	depends=(
+		'gcc-libs'
 		'glibc'
 		#'libgcrypt'
 		#'libmd'
@@ -613,6 +619,7 @@ package_xorg-server-xnest() {
 package_xorg-server-xwayland() {
 	pkgdesc='Run X clients under wayland'
 	depends=(
+		'gcc-libs'
 		'glibc'
 		'libdrm'
 		'libepoxy'
