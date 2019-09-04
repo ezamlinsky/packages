@@ -26,6 +26,7 @@ depends=(
 	'cairo'
 	#'ctpl'
 	'enchant'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'geany'
 	'glib2'
