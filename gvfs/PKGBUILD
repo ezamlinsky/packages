@@ -208,6 +208,7 @@ build() {
 package_gvfs() {
 	pkgdesc='Virtual filesystem implementation for GIO'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		#'avahi'
@@ -219,6 +220,7 @@ package_gvfs() {
 		'libgcrypt'
 		'libgudev'
 		'libsecret'
+		'libsoup'
 		'libxml2'
 		'polkit'
 		'systemd-libs'
@@ -354,6 +356,7 @@ package_gvfs() {
 package_gvfs-afc() {
 	pkgdesc='Virtual filesystem implementation for GIO (AFC backend; Apple mobile devices)'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		"gvfs=$pkgver"
@@ -371,6 +374,7 @@ package_gvfs-afc() {
 package_gvfs-goa() {
 	pkgdesc='Virtual filesystem implementation for GIO (Gnome Online Accounts backend; cloud storage)'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		"gvfs=$pkgver"
@@ -387,6 +391,7 @@ package_gvfs-goa() {
 package_gvfs-google() {
 	pkgdesc='Virtual filesystem implementation for GIO (Google Drive backend)'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		"gvfs-goa=$pkgver"
@@ -404,6 +409,7 @@ package_gvfs-google() {
 package_gvfs-gphoto2() {
 	pkgdesc='Virtual filesystem implementation for GIO (gphoto2 backend; PTP camera, MTP media player)'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		"gvfs=$pkgver"
@@ -421,6 +427,7 @@ package_gvfs-gphoto2() {
 package_gvfs-mtp() {
 	pkgdesc='Virtual filesystem implementation for GIO (MTP backend; Android, media player)'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		"gvfs=$pkgver"
@@ -439,6 +446,7 @@ package_gvfs-mtp() {
 package_gvfs-nfs() {
 	pkgdesc='Virtual filesystem implementation for GIO (NFS backend)'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		"gvfs=$pkgver"
@@ -456,6 +464,7 @@ package_gvfs-nfs() {
 package_gvfs-smb() {
 	pkgdesc='Virtual filesystem implementation for GIO (SMB/CIFS backend; Windows client)'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		"gvfs=$pkgver"
