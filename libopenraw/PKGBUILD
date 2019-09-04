@@ -26,6 +26,7 @@ depends=(
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
+	'libjpeg-turbo'
 )
 makedepends=(
 	'boost'
