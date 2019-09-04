@@ -30,6 +30,7 @@ depends=(
 	'exo'
 	'fontconfig'
 	'garcon'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
