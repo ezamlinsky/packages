@@ -131,6 +131,7 @@ package_transmission-cli() {
 	depends=(
 		'curl'
 		#'cyassl'
+		'gcc-libs'
 		'glibc'
 		'libevent'
 		'openssl'
@@ -180,6 +181,7 @@ package_transmission-gtk() {
 	pkgdesc='Fast, easy, and free BitTorrent client (GTK+ GUI)'
 	depends=(
 		'curl'
+		'gcc-libs'
 		#'cyassl'
 		'desktop-file-utils'
 		'gdk-pixbuf2'
