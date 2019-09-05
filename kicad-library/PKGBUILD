@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='kicad-library'
 pkgname=('kicad-library' 'kicad-library-3d')
-pkgver=5.1.2
+pkgver=5.1.4
 pkgrel=1
 url='https://kicad.github.io/'
 license=('GPL')
@@ -35,9 +35,9 @@ source=(
 	"kicad-3d.$pkgver.tgz::https://github.com/KiCad/kicad-packages3D/archive/$pkgver.tar.gz"
 )
 md5sums=(
-	'63d41e72a4ca16ecc534f174565ca8e2'
-	'beb7a445253bf769b97fb46b857e9f37'
-	'2c9ecc770ff3e79c191f0a3935c23da8'
+	'92b64f0a88782b95be887378289002b4'
+	'8db001204ae43e28648d3acea4f472de'
+	'e12f72c4a5c65cb0bb6a3c242e2ed482'
 )
 
 #==============================================================================#
@@ -94,13 +94,13 @@ package_kicad-library() {
 	depends=()
 
 	# Change directory to 'kicad-symbols'
-	cd $srcdir/kicad-symbols-$pkgver
+	cd $srcdir/kicad-symbols-$pkgver/build
 
 	# Install files
 	make DESTDIR=$pkgdir install
 
 	# Change directory to 'kicad-footprints'
-	cd $srcdir/kicad-footprints-$pkgver
+	cd $srcdir/kicad-footprints-$pkgver/build
 
 	# Install files
 	make DESTDIR=$pkgdir install
@@ -114,7 +114,7 @@ package_kicad-library-3d() {
 	depends=()
 
 	# Change directory to 'kicad-packages3D'
-	cd $srcdir/kicad-packages3D-$pkgver
+	cd $srcdir/kicad-packages3D-$pkgver/build
 
 	# Install files
 	make DESTDIR=$pkgdir install
