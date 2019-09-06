@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('nspr')
-pkgver=4.21
+pkgver=4.22
 pkgrel=1
 pkgdesc='Netscape Portable Runtime'
 url='https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR'
@@ -31,7 +31,7 @@ makedepends=('zip')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$pkgver/src/nspr-$pkgver.tar.gz")
-sha256sums=('15ea32c7b100217b6e3193bc03e77f485d9bf7504051443ba9ce86d1c17c6b5a')
+sha256sums=('c9e4b6cc24856ec93202fe13704b38b38ba219f0f2aeac93090ce2b6c696d430')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
