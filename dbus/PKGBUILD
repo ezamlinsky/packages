@@ -13,7 +13,7 @@
 pkgbase='dbus'
 pkgname=('dbus' 'dbus-docs')
 pkgver=1.12.16
-pkgrel=1
+pkgrel=2
 url='https://wiki.freedesktop.org/www/Software/dbus/'
 license=('GPL custom')
 arch=('x86_64')
