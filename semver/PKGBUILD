@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('semver')
 pkgver=6.3.0
-pkgrel=1
+pkgrel=2
 pkgdesc='The semantic version parser used by npm'
 url='https://github.com/npm/node-semver'
 license=('ISC')
