@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('node-gyp')
 pkgver=5.0.2
-pkgrel=1
+pkgrel=2
 pkgdesc='Node.js native addon build tool'
 url='https://github.com/nodejs/node-gyp'
 license=('MIT')
