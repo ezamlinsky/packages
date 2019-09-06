@@ -106,11 +106,7 @@ build() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_boost() {
 	pkgdesc='Free peer-reviewed portable C++ source libraries - development headers'
-	depends=(
-		"boost-libs=$pkgver"
-		#'python'
-		'python2'
-	)
+	depends=("boost-libs=$pkgver")
 
 	# Change directory to source directory
 	cd ${pkgbase}_${pkgver//./_}
