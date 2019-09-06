@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('gtk-engines')
-pkgver=2.20.2
+pkgver=2.21.0
 pkgrel=4
 pkgdesc='Theme engines for GTK+ 2'
 url='http://live.gnome.org/GnomeArt'
@@ -48,7 +48,8 @@ replaces=('lighthouse-gtk2')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://ftp.gnome.org/pub/gnome/sources/gtk-engines/${pkgver%.*}/gtk-engines-${pkgver}.tar.bz2")
+_commmit=e23eb81ade8c815dcd4da026ab7a2b7307a4f326
+source=('https://github.com/GNOME/gtk-engines.git#commit=$_commit')
 sha256sums=('SKIP')
 
 #==============================================================================#
