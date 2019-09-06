@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('audacious-plugins')
 pkgver=3.10.1
-pkgrel=3
+pkgrel=4
 pkgdesc='Plugins for Audacious'
 url='http://audacious-media-player.org/'
 license=('BSD' 'GPL')
