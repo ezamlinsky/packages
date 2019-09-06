@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('findutils')
-pkgver=4.6.0
-pkgrel=4
+pkgver=4.7.0
+pkgrel=1
 pkgdesc='GNU utilities to locate files'
-url='http://www.gnu.org/software/findutils'
+url='https://www.gnu.org/software/findutils'
 license=('GPL3')
 arch=('x86_64')
 groups=('base' 'base-devel')
@@ -33,14 +33,12 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"ftp://ftp.gnu.org/pub/gnu/findutils/findutils-$pkgver.tar.gz"
-	'gnulib-fflush.patch'
-	'gnulib-makedev.patch'
+	"ftp://ftp.gnu.org/pub/gnu/findutils/findutils-$pkgver.tar.xz"
+	"ftp://ftp.gnu.org/pub/gnu/findutils/findutils-$pkgver.tar.xz.sig"
 )
 sha1sums=(
-	'f18e8aaee3f3d4173a1f598001003be8706d28b0'
-	'1bc1586f6a52083939c4cabc32f12e7aead97e61'
-	'051382a2b0039438c2b143f2f9e5dc4bea130a09'
+	'bd2fae4add80334173e03272aeed5635d4a0fa03'
+	'SKIP'
 )
 
 #==============================================================================#
@@ -50,10 +48,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -p1 -i $srcdir/gnulib-fflush.patch
-	patch -p1 -i $srcdir/gnulib-makedev.patch
 
 	# Run automatic configure script
 	autoreconf -fi
@@ -98,7 +92,9 @@ build() {
 
 	# Don't build or install locate because we use mlocate,
 	# which is a secure version of locate.
-	sed -i '/^SUBDIRS/s/locate//' Makefile.in
+	sed -e '/^SUBDIRS/s/locate//' \
+		-e 's/frcode locate updatedb//' \
+		-i Makefile.in
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
