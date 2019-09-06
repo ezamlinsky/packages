@@ -29,6 +29,7 @@ depends=(
 	'libjpeg'
 	'libpng'
 	'libtiff'
+	'sdl'
 )
 makedepends=(
 	'freeglut'
@@ -86,7 +87,6 @@ build() {
 		'--enable-swap-16bit-csp'
 		'--enable-sse4.1'
 		'--enable-sse2'
-		'--enable-sdl'
 		'--enable-libwebpmux'
 		'--enable-libwebpdemux'
 		'--enable-libwebpdecoder'
@@ -111,6 +111,10 @@ build() {
 	# 'libtiff' related options
 		'--enable-tiff'
 		#'--disable-tiff'
+
+	# 'sdl' related options
+		#'--enable-sdl'
+		'--disable-sdl'
 	)
 
 	# Run package configuration script
