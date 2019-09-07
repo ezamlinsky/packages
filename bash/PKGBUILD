@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='bash'
-pkgver=5.0
+pkgver=5.0.011
 pkgrel=1
 pkgdesc='The GNU Bourne Again shell'
 url='http://www.gnu.org/software/bash/bash.html'
@@ -49,28 +49,37 @@ backup=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
+_basever=${pkgver%.*}
 source=(
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver.tar.gz"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver.tar.gz.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever.tar.gz"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever.tar.gz.sig"
 	'dot.bashrc'
 	'dot.bash_profile'
 	'dot.bash_logout'
 	'system.bashrc'
 	'system.bash_logout'
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-001"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-001.sig"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-002"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-002.sig"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-003"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-003.sig"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-004"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-004.sig"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-005"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-005.sig"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-006"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-006.sig"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-007"
-	"https://ftp.gnu.org/gnu/bash/bash-$pkgver-patches/bash${pkgver//./}-007.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-001"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-001.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-002"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-002.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-003"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-003.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-004"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-004.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-005"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-005.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-006"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-006.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-007"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-007.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-008"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-008.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-009"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-009.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-010"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-010.sig"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-011"
+	"https://ftp.gnu.org/gnu/bash/bash-$_basever-patches/bash${_basever//./}-011.sig"
 )
 md5sums=(
 	'2b44b47b905be16f45709648f671820b'
@@ -94,6 +103,14 @@ md5sums=(
 	'SKIP'
 	'411560d81fde2dc5b17b83c3f3b58c6f'
 	'SKIP'
+	'dd7cf7a784d1838822cad8d419315991'
+	'SKIP'
+	'c1b3e937cd6dccbb7fd772f32812a0da'
+	'SKIP'
+	'19b41e73b03602d0e261c471b53e670c'
+	'SKIP'
+	'414339330a3634137081a97f2c8615a8'
+	'SKIP'
 )
 
 #==============================================================================#
@@ -102,16 +119,20 @@ md5sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-$_basever
 
 	# Apply patches
-	patch -p0 -i $srcdir/bash${pkgver//./}-001
-	patch -p0 -i $srcdir/bash${pkgver//./}-002
-	patch -p0 -i $srcdir/bash${pkgver//./}-003
-	patch -p0 -i $srcdir/bash${pkgver//./}-004
-	patch -p0 -i $srcdir/bash${pkgver//./}-005
-	patch -p0 -i $srcdir/bash${pkgver//./}-006
-	patch -p0 -i $srcdir/bash${pkgver//./}-007
+	patch -p0 -i $srcdir/bash${_basever//./}-001
+	patch -p0 -i $srcdir/bash${_basever//./}-002
+	patch -p0 -i $srcdir/bash${_basever//./}-003
+	patch -p0 -i $srcdir/bash${_basever//./}-004
+	patch -p0 -i $srcdir/bash${_basever//./}-005
+	patch -p0 -i $srcdir/bash${_basever//./}-006
+	patch -p0 -i $srcdir/bash${_basever//./}-007
+	patch -p0 -i $srcdir/bash${_basever//./}-008
+	patch -p0 -i $srcdir/bash${_basever//./}-009
+	patch -p0 -i $srcdir/bash${_basever//./}-010
+	patch -p0 -i $srcdir/bash${_basever//./}-011
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -125,7 +146,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-$_basever
 
 	# Default configure options
 	config_opts=(
@@ -206,7 +227,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-$_basever
 
 	# Run internal checks
 	make -k check
@@ -218,7 +239,7 @@ check() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-$_basever
 
 	# Install files
 	make DESTDIR=$pkgdir install
