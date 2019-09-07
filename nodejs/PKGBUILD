@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='nodejs'
-pkgver=12.6.0
+pkgver=12.10.0
 pkgrel=1
 pkgdesc='Evented I/O for V8 javascript'
 url='https://nodejs.org/'
@@ -42,7 +42,7 @@ optdepends=('npm: nodejs package manager')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("nodejs-$pkgver.tar.gz::https://github.com/nodejs/node/archive/v${pkgver}.tar.gz")
-sha512sums=('31edba94017206c9ac26d6c89871ccb1d62d9b5ff1aae278dfd167ae23eb5b4059ccb80b0dedf5deb71abeee2a65e0e74d089454070869426ebd3d67f7f2aba5')
+sha512sums=('dcca3776f6794523313de5770c6a696b6354b567b960053e400ed5f7c3313d16720f4ef23e783c10b38a641346fdcc80a560d3434805b75f732559f9a00da5b3')
 
 #==============================================================================#
 #       Package building sequence                                              #
@@ -79,10 +79,15 @@ build() {
 
 	# 'openssl' related options
 		'--shared-openssl'
+		#'--without-ssl'
 
 	# 'zlib' related options
 		'--shared-zlib'
 	)
+
+	# Change compile flags
+	export CFLAGS+=' -fno-stack-protector'
+	export CXXFLAGS+="${CFLAGS}"
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
@@ -116,11 +121,15 @@ package() {
 	# Change directory to source directory
 	cd node-$pkgver
 
+	# Change compile flags
+	export CFLAGS+=' -fno-stack-protector'
+	export CXXFLAGS+="${CFLAGS}"
+
 	# Install files
 	make DESTDIR=$pkgdir install
 
 	# Install license file
-	install -Dm644 LICENSE $pkgdir/usr/share/licenses/package_name/LICENSE
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/nodejs/LICENSE
 }
 
 ################################################################################
