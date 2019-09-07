@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libxfce4ui')
-pkgver=4.13.5
-pkgrel=1
+pkgver=4.14.1
+pkgrel=2
 pkgdesc='Commonly used Xfce widgets among Xfce applications'
 url='http://www.xfce.org/'
 license=('GPL2')
@@ -50,7 +50,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("http://archive.xfce.org/src/xfce/libxfce4ui/${pkgver%.*}/libxfce4ui-$pkgver.tar.bz2")
-sha256sums=('3c38b065796a1cb2c2f2e9a28edaa6b37a3728c1c0b7a4297af9ecd82a8ab66d')
+sha256sums=('c449075eaeae4d1138d22eeed3d2ad7032b87fb8878eada9b770325bed87f2da')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
