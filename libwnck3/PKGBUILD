@@ -24,6 +24,7 @@ arch=('x86_64')
 depends=(
 	'atk'
 	'cairo'
+	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
@@ -47,18 +48,6 @@ makedepends=(
 _commit=d3a714db6af5c1a146effb8d8f827b8973bbb91c  # tags/3.32.0^0
 source=("git+https://gitlab.gnome.org/GNOME/libwnck.git#commit=$_commit")
 sha256sums=('SKIP')
-
-#==============================================================================#
-#       Package preparation sequence                                           #
-#==============================================================================#
-prepare() {
-
-	# Change directory to source directory
-	cd libwnck
-
-    # Fix startup-notification use
-    git cherry-pick -n bbf3286f66c79118b16ff429265bbc3e6ce283ad
-}
 
 #==============================================================================#
 #       Package building sequence                                              #
