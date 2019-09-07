@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libsoup')
-pkgver=2.66.2
+pkgver=2.66.3
 pkgrel=1
 pkgdesc='HTTP client/server library for GNOME'
 url='https://wiki.gnome.org/Projects/libsoup'
