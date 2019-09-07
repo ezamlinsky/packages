@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='libgcrypt'
-pkgver=1.8.4
+pkgver=1.8.5
 pkgrel=1
 pkgdesc='General purpose cryptographic library based on the code from GnuPG'
 url='http://www.gnupg.org'
@@ -36,7 +36,7 @@ source=(
 	"https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$pkgver.tar.bz2.sig"
 )
 sha1sums=(
-	'4a8ef9db6922f3a31992aca5640b4198a69b58fc'
+	'2d8781e92f88706707a1e76fb628b499ad538a30'
 	'SKIP'
 )
 
