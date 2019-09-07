@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('kbd')
-pkgver=2.0.4
-pkgrel=2
+pkgver=2.2.0
+pkgrel=3
 pkgdesc='Keytable files and keyboard utilities'
 url='http://www.kbd-project.org'
 license=('GPL')
@@ -27,7 +27,10 @@ depends=(
 	'pam'
 	'sh'
 )
-makedepends=('check')
+makedepends=(
+	'check'
+	'git'
+)
 
 #==============================================================================#
 #        Package relations                                                     #
@@ -40,14 +43,14 @@ replaces=('vlock')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.kernel.org/pub/linux/utils/kbd/kbd-$pkgver.tar.gz"
-	"https://www.kernel.org/pub/linux/utils/kbd/kbd-$pkgver.tar.sign"
+	"git+https://git.kernel.org/pub/scm/linux/kernel/git/legion/kbd.git#tag=v$pkgver"
 	'fix-euro2.patch'
+	'kbd-fix-loadkmap-compat.patch'
 )
 md5sums=(
-	'c69fce737a5fd0fa686cbfc4f611a220'
 	'SKIP'
 	'd869200acbc0aab6a9cafa43cb140d4e'
+	'730b1054fbd88b87c27c5565bd7d4fc6'
 )
 
 #==============================================================================#
@@ -56,23 +59,24 @@ md5sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname
 
 	# Rename keymap files with the same names
 	mv data/keymaps/i386/qwertz/cz{,-qwertz}.map
 	mv data/keymaps/i386/olpc/es{,-olpc}.map
 	mv data/keymaps/i386/olpc/pt{,-olpc}.map
-	mv data/keymaps/i386/dvorak/no{,-dvorak}.map
 	mv data/keymaps/i386/fgGIod/trf{,-fgGIod}.map
 	mv data/keymaps/i386/colemak/{en-latin9,colemak}.map
 
 	# Apply patches
-	patch -Np1 -i $srcdir/fix-euro2.patch
+	patch -Np1 -i ../fix-euro2.patch
+	git cherry-pick -n 15a74479
+	git cherry-pick -n acf93e44
+	git cherry-pick -n 7e27102b
+	patch -p1 -i ../kbd-fix-loadkmap-compat.patch
 
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
+	# Create configure script
+	autoreconf -fi
 }
 
 #==============================================================================#
@@ -81,7 +85,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname
 
 	# Default configure options
 	config_opts=(
@@ -113,12 +117,24 @@ build() {
 }
 
 #==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run internal checks
+	make -k check
+}
+
+#==============================================================================#
 #       Package installation sequence                                          #
 #==============================================================================#
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname
 
 	# Install files
 	make DESTDIR=$pkgdir install
