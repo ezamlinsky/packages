@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-pulseaudio-plugin')
-pkgver=0.4.1
-pkgrel=1
+pkgver=0.4.2
+pkgrel=2
 pkgdesc='Pulseaudio plugin for Xfce4 panel'
 url='https://goodies.xfce.org/projects/panel-plugins/xfce4-pulseaudio-plugin'
 license=('GPL2')
@@ -48,7 +48,7 @@ optdepends=('pavucontrol: default pulseaudio mixer')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=66231b3503a74faea7bdbb925f08d7967016df6a  # tags/xfce4-pulseaudio-plugin-0.4.1^0
+_commit=b7a76fa7d7176c4cad4dd432a9629f3fa78ed708  # tags/xfce4-pulseaudio-plugin-0.4.2^0
 source=("git+https://git.xfce.org/panel-plugins/xfce4-pulseaudio-plugin/#commit=$_commit")
 sha256sums=('SKIP')
 
