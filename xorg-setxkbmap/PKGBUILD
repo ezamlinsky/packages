@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xorg-setxkbmap')
-pkgver=1.3.1
-pkgrel=2
+pkgver=1.3.2
+pkgrel=1
 pkgdesc='Set the keyboard using the X Keyboard Extension'
 url='http://xorg.freedesktop.org/'
 license=('custom')
@@ -37,8 +37,8 @@ source=(
 	"http://xorg.freedesktop.org/releases/individual/app/setxkbmap-$pkgver.tar.bz2"
 	"http://xorg.freedesktop.org/releases/individual/app/setxkbmap-$pkgver.tar.bz2.sig"
 )
-sha256sums=(
-	'a9ddb3963f263ba13f0ea105d8c45a531832140530217cc559587bb94f02d3e1'
+sha512sums=(
+	'bfa8015dee0d8d3fdbbd89afbd71c8606ce168d6edca8521d5ed05a00fecbea39bc4bfcce84b71458bdeb34c60bd80a5df27e0691ccee3966443ecdc937faf38'
 	'SKIP'
 )
 
