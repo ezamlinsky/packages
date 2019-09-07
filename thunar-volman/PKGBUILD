@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('thunar-volman')
-pkgver=0.9.3
-pkgrel=1
+pkgver=0.9.5
+pkgrel=2
 pkgdesc='Automatic management of removeable devices in Thunar'
 url='http://goodies.xfce.org/projects/thunar-plugins/thunar-volman'
 license=('GPL2')
@@ -43,7 +43,7 @@ makedepends=('intltool')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("http://archive.xfce.org/src/apps/thunar-volman/${pkgver%.*}/thunar-volman-$pkgver.tar.bz2")
-sha256sums=('29309091db8b0f08c5a727625cc470673134977d7966cae0392f131300f9d5e9')
+sha256sums=('7ea7c6693334f2248cf399586af8974dfb7db9aad685ee31ac100e62e19a1837')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
