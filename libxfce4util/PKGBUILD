@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libxfce4util')
-pkgver=4.13.3
+pkgver=4.14.0
 pkgrel=1
 pkgdesc='Basic utility non-GUI functions for Xfce'
 url='http://www.xfce.org/'
@@ -37,7 +37,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://archive.xfce.org/src/xfce/libxfce4util/${pkgver%.*}/libxfce4util-$pkgver.tar.bz2")
-sha256sums=('724b523a4a9ec8cada727950ab2173be30f256fa332a891ccd28b46f4b91b67e')
+sha256sums=('32ad79b7992ec3fd863e8ff2f03eebda8740363ef9d7d910a35963ac1c1a6324')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
