@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-settings')
-pkgver=4.12.4
-pkgrel=2
+pkgver=4.14.1
+pkgrel=1
 pkgdesc='Settings manager for xfce'
 url='http://www.xfce.org/'
 license=('GPL2')
@@ -22,9 +22,12 @@ groups=('xfce4')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
+# #########
 depends=(
 	'adwaita-icon-theme'
+	'atk'
 	'cairo'
+	'colord'
 	'dbus'
 	'dbus-glib'
 	'exo'
@@ -36,7 +39,7 @@ depends=(
 	'glibc'
 	'gnome-icon-theme'
 	'gnome-themes-standard'
-	'gtk2'
+	'gtk3'
 	'libnotify'
 	'libx11'
 	'libxcursor'
@@ -64,7 +67,7 @@ source=(
 	"default-xsettings-xml.patch"
 )
 sha256sums=(
-	'e2a04cad48bf9e951409d0c841829fa3b4ce632cd799082ef82d0506618b6f9b'
+	'e873e9f6b8e801fd9304ee100c4c76ed9987446c38429d02477c086431c0bf7a'
 	'8e9a6c70ab0ceb5d91b637dc290768f8a47edb5d7b6e2eebc4459dbc4ee040d7'
 )
 
@@ -110,35 +113,39 @@ build() {
 		'--disable-debug'
 		'--enable-debug=no'
 
-	# 'libx11' related option
+	# 'colord' related options
+		#'--enable-colord'
+		'--disable-colord'
+
+	# 'libx11' related options
 		'--with-x'
 		#'--without-x'
 
-	# 'libxrandr' related option
+	# 'libxrandr' related options
 		'--enable-xrandr'
 		#'--disable-xrandr'
 
-	# 'upower' related option
+	# 'upower' related options
 		'--enable-upower-glib'
 		#'--disable-upower-glib'
 
-	# 'libnotify' related option
+	# 'libnotify' related options
 		'--enable-libnotify'
 		#'--disable-libnotify'
 
-	# 'libxcursor' related option
+	# 'libxcursor' related options
 		'--enable-xcursor'
 		#'--disable-xcursor'
 
-	# 'libxi' related option
+	# 'libxi' related options
 		'--enable-xorg-libinput'
 		#'--disable-xorg-libinput'
 
-	# 'libxklavier' related option
+	# 'libxklavier' related options
 		'--enable-libxklavier'
 		#'--disable-libxklavier'
 
-	# 'libcanberra' related option
+	# 'libcanberra' related options
 		'--enable-sound-settings'
 		#'--disable-sound-settings'
 	)
