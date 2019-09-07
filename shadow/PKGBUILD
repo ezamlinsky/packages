@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('shadow')
 pkgver=4.7
-pkgrel=1
+pkgrel=2
 pkgdesc='Password and account management tool suite with support for shadow files and PAM'
 url='https://github.com/shadow-maint/shadow'
 license=('BSD')
