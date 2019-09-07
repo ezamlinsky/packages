@@ -70,7 +70,7 @@ build() {
 
 	# Change compile flags
 	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS+="${CFLAGS}"
+	export CXXFLAGS="${CFLAGS}"
 
 	# Default configure options
 	config_opts=(

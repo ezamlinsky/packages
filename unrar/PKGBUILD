@@ -35,7 +35,7 @@ prepare() {
 
 	# Change compile flags
 	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS+="${CFLAGS}"
+	export CXXFLAGS="${CFLAGS}"
 
 	# Set correct CFLAGS
 	sed -e "s/-O2/$CFLAGS/" -i makefile

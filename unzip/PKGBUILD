@@ -74,7 +74,7 @@ prepare() {
 
 	# Change compile flags
 	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS+="${CFLAGS}"
+	export CXXFLAGS="${CFLAGS}"
 
 	# Set correct CFLAGS
 	sed -e "s/CF_NOOPT =/CF_NOOPT = $CFLAGS/" -i unix/Makefile

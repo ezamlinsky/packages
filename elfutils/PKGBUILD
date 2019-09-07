@@ -81,7 +81,7 @@ build() {
 
 	# Change compile flags
 	export CFLAGS+=' -fno-lto -Wno-error'
-	export CXXFLAGS+="${CFLAGS}"
+	export CXXFLAGS="${CFLAGS}"
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
