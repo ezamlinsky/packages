@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-terminal')
-pkgver=0.8.7.4
-pkgrel=1
+pkgver=0.8.8
+pkgrel=2
 pkgdesc='A modern terminal emulator primarily for the Xfce desktop environment'
 url='http://www.xfce.org/'
 license=('GPL2')
@@ -36,6 +36,7 @@ depends=(
 	'libxfce4util'
 	'pango'
 	'vte3'
+	'xfconf'
 )
 makedepends=('intltool')
 
@@ -49,7 +50,7 @@ replaces=('terminal')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://archive.xfce.org/src/apps/xfce4-terminal/0.8/xfce4-terminal-$pkgver.tar.bz2")
-sha256sums=('a88f98af4da72394f2cfbd7f14b0f053ec0a3b58a4f6a577836357c60a6c42ab')
+sha256sums=('8fba6a60d3a0fee07417ad7c36bf78cc45be1b27f0759e125051aa73f08487fd')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
