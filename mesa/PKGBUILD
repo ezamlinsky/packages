@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='mesa'
 pkgname=('mesa' 'libva-mesa-driver' 'mesa-vdpau'  'opencl-mesa' 'vulkan-intel' 'vulkan-mesa-layer' 'vulkan-radeon')
-pkgver=19.1.3
+pkgver=19.1.6
 pkgrel=1
 url='https://www.mesa3d.org/'
 license=('custom')
@@ -69,16 +69,16 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz"
-	"https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz.sig"
+	"https://mesa.freedesktop.org/archive/mesa-${pkgver}.tar.xz"
+	"https://mesa.freedesktop.org/archive/mesa-${pkgver}.tar.xz.sig"
 	'LICENSE'
 	'glesv2.pc'
 )
 sha512sums=(
-	'787310c43089142209ff7db298489b0815b630577680d5ce1bc3f796eed3772ba41f03e5e773b77ae084c191ed4e365eac1753166ce60f12b8f5974d55762eeb'
+	'399ce97a293769893ef9a4a6af1f77c7d835f5405bdbc03bbf9b73e052e4ff3b43dec5dafd6b9fedaaf2c59531aeccaa0f685a8bfdc5719a26c3815fc7f68024'
 	'SKIP'
 	'f9f0d0ccf166fe6cb684478b6f1e1ab1f2850431c06aa041738563eb1808a004e52cdec823c103c9e180f03ffc083e95974d291353f0220fe52ae6d4897fecc7'
-	'e5db81538625a056328c2ba83f3e6418e0d579c261bcddf685036ad19e816dd002313c80a6c48cef0289d1e1b0bdbe733810ae9f53604e380486253642cff52c'
+	'd3adb2081c945df701d2e0ad0ecd19f96ebffaba9878da31bf670b1b591a7d9d5895f4b10cda1f9dbf51e551baa8dda5d061e61256225b464eeec34f29141dff'
 )
 
 #==============================================================================#
@@ -115,7 +115,7 @@ build() {
 		'-Dglx=dri'
 		'-Dvulkan-drivers=intel,amd'
 		'-Ddri-drivers=i915,i965,nouveau'
-		'-Dgallium-drivers=r300,r600,radeonsi,nouveau,svga,virgl,swrast,swr'
+		'-Dgallium-drivers=r300,r600,radeonsi,nouveau,svga,virgl,swrast,swr,iris'
 		'-Dswr-arches=avx,avx2'
 
 	# 'gtk3 && glib2 && libepoxy' related options
