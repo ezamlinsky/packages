@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='librsvg'
-pkgver=2.44.14
+pkgver=2.44.15
 pkgrel=1
 epoch=2
 pkgdesc='SVG rendering library'
@@ -46,7 +46,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=17bb3cd6e07703b72d87e3a4d322dc80c865338f  # librsvg-2.44
+_commit=bc786f6fbbe7b63a24e7eb499efb2f23c47ab5c2  # tags/2.44.15^0
 source=("git+https://gitlab.gnome.org/GNOME/librsvg.git#commit=$_commit")
 sha256sums=('SKIP')
 
