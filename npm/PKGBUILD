@@ -3,7 +3,7 @@
 #                                                                              #
 #                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
 #                                                                              #
-# Ordnung muss sein!                             Copyleft (Ɔ) 2018, Arch Linux #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
 ################################################################################
 # Maintainer: Jack Black <ezamlinsky@gmail.com>
 
@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('npm')
-pkgver=6.10.2
+pkgver=6.11.3
 pkgrel=1
 pkgdesc='A package manager for javascript'
 url='https://www.npmjs.com/'
@@ -35,7 +35,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("$pkgname-$pkgver.tar.gz::https://github.com/npm/cli/archive/v$pkgver.tar.gz")
-sha512sums=('b509046bb119ea431538d529bf19f970b5331e2950a5af0d2f7b5296274cd6fa734d6f8c0b3bef992082779d6476442e062b63a89216c858b9f060fc1a5c32ea')
+sha512sums=('191c637040cce72a029ec17ff5ba2865aafd5c1b024e81bf5ed6885788b3fc5ce90cb49ae2c44c9c5016bdc0999bf2f5d3c1208ee54e3355da0ee8d62d623d17')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
