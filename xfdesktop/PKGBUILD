@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfdesktop')
-pkgver=4.13.4
-pkgrel=1
+pkgver=4.14.1
+pkgrel=2
 pkgdesc='A desktop manager for Xfce'
 url='http://www.xfce.org/'
 license=('GPL2')
@@ -55,7 +55,7 @@ replaces=('xfce4-menueditor')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("http://archive.xfce.org/src/xfce/xfdesktop/${pkgver%.*}/xfdesktop-$pkgver.tar.bz2")
-sha256sums=('f4f7fa5162512971c25066eb04ef78f0d075656da79b6f7425ffb619a5119ca0')
+sha256sums=('f705a016246ec54ab0c688d1a0577f6c2b45a446690aa8d9e5a7ac23efebf882')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
