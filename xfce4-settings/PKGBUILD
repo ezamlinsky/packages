@@ -27,7 +27,7 @@ depends=(
 	'adwaita-icon-theme'
 	'atk'
 	'cairo'
-	'colord'
+	#'colord'
 	'dbus'
 	'dbus-glib'
 	'exo'
