@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='tumbler'
-pkgver=0.2.5
+pkgver=0.2.7
 pkgrel=1
 pkgdesc='D-Bus service for applications to request thumbnails'
 url='http://www.xfce.org/'
@@ -47,7 +47,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://archive.xfce.org/src/xfce/tumbler/${pkgver%.*}/tumbler-$pkgver.tar.bz2")
-sha256sums=('6447697a861a4854f18348a4dc6aa8b7903a0f22c52350b793fab6bc6968d459')
+sha256sums=('f704c35f16716cbee3c94883cee2a8d865e9cf2535d0e84f57e1c8cce00314e4')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
