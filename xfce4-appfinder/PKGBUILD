@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-appfinder')
-pkgver=4.12.0
-pkgrel=5
+pkgver=4.14.0
+pkgrel=1
 pkgdesc='An application finder for Xfce'
 url='http://www.xfce.org/'
 license=('GPL2')
@@ -28,7 +28,6 @@ depends=(
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
-	#'gtk2'
 	'gtk3'
 	'hicolor-icon-theme'
 	'libxfce4ui'
@@ -45,14 +44,8 @@ replaces=('xfce-utils')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=(
-	"http://archive.xfce.org/src/xfce/xfce4-appfinder/${pkgver%.*}/xfce4-appfinder-$pkgver.tar.bz2"
-	'0001-Use-non-legacy-icon-names.patch'
-)
-sha256sums=(
-	'2ad4a58019a76a6b64a816050db25f96854917c2f2e89d6a9df6c18e6c84c567'
-	'b829103bf33d6f1ec71e1448e469b1b1df3313f887a27b7479a7cbc67e06643f'
-)
+source=("http://archive.xfce.org/src/xfce/xfce4-appfinder/${pkgver%.*}/xfce4-appfinder-$pkgver.tar.bz2")
+sha256sums=('7ec175d4954fceb2e76cbfbca76ac4a4f53fe799d097a14117e7de68e88a4d98')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -61,9 +54,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -Np1 -i $srcdir/0001-Use-non-legacy-icon-names.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -94,11 +84,8 @@ build() {
 		'--disable-debug'
 		'--enable-debug=no'
 
-		# 'gtk2' related options
-			#'--disable-gtk3'
-
-		# 'gtk3' related options
-			'--enable-gtk3'
+	# 'gtk3' related options
+		'--enable-gtk3'
 	)
 
 	# Run package configuration script
