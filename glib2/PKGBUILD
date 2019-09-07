@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase=('glib2')
 pkgname=('glib2' 'glib2-docs')
-pkgver=2.60.6
+pkgver=2.62.0
 pkgrel=1
 url='https://wiki.gnome.org/Projects/GLib'
 arch=('x86_64')
@@ -35,7 +35,7 @@ checkdepends=('desktop-file-utils')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=6672d0cbed1f2bc87ca27ab69290900ff838224e  # tags/2.60.4^0
+_commit=a1af0be78c6cb3bce4791a1598a796c3e912019f  # tags/2.62.0^0
 source=(
 	"git+https://gitlab.gnome.org/GNOME/glib.git#commit=$_commit"
 	'noisy-glib-compile-schemas.diff'
