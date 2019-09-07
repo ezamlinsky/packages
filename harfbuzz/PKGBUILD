@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='harfbuzz'
 pkgname=('harfbuzz' 'harfbuzz-icu')
-pkgver=2.5.3
+pkgver=2.6.1
 pkgrel=1
 url='http://www.freedesktop.org/wiki/Software/HarfBuzz'
 license=('MIT')
@@ -38,7 +38,7 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=b14e413fae8f14b75c5956e9b38e413c878ded0c  # tags/2.5.3^0
+_commit=be97e9d678017d4ec66625fa2b17ef3485552cad  # tags/2.6.1^0
 source=("git+https://github.com/harfbuzz/harfbuzz#commit=$_commit")
 sha256sums=('SKIP')
 
