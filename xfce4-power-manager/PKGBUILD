@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-power-manager')
-pkgver=1.6.2
-pkgrel=1
+pkgver=1.6.5
+pkgrel=2
 pkgdesc='Power manager for Xfce desktop'
 url='http://www.xfce.org/'
 license=('GPL2')
@@ -51,7 +51,7 @@ optdepends=('xfce4-panel: for the Xfce panel plugin')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("http://archive.xfce.org/src/xfce/xfce4-power-manager/${pkgver%.*}/xfce4-power-manager-$pkgver.tar.bz2")
-sha256sums=('66ac34b33a2021b5af04c0181dfab6e6ee2bfab0ae07ed4527ca4552a66e1c01')
+sha256sums=('10adb67899b181ca5fc577fc9bb7a698fb94e42073585f7e2be642c7db127a74')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
