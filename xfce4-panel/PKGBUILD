@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-panel')
-pkgver=4.12.2
+pkgver=4.14.0
 pkgrel=1
 pkgdesc='Panel for the Xfce desktop environment'
 url='http://www.xfce.org/'
@@ -37,7 +37,7 @@ depends=(
 	'gtk2'
 	'gtk3'
 	'hicolor-icon-theme'
-	'libwnck'
+	'libwnck3'
 	'libx11'
 	'libxext'
 	'libxfce4ui'
@@ -46,15 +46,17 @@ depends=(
 	'xfconf'
 )
 makedepends=(
-	'intltool'
+	'gobject-introspection'
 	'gtk-doc'
+	'intltool'
+	'vala'
 )
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("http://archive.xfce.org/src/xfce/xfce4-panel/${pkgver%.*}/xfce4-panel-$pkgver.tar.bz2")
-sha256sums=('42058abb81b8f87691d3999627447de71c3285bcf055f308aab5cefab2de0ce9')
+sha256sums=('d5f8f3bd7e142139987e5e62cda26135a424baabb5e47aa0c23b4169d0a66ef4')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -94,11 +96,16 @@ build() {
 		'--disable-gtk-doc'
 		'--disable-debug'
 		'--enable-debug=no'
+		'--enable-introspection=no'	#Enable introspection for this build
 		'--with-x'
 
-	# 'gtk3' related options
-		'--enable-gtk3'
-		#'--disable-gtk3'
+	# 'gtk2' related options
+		'--enable-gtk2'
+		#'--disable-gtk2'
+
+	# 'vala' related options
+		#'--enable-vala=yes'
+		'--enable-vala=no'
 	)
 
 	# Run package configuration script
