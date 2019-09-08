@@ -106,6 +106,8 @@ build() {
 	)
 
 	# Change compile flags
+	export CFLAGS+=' -fno-stack-protector'
+	export CXXFLAGS="${CFLAGS}"
 	export CPPFLAGS+=" -DSQLITE_ENABLE_COLUMN_METADATA=1 \
 	-DSQLITE_ENABLE_UNLOCK_NOTIFY \
 	-DSQLITE_ENABLE_DBSTAT_VTAB=1 \
@@ -115,7 +117,7 @@ build() {
 	-DSQLITE_MAX_EXPR_DEPTH=10000"
 
 	# Run package configuration script
-	TCLLIBDIR=/usr/lib/sqlite$pkgver ./configure "${config_opts[@]}"
+	TCLLIBDIR=/usr/lib/sqlite${pkgver} ./configure "${config_opts[@]}"
 
 	# Set correct LDFLAGS to build a shared archive
 	if [ -f libtool ]; then
@@ -126,12 +128,7 @@ build() {
 	make
 
 	# Build additional tools
-	make showdb showjournal showstat4 showwal sqldiff
-
-	# Build 'sqlite3_analyzer' if required
-	if check_rule 'tcl'; then
-		make sqlite3_analyzer
-	fi
+	make showdb showjournal showstat4 showwal sqldiff sqlite3_analyzer
 }
 
 #==============================================================================#
