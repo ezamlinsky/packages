@@ -142,6 +142,7 @@ build() {
 package_gtkhash() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums'
 	depends=(
+		'gcc-libs'
 		'glib2'
 		'glibc'
 		#'gtk2'
@@ -193,8 +194,16 @@ package_gtkhash() {
 package_gtkhash-nemo() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums (Nemo filemanager plugin)'
 	depends=(
+		'gcc-libs'
+		'glib2'
+		'glibc'
+		'gtk3'
 		'gtkhash'
+		'libgcrypt'
 		'nemo'
+		'nettle'
+		'openssl'
+		'zlib'
 	)
 
 	# Copy files
@@ -207,8 +216,16 @@ package_gtkhash-nemo() {
 package_gtkhash-nautilus() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums (Nautilus filemanager plugin)'
 	depends=(
+		'gcc-libs'
+		'glib2'
+		'glibc'
+		'gtk3'
 		'gtkhash'
+		'libgcrypt'
 		'libnautilus-extension'
+		'nettle'
+		'openssl'
+		'zlib'
 	)
 
 	# Copy files
@@ -221,8 +238,17 @@ package_gtkhash-nautilus() {
 package_gtkhash-thunar() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums (Thunar filemanager plugin)'
 	depends=(
+		'gcc-libs'
+		'glib2'
+		'glibc'
+		'gtk3'
 		'gtkhash'
+		'libgcrypt'
+		'nettle'
+		'openssl'
 		'thunar'
+		'thunar'
+		'zlib'
 	)
 
 	# Copy files
@@ -235,8 +261,16 @@ package_gtkhash-thunar() {
 package_gtkhash-caja() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums (Caja filemanager plugin)'
 	depends=(
-		'gtkhash'
 		'caja'
+		'gcc-libs'
+		'glib2'
+		'glibc'
+		'gtk3'
+		'gtkhash'
+		'libgcrypt'
+		'nettle'
+		'openssl'
+		'zlib'
 	)
 
 	# Copy files
