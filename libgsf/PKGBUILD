@@ -22,12 +22,13 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'bzip2'
+	'gcc-libs'
+	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
 	'libxml2'
 	'zlib'
-	'bzip2'
-	'gdk-pixbuf2'
 )
 makedepends=(
 	'git'
@@ -54,6 +55,9 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname
+
+	# Fix incorrect gettext version
+	sed -e 's/0.19.4/0.20/g' -i configure.ac
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -84,13 +88,13 @@ build() {
 		'--enable-gtk-doc'
 		'--enable-introspection=no'
 
-		# 'bzip2' related options
-			'--with-bz2'
-			#'--without-bz2'
+	# 'bzip2' related options
+		'--with-bz2'
+		#'--without-bz2'
 
-		# 'gdk-pixbuf2' related options
-			'--with-gdk-pixbuf'
-			#'--without-gdk-pixbuf'
+	# 'gdk-pixbuf2' related options
+		'--with-gdk-pixbuf'
+		#'--without-gdk-pixbuf'
 	)
 
 	# Run package configuration script
