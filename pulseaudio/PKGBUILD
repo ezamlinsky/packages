@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='pulseaudio'
 pkgname=('pulseaudio' 'libpulse' 'pulseaudio-gconf' 'pulseaudio-zeroconf' 'pulseaudio-lirc' 'pulseaudio-jack' 'pulseaudio-bluetooth' 'pulseaudio-equalizer')
-pkgver=12.99.1
+pkgver=12.99.3
 pkgrel=1
 url="https://www.freedesktop.org/wiki/Software/PulseAudio/"
 license=('GPL')
@@ -34,6 +34,7 @@ makedepends=(
 	'git'
 	'gtk3'
 	'intltool'
+	'jack'
 	'libasyncns'
 	'libcap'
 	'libsm'
@@ -54,7 +55,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=0cd931dc808786bffa3b40f75097af43a217b880  # tags/v12.99.1^0
+_commit=fb530e0f3b2e36cfd28fb975237144d083419044  # tags/v12.99.3^0
 source=("git+https://gitlab.freedesktop.org/pulseaudio/pulseaudio.git#commit=$_commit")
 sha256sums=('SKIP')
 
