@@ -190,7 +190,7 @@ build() {
 		-Dntp-servers="${_timeservers[*]}"
 		-Ddns-servers="${_nameservers[*]}"
 		'-Dima=false'
-		'-Defi=true'		##################
+		'-Defi=true'
 		'-Dbinfmt=true'
 		'-Dcoredump=true'
 		'-Denvironment-d=true'
@@ -566,7 +566,7 @@ package_systemd() {
 
 	# Don't write units to "/etc" by default.
 	# Some of these will be re-enabled on post_install.
-	rm -r $pkgdir/etc/systemd/system/*
+	rm -fr $pkgdir/etc/systemd/system/*
 
 	# Remove "/var/log/journal/remote" directory
 	# Will be created by installation script
