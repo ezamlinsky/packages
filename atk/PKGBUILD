@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('atk')
-pkgver=2.32
+pkgver=2.34.1
 pkgrel=1
 pkgdesc='The interface definitions of accessibility infrastructure'
 url='https://gitlab.gnome.org/GNOME/atk'
@@ -36,7 +36,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=fd6a6599bdae09ac0436e7b7225214429c176a19  # gnome-3-32
+_commit=633bde11f93ee971ba8902c6fadbc29c121f71af  # tags/ATK_2_34_1^0
 source=("git+https://gitlab.gnome.org/GNOME/atk.git#commit=$_commit")
 sha256sums=('SKIP')
 
