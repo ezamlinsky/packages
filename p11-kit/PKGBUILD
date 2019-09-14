@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('p11-kit')
-pkgver=0.23.16.1
-pkgrel=1
+pkgver=0.23.17
+pkgrel=2
 pkgdesc='Provides a way to load and enumerate PKCS#11 modules'
 url='https://p11-glue.freedesktop.org'
 license=('BSD')
@@ -22,15 +22,17 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'gcc-libs'
 	'glibc'
 	'libffi'
 	'libtasn1'
-	'nss'
+	#'nss'
 	'systemd-libs'
 )
 makedepends=(
 	'git'
 	'gtk-doc'
+	'meson'
 )
 
 #==============================================================================#
@@ -43,11 +45,25 @@ install='p11-kit.install'
 #==============================================================================#
 source=(
 	"git+https://github.com/p11-glue/p11-kit?signed#tag=$pkgver"
-	'0001-Build-and-install-libnssckbi-p11-kit.so.patch'
+	'0001-meson-Fix-dictionary-syntax.patch'
+	'0002-meson-Install-p11-kit-client-module.patch'
+	'0003-meson-PKCS-11-modules-should-only-export-C_GetFuncti.patch'
+	'0004-meson-Don-t-prefix-p11_user_config.patch'
+	'0005-meson-Build-and-install-man-pages.patch'
+	'0006-meson-Install-p11-kit-server-units.patch'
+	'0007-meson-Add-missing-prefix-to-system-path-defines.patch'
+	'0008-Build-and-install-libnssckbi-p11-kit.so.patch'
 )
 sha256sums=(
 	'SKIP'
-	'a2222e092b2c9ae2d2c344b3268f8f86e7b424973433d49653f72e6c51fa54cf'
+	'e255ae1650eaf236b89038175b9f4799e1ac7dd0820724f96a96be1a1c3d8c51'
+	'423fdf1014eb8952cb3d0315c2cd0be164d38674b76a8480b2b8e804af62f4a5'
+	'1498bfb9e1570750106a75219313b6de5e1d5377197e26e900864aadb0e5ebf0'
+	'147e206d360df72812f989dd8ab630138e3b171e6c1b8c40291b48870c0086e3'
+	'1b5ef2e0ad4bd80eee14aed1be9f789ab7df0a27341b79aa09ca39f2d020411a'
+	'30b0f6d6ab50566d003bb96ab841203e94064b5d3940e6c7fc7302ca105e70f6'
+	'531598f5c94bc83f2a3ebd83e6d2bc42c495f1d999504d695553e8e4b709f307'
+	'2605f0de616a75f98459e984b8db2dca8757aac05f03514caa7838ef23c90078'
 )
 
 #==============================================================================#
@@ -59,12 +75,14 @@ prepare() {
 	cd $pkgname
 
 	# Apply patches
-	patch -Np1 -i $srcdir/0001-Build-and-install-libnssckbi-p11-kit.so.patch
-
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
+	patch -Np1 -i $srcdir/0001-meson-Fix-dictionary-syntax.patch
+	patch -Np1 -i $srcdir/0002-meson-Install-p11-kit-client-module.patch
+	patch -Np1 -i $srcdir/0003-meson-PKCS-11-modules-should-only-export-C_GetFuncti.patch
+	patch -Np1 -i $srcdir/0004-meson-Don-t-prefix-p11_user_config.patch
+	patch -Np1 -i $srcdir/0005-meson-Build-and-install-man-pages.patch
+	patch -Np1 -i $srcdir/0006-meson-Install-p11-kit-server-units.patch
+	patch -Np1 -i $srcdir/0007-meson-Add-missing-prefix-to-system-path-defines.patch
+	patch -Np1 -i $srcdir/0008-Build-and-install-libnssckbi-p11-kit.so.patch
 }
 
 #==============================================================================#
@@ -77,60 +95,31 @@ build() {
 
 	# Default configure options
 	config_opts=(
-		'--prefix=/usr'
-		'--bindir=/usr/bin'
-		'--sbindir=/usr/bin'
-		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib'
-		'--sysconfdir=/etc'
-		'--localstatedir=/var'
-		'--enable-silent-rules'
-		'--enable-shared'
-		'--disable-static'
-		'--enable-doc'
-		'--enable-debug=no'
-		'--with-module-path=/usr/lib/pkcs11'
-		'--with-trust-paths=/etc/ca-certificates/trust-source:/usr/share/ca-certificates/trust-source'
+		'-Dstrict=false'
+		'-Dgtk_doc=true'
+		'-Dman=true'
+		'-Dtrust_module=enabled'
+		'-Dmodule_path=/usr/lib/pkcs11'
+		'-Dtrust_paths=/etc/ca-certificates/trust-source:/usr/share/ca-certificates/trust-source'
 
-		# 'libffi' related options
-			'--with-libffi'
-			#'--without-libffi'
+	# 'libffi' related options
+		'-Dlibffi=enabled'
+		#'-Dlibffi=disabled'
 
-		# 'libtasn1' related options
-			'--with-libtasn1'
-			#'--without-libtasn1'
+	# 'nss' related options
+		#'-Dhash_impl=freebl'
+		'-Dhash_impl=internal'
 
-		# 'nss' related options
-			'--with-hash-impl=freebl'
-			#'--with-hash-impl=internal'
-
-		# 'systemd' related options
-			'--with-systemd'
-			#'--without-systemd'
+	# 'systemd' related options
+		'-Dsystemd=enabled'
+		#'-Dsystemd=disabled'
 	)
 
 	# Run package configuration script
-	./configure "${config_opts[@]}"
-
-	# Set correct LDFLAGS to build a shared archive
-	if [ -f libtool ]; then
-		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
-	fi
+	arch-meson build "${config_opts[@]}"
 
 	# Build package
-	make
-}
-
-#==============================================================================#
-#       Package self testing sequence                                          #
-#==============================================================================#
-check() {
-
-	# Change directory to source directory
-	cd $pkgname
-
-	# Run internal checks
-	make -k check
+	ninja -C build
 }
 
 #==============================================================================#
@@ -142,16 +131,13 @@ package() {
 	cd $pkgname
 
 	# Install files
-	make DESTDIR=$pkgdir install
+	DESTDIR=$pkgdir ninja -C build install
 
 	# Install license file
 	install -Dm644 COPYING $pkgdir/usr/share/licenses/p11-kit/LICENSE
 
 	# Set correct symlink for 'trust-extract-compat'
 	ln -srf $pkgdir/usr/bin/update-ca-trust $pkgdir/usr/lib/p11-kit/trust-extract-compat
-
-	# Enable 'pkcs11.conf' config file
-	mv $pkgdir/etc/pkcs11/{pkcs11.conf.example,pkcs11.conf}
 }
 
 ################################################################################
