@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('enchant')
-pkgver=2.2.5
+pkgver=2.2.6
 pkgrel=1
 pkgdesc='A wrapper library for generic spell checking'
 url='https://abiword.github.io/enchant/'
@@ -36,7 +36,7 @@ makedepends=('git')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("$pkgname-$pkgver.tar.gz::https://github.com/AbiWord/enchant/archive/v$pkgver.tar.gz")
-sha512sums=('a1395a0392d17d6f14f3a68beef5ef841f1e13f8f0ecc8ed5e43d5265c87a21bebe0f805662575200cd8189ea29d82d29aef9556a3b3cc672c320a4381fdb9a9')
+sha512sums=('6c17e04e3e122582c2f420fd64f7217438f7186994e8448f1a745b3b786d75c9871befb13ec46b7c8fd2efa135206017ec45e5e920efe230f599322b9d70247f')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
