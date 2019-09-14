@@ -29,7 +29,7 @@ depends=(
 	'libjpeg'
 	'libpng'
 	'libtiff'
-	'sdl'
+	#'sdl'
 )
 makedepends=(
 	'freeglut'
