@@ -83,7 +83,6 @@ build() {
 		'--enable-pcre2-32'
 		'--enable-unicode'
 		'--enable-jit'
-		'--enable-jit-sealloc'
 		'--enable-pcre2grep-jit'
 		'--enable-pcre2grep-callout'
 		'--enable-pcre2grep-callout-fork'
