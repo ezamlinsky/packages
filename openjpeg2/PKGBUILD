@@ -27,7 +27,6 @@ depends=(
 	'lcms2'
 	'libpng'
 	'libtiff'
-	'zlib'
 )
 makedepends=(
 	'cmake'
@@ -54,6 +53,7 @@ build() {
 		"-DCMAKE_CXX_FLAGS='$CXXFLAGS'"
 		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
 		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_INSTALL_LIBDIR=/usr/lib'
 		'-DCMAKE_BUILD_TYPE=Release'
 		'-DBUILD_PKGCONFIG_FILES=ON'
 		'-DBUILD_STATIC_LIBS=OFF'

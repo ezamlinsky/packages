@@ -22,6 +22,7 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'freeglut'
 	'gcc-libs'
 	'giflib'
 	'glibc'
@@ -32,12 +33,10 @@ depends=(
 	#'sdl'
 )
 makedepends=(
-	'freeglut'
 	'git'
 	'glu'
 	'mesa'
 )
-optdepends=('freeglut: vwebp viewer')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
