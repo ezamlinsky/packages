@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('upower')
-pkgver=0.99.10
+pkgver=0.99.11
 pkgrel=1
 pkgdesc='Abstraction for enumerating power devices, listening to device events and querying history and statistics'
 url='http://upower.freedesktop.org'
@@ -48,7 +48,7 @@ options=('emptydirs')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=215049e7b80c5f24cb35cd229a445c6cf19bd381	# tags/UPOWER_0_99_10^0
+_commit=e1548bba61206a05bbc318b3d49ae24571755ac6  # tags/UPOWER_0_99_11^0
 source=("git+https://gitlab.freedesktop.org/upower/upower.git#commit=$_commit")
 md5sums=('SKIP')
 
