@@ -13,7 +13,7 @@
 pkgbase='fuse3'
 pkgname=('fuse3' 'fuse-common')
 pkgver=3.6.2
-pkgrel=1
+pkgrel=2
 url='https://github.com/libfuse/libfuse'
 license=('GPL2')
 arch=('x86_64')
@@ -53,6 +53,7 @@ build() {
 	config_opts=(
 		'-Ddisable-mtab=false'
 		'-Dutils=true'
+		'-Duseroot=true'
 		'-Dexamples=false'
 	)
 
