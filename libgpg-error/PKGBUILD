@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libgpg-error')
 pkgver=1.36
-pkgrel=1
+pkgrel=2
 pkgdesc='Support library for libgcrypt'
 url='https://www.gnupg.org'
 license=('LGPL')
@@ -34,10 +34,12 @@ depends=(
 source=(
 	"ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-$pkgver.tar.bz2"
 	"ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-$pkgver.tar.bz2.sig"
+	'gawk5.diff'
 )
 sha1sums=(
 	'5245ce38b198cecd57775fb3c7b7328ec1a2a615'
 	'SKIP'
+	'0f4e2308e0ad623c7066f9437fd0219ee1544d2b'
 )
 
 #==============================================================================#
@@ -48,10 +50,11 @@ prepare() {
 	# Change directory to source directory
 	cd $pkgname-$pkgver
 
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
+	# Apply patches
+	patch -Np1 -i $srcdir/gawk5.diff
+
+	# Create configure script
+	autoreconf -fi
 }
 
 #==============================================================================#
@@ -76,7 +79,6 @@ build() {
 		'--disable-static'
 		'--enable-doc'
 		'--enable-languages'
-		'--enable-threads'
 		'--enable-threads=posix'
 
 	# 'readline' related options
