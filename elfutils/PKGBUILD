@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='elfutils'
 pkgname=('elfutils' 'libelf')
-pkgver=0.176
+pkgver=0.177
 pkgrel=1
 url='https://sourceware.org/elfutils/'
 license=('LGPL3' 'GPL' 'GPL3')
@@ -26,7 +26,7 @@ source=(
 	"https://sourceware.org/elfutils/ftp/$pkgver/elfutils-$pkgver.tar.bz2.sig"
 )
 sha1sums=(
-	'6511203cae7225ae780501834a7ccd234b14889a'
+	'922161f84baaae845382338098071544b98ca92d'
 	'SKIP'
 )
 
@@ -64,6 +64,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-thread-safety'
 		'--enable-deterministic-archives'
 
 	# 'bzip2' related options
@@ -120,6 +121,7 @@ package_elfutils() {
 		"libelf=$pkgver-$pkgrel"
 		'gcc-libs'
 		'glibc'
+		'sh'
 	)
 
 	# Change directory to source directory
