@@ -11,9 +11,9 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgbase='pulseaudio'
-pkgname=('pulseaudio' 'libpulse' 'pulseaudio-gconf' 'pulseaudio-zeroconf' 'pulseaudio-lirc' 'pulseaudio-jack' 'pulseaudio-bluetooth' 'pulseaudio-equalizer')
-pkgver=12.99.3
-pkgrel=1
+pkgname=('pulseaudio' 'libpulse' 'pulseaudio-zeroconf' 'pulseaudio-lirc' 'pulseaudio-jack' 'pulseaudio-bluetooth' 'pulseaudio-equalizer')
+pkgver=13.0.0
+pkgrel=2
 url="https://www.freedesktop.org/wiki/Software/PulseAudio/"
 license=('GPL')
 arch=('x86_64')
@@ -34,7 +34,7 @@ makedepends=(
 	'git'
 	'gtk3'
 	'intltool'
-	'jack'
+	'jack2'
 	'libasyncns'
 	'libcap'
 	'libsm'
@@ -55,9 +55,15 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=fb530e0f3b2e36cfd28fb975237144d083419044  # tags/v12.99.3^0
-source=("git+https://gitlab.freedesktop.org/pulseaudio/pulseaudio.git#commit=$_commit")
-sha256sums=('SKIP')
+_commit='200618b32f0964a479d69c9b6e5073e6931c370a'
+source=(
+	"git+https://gitlab.freedesktop.org/pulseaudio/pulseaudio.git#commit=$_commit"
+	'0001-meson-Define-TUNNEL_SINK-for-module-tunnel-sink.patch'
+)
+sha256sums=(
+	'SKIP'
+	'4ff133e2847baad5bb6798b5816d67551cfba2efabb2f1f348628d7217abd07d'
+)
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -66,6 +72,9 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgbase
+
+	# Apply patches
+	patch -p1 -i $srcdir/0001-meson-Define-TUNNEL_SINK-for-module-tunnel-sink.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -93,17 +102,23 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-static-bins'				# Statically link executables.
 		'--enable-manpages'
+		'--enable-memfd'					# Disable Linux memfd shared memory
+		'--enable-schemas-compile'			# Disable regeneration of gschemas.compiled on install
+		'--enable-gsettings'				# Disable optional GSettings support
 		'--enable-gtk3'
 		'--disable-ipv6'
 		'--disable-hal-compat'
 		'--disable-oss-output'
 		'--disable-oss-wrapper'
-		'--disable-esound'
 		'--disable-bluez4'
+		'--disable-esound'
+		'--disable-per-user-esound-socket'	# Use global esound socket directory /tmp/.esd/socket.
 		'--disable-legacy-database-entry-format'
 		'--disable-tests'
 		'--disable-default-build-tests'
+		'--with-pulsedsp-location=/usr/lib/pulseaudio'
 
 	# 'alsa-lib' related options
 		'--enable-alsa'
@@ -122,8 +137,8 @@ build() {
 		#'--without-fftw'
 
 	# 'gconf' related options
-		'--enable-gconf'
-		#'--disable-gconf'
+		#'--enable-gconf'
+		'--disable-gconf'
 
 	# 'gdbm' related options
 		'--with-database=gdbm'
@@ -132,7 +147,7 @@ build() {
 		'--enable-glib2'
 		#'--disable-glib2'
 
-	# 'jack' related options
+	# 'jack2' related options
 		'--enable-jack'
 		#'--disable-jack'
 
@@ -157,11 +172,15 @@ build() {
 		'--without-soxr'
 
 	# 'libsystemd' related options
-		'--with-udev-rules-dir=/usr/lib/udev/rules.d'
+		'--enable-udev'
 		#'--disable-udev'
+		'--enable-systemd-daemon'
 		#'--disable-systemd-daemon'
+		'--enable-systemd-login'
 		#'--disable-systemd-login'
+		'--enable-systemd-journal'
 		#'--disable-systemd-journal'
+		'--with-udev-rules-dir=/usr/lib/udev/rules.d'
 
 	# 'libwrap' related options
 		#'--enable-tcpwrap'
@@ -230,6 +249,7 @@ package_pulseaudio() {
 		'dbus'
 		'gcc-libs'
 		'gdbm'
+		'glib2'
 		'glibc'
 		'libcap'
 		'libice'
@@ -293,12 +313,8 @@ package_pulseaudio() {
 	mv usr/share/vala $srcdir/libpulse/usr/share || true
 
 	# Split modules
-	mkdir -p $srcdir/{gconf,zeroconf,lirc,jack,bluetooth,equalizer}/usr/lib/pulse-${pkgver%.*}/modules \
+	mkdir -p $srcdir/{zeroconf,lirc,jack,bluetooth,equalizer}/usr/lib/pulse-${pkgver%.*}/modules \
 	$srcdir/{gconf/usr/lib/pulse,equalizer/usr/bin}
-	mv usr/lib/pulse-${pkgver%.*}/modules/module-gconf.so \
-	$srcdir/gconf/usr/lib/pulse-${pkgver%.*}/modules || true
-	mv usr/lib/pulse/gconf-helper \
-	$srcdir/gconf/usr/lib/pulse || true
 	mv usr/lib/pulse-${pkgver%.*}/modules/{libavahi-wrap,module-{zeroconf-{publish,discover},raop-discover}}.so \
 	$srcdir/zeroconf/usr/lib/pulse-${pkgver%.*}/modules || true
 	mv usr/lib/pulse-${pkgver%.*}/modules/module-lirc.so \
@@ -334,24 +350,6 @@ package_libpulse() {
 
 	# Copy files
 	mv $srcdir/libpulse/* $pkgdir
-}
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#       Pulseaudio-gconf                                                       #
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-package_pulseaudio-gconf() {
-	pkgdesc="GConf support for PulseAudio"
-	depends=(
-		"libpulse=$pkgver-$pkgrel"
-		"pulseaudio=$pkgver-$pkgrel"
-		'gcc-libs'
-		'gconf'
-		'glib2'
-		'glibc'
-	)
-
-	# Copy files
-	mv $srcdir/gconf/* $pkgdir
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -400,7 +398,7 @@ package_pulseaudio-jack() {
 		'dbus'
 		'gcc-libs'
 		'glibc'
-		'jack'
+		'jack2'
 	)
 
 	# Copy files
