@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='glibmm'
 pkgname=('glibmm' 'glibmm-docs')
-pkgver=2.60.0
+pkgver=2.62.0
 pkgrel=1
 url='http://www.gtkmm.org/'
 license=('LGPL')
@@ -22,16 +22,16 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 makedepends=(
+	'clang'
 	'git'
 	'mm-common'
 	'perl-xml-parser'
-	'clang'
 )
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=021bfe1ea539e136c170526563697970ebc318b8  # tags/2.60.0^0
+_commit='ceff460bbfbca3acf60e6d35cf01961ff988177c'
 source=("git+https://gitlab.gnome.org/GNOME/glibmm.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -98,6 +98,7 @@ package_glibmm() {
 		'glib2'
 		'glibc'
 		'libsigc++'
+		'perl'
 	)
 
 	# Change directory to source directory
@@ -119,7 +120,7 @@ package_glibmm() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_glibmm-docs() {
 	pkgdesc='C++ bindings for GLib (documentation)'
-	depends=()
+	depends=('glibmm')
 	options=('docs')
 
 	# Copy files
