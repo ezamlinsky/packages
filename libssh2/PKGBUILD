@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libssh2')
-pkgver=1.8.2
+pkgver=1.9.0
 pkgrel=1
 pkgdesc='A library implementing the SSH2 protocol as defined by Internet Drafts'
 url='https://www.libssh2.org/'
@@ -43,7 +43,7 @@ source=(
 	"https://www.libssh2.org/download/libssh2-$pkgver.tar.gz.asc"
 )
 md5sums=(
-	'616efd99af3d9ef731a26bed6cee9593'
+	'1beefafe8963982adc84b408b2959927'
 	'SKIP'
 )
 
@@ -86,13 +86,13 @@ build() {
 		'--disable-examples-build'
 
 	# 'libgcrypt' related options
-		#'--with-libgcrypt'
+		#'--with-crypto=libgcrypt'
 
 	# 'mbedtls' related options
-		#'--with-mbedtls'
+		#'--with-crypto=mbedtls'
 
 	# 'openssl' related options
-		'--with-openssl'
+		'--with-crypto=openssl'
 
 	# 'zlib' related options
 		'--with-libz'
