@@ -24,7 +24,8 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	#'axtls'
-	#'brotli'
+	'bash'
+	'brotli'
 	'c-ares'
 	'ca-certificates'
 	'gcc-libs'
@@ -137,8 +138,8 @@ build() {
 		'--without-axtls'
 
 	# 'brotli' related options
-		#'--with-brotli'
-		'--without-brotli'
+		'--with-brotli'
+		#'--without-brotli'
 
 	# 'c-ares' related options
 		'--enable-ares'
