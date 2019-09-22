@@ -7,13 +7,11 @@
 ################################################################################
 # Maintainer: Jack Black <ezamlinsky@gmail.com>
 
-#depends=(  )
-
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libxfont2')
-pkgver=2.0.3
+pkgver=2.0.4
 pkgrel=1
 pkgdesc='X11 font rasterisation library'
 url='https://xorg.freedesktop.org/'
@@ -45,8 +43,8 @@ source=(
 	"https://xorg.freedesktop.org/archive/individual/lib/libXfont2-$pkgver.tar.bz2"
 	"https://xorg.freedesktop.org/archive/individual/lib/libXfont2-$pkgver.tar.bz2.sig"
 )
-sha256sums=(
-	'0e8ab7fd737ccdfe87e1f02b55f221f0bd4503a1c5f28be4ed6a54586bac9c4e'
+sha512sums=(
+	'7cf6c58e520e48e24fc4f05fec760fcbeaaac0cedeed57dded262c855e1515cc34cd033222945a0b016f6857b83009fc2a6946c7d632c2f7bb0060f8e8a8a106'
 	'SKIP'
 )
 
