@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libsoup')
-pkgver=2.66.3
+pkgver=2.68.1
 pkgrel=1
 pkgdesc='HTTP client/server library for GNOME'
 url='https://wiki.gnome.org/Projects/libsoup'
@@ -22,6 +22,7 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'brotli'
 	'gcc-libs'
 	'glib2'
 	#'glib-networking'
@@ -30,6 +31,7 @@ depends=(
 	'libxml2'
 	'sqlite'
 	#'krb5'
+	'zlib'
 )
 makedepends=(
 	'git'
@@ -47,7 +49,7 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=716acf96c8368ad17c6a257890387659def591e5  # tags/2.67.1~20
+_commit=15a3d17bdefebede9262933752a897cf51976a05  # tags/2.68.1^0
 source=("git+https://gitlab.gnome.org/GNOME/libsoup.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -75,27 +77,32 @@ build() {
 
 	# Default configure options
 	config_opts=(
-		'-Dntlm=false'
+		'-Dntlm=disabled'
 		'-Dgnome=true'
 		'-Dgtk_doc=true'
 		'-Dtests=false'
-		'-Dintrospection=false'
+		'-Dintrospection=disabled'
+		'-Dinstalled_tests=false'
+
+	# 'brotli' related options
+		'-Dbrotli=enabled',
+		#'-Dbrotli=disabled',
 
 	# 'glib-networking' related options
 		#'-Dtls_check=true'
 		'-Dtls_check=false'
 
 	# 'krb5' related options
-		#'-Dgssapi=true'
-		'-Dgssapi=false'
+		#'-Dgssapi=enabled'
+		'-Dgssapi=disabled'
 
 	# 'vala' related options
-		#'-Dvapi=true'
-		'-Dvapi=false'
+		#'-Dvapi=enabled'
+		'-Dvapi=disabled'
 	)
 
 	# Run package configuration script
-	arch-meson build "${config_opts[@]}"
+	arch-meson build ${config_opts[@]}
 
 	# Build package
 	ninja -C build
