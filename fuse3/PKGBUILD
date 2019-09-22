@@ -78,9 +78,9 @@ build() {
 package_fuse3() {
 	pkgdesc='A library that makes it possible to implement a filesystem in a userspace program.'
 	depends=(
+		'fuse-common'
 		'gcc-libs'
 		'glibc'
-		'fuse-common'
 	)
 
 	# Change directory to source directory
@@ -96,11 +96,8 @@ package_fuse3() {
 	rm -fr dev
 
 	# Split 'fuse-common' package
-	mkdir -p $srcdir/fuse-common/{etc,usr/{bin,lib,share/man}}
+	mkdir -p $srcdir/fuse-common/etc
 	mv etc/fuse.conf $srcdir/fuse-common/etc
-	mv usr/bin/mount.fuse3 $srcdir/fuse-common/usr/bin/mount.fuse
-	mv usr/lib/udev $srcdir/fuse-common/usr/lib
-	mv usr/share/man/man8 $srcdir/fuse-common/usr/share/man
 	rm -fr etc
 }
 
@@ -109,11 +106,7 @@ package_fuse3() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_fuse-common() {
 	pkgdesc='Common files for fuse2/3 packages'
-	depends=(
-		'fuse3'
-		'gcc-libs'
-		'glibc'
-	)
+	depends=()
 	backup=('etc/fuse.conf')
 
 	# Copy files
