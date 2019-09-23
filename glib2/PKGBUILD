@@ -75,8 +75,8 @@ build() {
 		'-Ddtrace=false'
 		'-Dsystemtap=false'
 		'-Dgtk_doc=true'
-		'-Dinternal_pcre=false'
-		'-Dforce_posix_threads=true'
+		'-Diconv=auto'
+		'-Dforce_posix_threads=false'
 		'-Dinstalled_tests=false'
 		'-Dnls=enabled'
 
@@ -95,6 +95,10 @@ build() {
 	# 'libselinux' related options
 		#'-Dselinux=enabled'
 		'-Dselinux=disabled'
+
+	# 'pcre' related options
+		#'-Dinternal_pcre=true'
+		'-Dinternal_pcre=false'
 	)
 
 	# Run package configuration script
