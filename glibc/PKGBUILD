@@ -49,7 +49,7 @@ install='glibc.install'
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=34fb5f61d3c3f4b8fc616ea259fa19168b58ecd4
+_commit='34fb5f61d3c3f4b8fc616ea259fa19168b58ecd4'
 source=(
 	"git+https://sourceware.org/git/glibc.git#commit=$_commit"
 	'locale.gen.txt'
@@ -104,7 +104,12 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-werror'
+		'--disable-profile'
 		'--disable-multi-arch'
+		'--enable-sanity-checks'
+		'--enable-timezone-tools'
+		'--enable-hidden-plt'
+		'--enable-pt_chown'
 		'--enable-stackguard-randomization'
 		#'--enable-stack-protector=strong'
 		'--enable-lock-elision=yes'
@@ -132,6 +137,7 @@ build() {
 		#'--enable-nss-crypt'
 		'--disable-nss-crypt'
 		#'--enable-static-nss'
+		#'--disable-static-nss'
 	)
 
 	# Change directory to build directory
