@@ -36,6 +36,8 @@ depends=(
 	'libxfce4ui'
 	'libxfce4util'
 	'pango'
+	'perl'
+	'sh'
 )
 makedepends=(
 	'gtk-doc'
