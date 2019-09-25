@@ -38,8 +38,9 @@ depends=(
 	'pango'
 )
 makedepends=(
-	'intltool'
 	'gtk-doc'
+	'intltool'
+	'perl-uri'
 )
 
 #==============================================================================#
