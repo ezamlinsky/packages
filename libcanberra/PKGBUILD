@@ -22,9 +22,24 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 makedepends=(
+	'alsa-lib'
+	'gcc-libs'
 	'git'
+	'glib2'
+	'glibc'
+	'gstreamer'
 	'gtk-doc'
+	'gtk2'
+	'gtk3'
+	'libcanberra'
+	'libcanberra-default-sounds'
+	'libltdl'
+	'libpulse'
+	'libudev.so'
+	'libvorbis'
+	'libx11'
 	'lynx'
+	#'tdb'
 )
 
 #==============================================================================#
@@ -152,6 +167,7 @@ package_libcanberra() {
 		'libvorbis'
 		'libx11'
 		#'tdb'
+		'sh'
 	)
 	optdepends=(
 		'libcanberra-pulse: PulseAudio driver'
