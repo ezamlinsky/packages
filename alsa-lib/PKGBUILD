@@ -11,11 +11,11 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('alsa-lib')
-pkgver=1.1.9
-pkgrel=2
+pkgver=1.2.2
+pkgrel=1
 pkgdesc='An alternative implementation of Linux sound support'
-url='http://www.alsa-project.org'
-license=('LGPL')
+url='https://www.alsa-project.org'
+license=('LGPL2.1')
 arch=('x86_64')
 
 #==============================================================================#
