@@ -13,7 +13,7 @@
 pkgname=('attr')
 pkgoname=('attr')
 pkgver=2.4.48
-pkgrel=1
+pkgrel=2
 pkgdesc='Extended attribute support library for ACL support'
 url='http://savannah.nongnu.org/projects/attr'
 license=('LGPL')
