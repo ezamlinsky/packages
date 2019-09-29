@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('findutils')
 pkgver=4.7.0
-pkgrel=1
+pkgrel=2
 pkgdesc='GNU utilities to locate files'
 url='https://www.gnu.org/software/findutils'
 license=('GPL3')
