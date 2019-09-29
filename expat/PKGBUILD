@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('expat')
 pkgver=2.2.9
-pkgrel=1
+pkgrel=3
 pkgdesc='An XML parser library'
 url='https://libexpat.github.io/'
 license=('custom')
