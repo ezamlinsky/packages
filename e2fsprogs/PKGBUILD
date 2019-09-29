@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('e2fsprogs')
-pkgver=1.45.4
+pkgver=1.45.5
 pkgrel=1
 pkgdesc='Ext2/3/4 filesystem utilities'
 url='http://e2fsprogs.sourceforge.net'
@@ -48,7 +48,7 @@ source=(
 	'MIT-LICENSE'
 )
 sha256sums=(
-	'65faf6b590ca1da97440d6446bd11de9e0914b42553740ba5d9d2a796fa0dc02'
+	'f9faccc0d90f73556e797dc7cc5979b582bd50d3f8609c0f2ad48c736d44aede'
 	'SKIP'
 	'cc45386c1d71f438ad648fd7971e49e3074ad9dbacf9dd3a5b4cb61fd294ecbb'
 )
@@ -60,6 +60,9 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
+
+	# Remove unnecessary init.d directory
+	sed -i '/init\.d/s|^|#|' misc/Makefile.in
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
