@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('fontconfig')
 pkgver=2.13.91
-pkgrel=1
+pkgrel=2
 epoch=2
 pkgdesc='A library for configuring and customizing font access'
 url='https://www.freedesktop.org/wiki/Software/fontconfig/'
