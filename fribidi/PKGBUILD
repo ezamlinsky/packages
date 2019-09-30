@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('fribidi')
-pkgver=1.0.7
+pkgver=1.0.8
 pkgrel=1
 pkgdesc='A Free Implementation of the Unicode Bidirectional Algorithm'
 url='https://github.com/fribidi/fribidi/'
@@ -30,9 +30,9 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='aac3845708969b9c4bc2874edc4950123595b1b4'  # tags/v1.0.7
+_commit='2e9bd91cfd857c5b78a210d8f24862a4bb704059'
 source=("git+https://github.com/fribidi/fribidi#commit=$_commit")
-md5sums=('SKIP')
+sha256sums=('SKIP')
 
 #==============================================================================#
 #       Package building sequence                                              #
