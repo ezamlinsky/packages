@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('gawk')
 pkgver=5.0.1
-pkgrel=1
+pkgrel=2
 pkgdesc='GNU version of awk'
 url='http://www.gnu.org/software/gawk/'
 license=('GPL')
