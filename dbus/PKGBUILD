@@ -13,9 +13,9 @@
 pkgbase='dbus'
 pkgname=('dbus' 'dbus-docs')
 pkgver=1.12.16
-pkgrel=2
+pkgrel=5
 url='https://wiki.freedesktop.org/www/Software/dbus/'
-license=('GPL custom')
+license=('GPL' 'custom')
 arch=('x86_64')
 
 #==============================================================================#
@@ -37,9 +37,15 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='23cc709db8fab94f11fa48772bff396b20aea8b0'  # tags/dbus-1.12.16^0
-source=("git+https://gitlab.freedesktop.org/dbus/dbus.git#commit=$_commit")
-sha256sums=('SKIP')
+_commit='23cc709db8fab94f11fa48772bff396b20aea8b0'
+source=(
+	"git+https://gitlab.freedesktop.org/dbus/dbus.git#commit=$_commit"
+	'dbus-reload.hook'
+)
+sha256sums=(
+	'SKIP'
+	'd636205622d0ee3b0734360225739ef0c7ad2468a09489e6ef773d88252960f3'
+)
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -95,11 +101,14 @@ build() {
 		#'--enable-apparmor'
 		'--disable-apparmor'
 
+	# 'audit' related options
+		#'--enable-libaudit'
+		'--disable-libaudit'
+
 	# 'libselinux' related options
 		#'--enable-selinux'
 		'--disable-selinux'
-		#'--enable-libaudit'
-		'--disable-libaudit'
+
 
 	# 'libsystemd' related options
 		'--enable-systemd'
@@ -147,13 +156,17 @@ package_dbus() {
 	pkgdesc='Freedesktop.org message bus system'
 	depends=(
 		#'apparmor'
+		#'audit'
 		'expat'
 		'glibc'
 		#'libselinux'
 		'libx11'
 		'systemd-libs'
 	)
-	provides=('libdbus')
+	provides=(
+		'libdbus'
+		'libdbus-1.so'
+	)
 	conflicts=('libdbus')
 	replaces=('libdbus')
 
@@ -162,6 +175,9 @@ package_dbus() {
 
 	# Install files
 	make DESTDIR=$pkgdir install
+
+	# Install 'dbus-reload.hook'
+	install -Dm644 ../dbus-reload.hook $pkgdir/usr/share/libalpm/hooks/dbus-reload.hook
 
 	# Install license file
 	install -Dm644 COPYING $pkgdir/usr/share/licenses/dbus/COPYING
