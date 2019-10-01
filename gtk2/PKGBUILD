@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('gtk2')
 pkgver=2.24.32
-pkgrel=1
+pkgrel=2
 pkgdesc='GObject-based multi-platform GUI toolkit (legacy)'
 url='https://www.gtk.org/'
 license=('LGPL')
