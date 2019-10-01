@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('hwids')
-pkgver=20190818
+pkgver=20200204
 pkgrel=1
 pkgdesc='Hardware identification databases'
 url='https://github.com/gentoo/hwids'
