@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('gzip')
 pkgver=1.10
-pkgrel=2
+pkgrel=3
 pkgdesc='GNU compression utility'
 url='https://www.gnu.org/software/gzip/'
 license=('GPL3')
