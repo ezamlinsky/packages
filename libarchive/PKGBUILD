@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libarchive')
-pkgver=3.4.0
-pkgrel=2
+pkgver=3.4.2
+pkgrel=1
 pkgdesc='Multi-format archive and compression library'
-url='http://libarchive.org/'
+url='https://libarchive.org/'
 license=('BSD')
 arch=('x86_64')
 
@@ -45,11 +45,11 @@ provides=('libarchive.so')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/libarchive/libarchive/releases/download/v${pkgver}/libarchive-${pkgver}.tar.gz"
-	"https://github.com/libarchive/libarchive/releases/download/v${pkgver}/libarchive-${pkgver}.tar.gz.asc"
+	"https://github.com/libarchive/libarchive/releases/download/v${pkgver}/libarchive-${pkgver}.tar.xz"
+	"https://github.com/libarchive/libarchive/releases/download/v${pkgver}/libarchive-${pkgver}.tar.xz.asc"
 )
 sha256sums=(
-	'8643d50ed40c759f5412a3af4e353cffbce4fdf3b5cf321cb72cacf06b2d825e'
+	'd8e10494b4d3a15ae9d67a130d3ab869200cfd60b2ab533b391b0a0d5500ada1'
 	'SKIP'
 )
 
