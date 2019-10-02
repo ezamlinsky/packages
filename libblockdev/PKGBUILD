@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname='libblockdev'
 pkgver=2.23
-pkgrel=1
+pkgrel=3
 pkgdesc='A library for manipulating block devices'
 url='https://github.com/rhinstaller/libblockdev'
 license=('LGPL')
@@ -58,7 +58,7 @@ sha512sums=('e1e9976d24bdd8775310c9b25c31eb3b0e2d06a295b75f0c281def694104664f42a
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver-$pkgrel
+	cd $pkgname-$pkgver-1
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -72,7 +72,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver-$pkgrel
+	cd $pkgname-$pkgver-1
 
 	# Default configure options
 	config_opts=(
@@ -165,7 +165,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver-$pkgrel
+	cd $pkgname-$pkgver-1
 
 	# Run internal checks
 	make -k check
@@ -177,7 +177,7 @@ check() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver-$pkgrel
+	cd $pkgname-$pkgver-1
 
 	# Install files
 	make DESTDIR=$pkgdir install
