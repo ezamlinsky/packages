@@ -13,7 +13,7 @@
 pkgname=('less')
 pkgoname=('less')
 pkgver=551
-pkgrel=2
+pkgrel=3
 pkgdesc='A terminal based program for viewing text files'
 url='http://www.greenwoodsoftware.com/less'
 license=('GPL3')
