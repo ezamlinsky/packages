@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libffi')
 pkgver=3.2.1
-pkgrel=3
+pkgrel=4
 pkgdesc='Portable foreign function interface library'
 url='http://sourceware.org/libffi/'
 license=('MIT')
