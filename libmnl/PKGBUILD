@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libmnl')
 pkgver=1.0.4
-pkgrel=2
+pkgrel=3
 pkgdesc='Minimalistic user-space library oriented to Netlink developers.'
 url='http://www.netfilter.org/projects/libmnl/'
 license=('LGPL2.1')
