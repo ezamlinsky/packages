@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname='libice'
 pkgver=1.0.10
-pkgrel=1
+pkgrel=2
 pkgdesc='X11 Inter-Client Exchange library'
 url='https://xorg.freedesktop.org/'
 license=('custom')
