@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libpsl')
 pkgver=0.21.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Public Suffix List library'
 url='https://github.com/rockdaboot/libpsl'
 license=('MIT')
