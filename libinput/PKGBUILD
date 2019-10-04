@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libinput')
-pkgver=1.14.3
+pkgver=1.15.2
 pkgrel=1
 pkgdesc='Input device management and event handling library'
 url='https://www.freedesktop.org/wiki/Software/libinput/'
@@ -47,7 +47,7 @@ source=(
 	"https://freedesktop.org/software/libinput/libinput-$pkgver.tar.xz.sig"
 )
 sha512sums=(
-	'f01d1bd1b25b8060519575644597d35f0c89de5386d298441f440128ceee3e57549921a058adec31adc8b33dbdedf4c0bd12c76905a69f752859d3136e26336d'
+	'f6b50dbdf6ee6b65f88e020c4292c94c3178125d58629f27c2e52f92b658ccd67e0c5604fbf0b303621ff0386637ce1e291daaa991761d4145e8bcda4dd128a2'
 	'SKIP'
 )
 
