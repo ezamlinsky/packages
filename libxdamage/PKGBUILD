@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libxdamage')
 pkgver=1.1.5
-pkgrel=1
+pkgrel=2
 pkgdesc='X11 damaged region extension library'
 url='https://xorg.freedesktop.org/'
 license=('custom')
