@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='libuv'
-pkgver=1.33.1
+pkgver=1.34.2
 pkgrel=1
 pkgdesc='Multi-platform support library with a focus on asynchronous I/O'
 url='https://github.com/libuv/libuv'
@@ -30,8 +30,8 @@ makedepends=('python-sphinx')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://github.com/libuv/libuv/archive/v$pkgver/libuv-$pkgver.tar.gz")
-sha512sums=('0200aae2d38c26f537658955479cbc54fb69d5d8cbbccf3016cea319b2c46b1f311ca7a8fc289f14532acbbf2905cf96b17353b8b92bf09802424c372701d1d5')
+source=("https://github.com/libuv/libuv/archive/v$pkgver/$pkgname-$pkgver.tar.gz")
+sha512sums=('7e7a54d2d1e0ed76654ece9481f02177d201a4590c5d9b5c8b4edf6f795a0d7c30970b907481847930a524a0f06c15c6c73b3ce73a8afa2f836e33dbd54a7249')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
