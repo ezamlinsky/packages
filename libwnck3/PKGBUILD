@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libwnck3')
 pkgver=3.32.0
-pkgrel=2
+pkgrel=3
 pkgdesc='Library to manage X windows and workspaces (via pagers, tasklists, etc.)'
 url='https://gitlab.gnome.org/GNOME/libwnck'
 license=('LGPL')
