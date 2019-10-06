@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libxtst')
 pkgver=1.2.3
-pkgrel=2
+pkgrel=3
 pkgdesc='X11 Testing -- Resource extension library'
 url='https://xorg.freedesktop.org/'
 license=('custom')
