@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libxrender')
 pkgver=0.9.10
-pkgrel=2
+pkgrel=3
 pkgdesc='X Rendering Extension client library'
 url='https://xorg.freedesktop.org/'
 license=('custom')
