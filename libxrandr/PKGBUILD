@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libxrandr')
 pkgver=1.5.2
-pkgrel=1
+pkgrel=2
 pkgdesc='X11 RandR extension library'
 url='https://xorg.freedesktop.org/'
 license=('custom')
