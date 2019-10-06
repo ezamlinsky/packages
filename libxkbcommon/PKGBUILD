@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='libxkbcommon'
 pkgname=('libxkbcommon' 'libxkbcommon-x11' 'libxkbcommon-doc')
-pkgver=0.9.1
+pkgver=0.10.0
 pkgrel=1
 url='https://xkbcommon.org/'
 license=('custom')
@@ -38,7 +38,7 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='6d83838cc2e89a61d081e6f7f53aa9bccd0ddb34'  # tags/xkbcommon-0.9.1^0
+_commit='e3c3420a7146f4ea6225d6fb417baa05a79c8202'
 source=("git+https://github.com/xkbcommon/libxkbcommon#commit=$_commit")
 sha256sums=('SKIP')
 
