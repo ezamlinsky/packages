@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libxxf86vm')
 pkgver=1.1.4
-pkgrel=2
+pkgrel=3
 pkgdesc='X11 XFree86 video mode extension library'
 url='https://xorg.freedesktop.org/'
 license=('custom')
