@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('popt')
 pkgver=1.16
-pkgrel=10
+pkgrel=12
 pkgdesc='A commandline option parser'
 url='http://rpm5.org'
 license=('custom')
