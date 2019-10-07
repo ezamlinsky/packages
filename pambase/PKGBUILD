@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('pambase')
 pkgver=20190105.1
-pkgrel=1
+pkgrel=12
 pkgdesc='Base PAM configuration for services'
 url='http://www.archlinux.org'
 license=('GPL')
