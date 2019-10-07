@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('shared-mime-info')
 pkgver=1.15
-pkgrel=1
+pkgrel=2
 pkgdesc='Freedesktop.org Shared MIME Info'
 url='https://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec/'
 license=('GPL2')
