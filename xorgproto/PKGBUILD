@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('xorgproto')
 pkgver=2019.2
-pkgrel=1
+pkgrel=2
 pkgdesc='Combined X.Org X11 Protocol headers'
 url='https://xorg.freedesktop.org/'
 license=('custom')
@@ -138,9 +138,7 @@ build() {
 	cd $pkgname-$pkgver
 
 	# Default configure options
-	config_opts=(
-		'-Dlegacy=true'
-	)
+	config_opts=()
 
 	# Run package configuration script
 	arch-meson build "${config_opts[@]}"
@@ -185,8 +183,6 @@ package() {
 	rm -f $pkgdir/usr/include/X11/extensions/{apple,windows}*
 	rm -f $pkgdir/usr/share/licenses/xorgproto/COPYING-{apple,windows}wmproto
 	rm -f $pkgdir/usr/share/pkgconfig/{apple,windows}wmproto.pc
-	rm -f $pkgdir/usr/include/X11/extensions/vldXvMC.h
-	rm -f $pkgdir/usr/include/X11/extensions/XKBgeom.h
 	rm -f $pkgdir/usr/share/doc/xorgproto/meson_options.txt
 }
 
