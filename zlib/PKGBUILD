@@ -13,7 +13,7 @@
 pkgbase='zlib'
 pkgname=('zlib' 'minizip')
 pkgver=1.2.11
-pkgrel=3
+pkgrel=4
 epoch=1
 url='http://www.zlib.net/'
 license=('custom')
