@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-panel')
-pkgver=4.14.1
+pkgver=4.14.3
 pkgrel=1
 pkgdesc='Panel for the Xfce desktop environment'
 url='https://www.xfce.org/'
@@ -55,8 +55,8 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://archive.xfce.org/src/xfce/xfce4-panel/${pkgver%.*}/xfce4-panel-$pkgver.tar.bz2")
-sha256sums=('9c3c78b49ddfac7d42a804e6a6ad9d22ad64ec60bbe17d8724bc52d3e3f6d114')
+source=("https://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
+sha256sums=('ef22324d26e5af735134bb10f85b6e16525ac9f48be8d2f6b634142fbfcabbc9')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
