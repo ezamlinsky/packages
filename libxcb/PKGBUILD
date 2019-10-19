@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libxcb')
-pkgver=1.13.1
+pkgver=1.14
 pkgrel=1
 pkgdesc='X11 client-side library'
 url='https://xcb.freedesktop.org/'
@@ -31,18 +31,19 @@ makedepends=(
 	'libxslt'
 	'python'
 	'xorg-util-macros'
+	'xorgproto'
 )
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://xcb.freedesktop.org/dist/libxcb-$pkgver.tar.bz2"
-	'libxcb-1.1-no-pthread-stubs.patch'
+	"https://xorg.freedesktop.org/archive/individual/lib/$pkgname-$pkgver.tar.xz"
+	"https://xorg.freedesktop.org/archive/individual/lib/$pkgname-$pkgver.tar.xz.sig"
 )
-sha256sums=(
-	'a89fb7af7a11f43d2ce84a844a4b38df688c092bf4b67683aef179cdf2a647c4'
-	'21bf86a40e4038c52c2a8c57f76b5f10e211e27562cce7526b4bb6fd025dd0c3'
+sha512sums=(
+	'b90a23204b0d2c29d8b115577edb01df0465e02d6a8876550fecd62375d24a5d5f872ddd5946772ddba077cadce75b12c7a6d218469dc30b5b92bc82188e8bc6'
+	'SKIP'
 )
 
 #==============================================================================#
@@ -52,9 +53,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -Np1 -i ../libxcb-1.1-no-pthread-stubs.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
