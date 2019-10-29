@@ -11,12 +11,17 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('linux-api-headers')
-pkgver=5.1
+pkgver=5.3.1
 pkgrel=1
 pkgdesc='Kernel headers sanitized for use in userspace'
 url='http://www.gnu.org/software/libc'
 license=('GPL2')
 arch=('any')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=('rsync')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
@@ -26,7 +31,7 @@ source=(
 	"https://www.kernel.org/pub/linux/kernel/v${pkgver:0:1}.x/linux-$pkgver.tar.sign"
 )
 md5sums=(
-	'15fbdff95ff98483069ac6e215b9f4f9'
+	'4c68633ce304b8fbc7be2d3452060c11'
 	'SKIP'
 )
 
