@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('tzdata')
 pkgver=2019c
-pkgrel=1
+pkgrel=2
 pkgdesc='Sources for time zone and daylight saving time data'
 url='http://www.iana.org/time-zones'
 license=('GPL')
@@ -21,7 +21,10 @@ arch=('any')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=('glibc')
+depends=(
+	'bash'
+	'glibc'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
