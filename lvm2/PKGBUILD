@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='lvm2'
 pkgname=('lvm2' 'device-mapper')
-pkgver=2.02.185
-pkgrel=1
+pkgver=2.02.186
+pkgrel=2
 url='https://sourceware.org/lvm2/'
 license=('GPL2' 'LGPL2.1')
 arch=('x86_64')
@@ -60,7 +60,7 @@ sha256sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd lvm2
+	cd $pkgname
 
 	# Remove install section from systemd units that are enabled by default
 	sed -e '/^\[Install\]$/,$d' \
@@ -81,7 +81,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd lvm2
+	cd $pkgname
 
 	# Default configure options
 	config_opts=(
@@ -102,6 +102,7 @@ build() {
 		'--enable-lvmpolld'
 		'--enable-dmfilemapd'
 		'--enable-dmeventd'
+		'--enable-devmapper'
 		'--enable-notify-dbus'
 		'--enable-pkgconfig'
 		'--with-optimisation=-O3'
@@ -151,7 +152,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd lvm2
+	ccd $pkgname
 
 	# Run internal checks
 	make -k check
@@ -186,7 +187,7 @@ package_lvm2() {
 	)
 
 	# Change directory to source directory
-	cd lvm2
+	cd $pkgname
 
 	# Install files
 	make DESTDIR=$pkgdir install
@@ -243,6 +244,7 @@ package_device-mapper() {
 	pkgdesc='Device mapper userspace library and tools'
 	url='http://sourceware.org/dm/'
 	depends=(
+		'bash'
 		'glibc'
 		'systemd-libs'
 	)
