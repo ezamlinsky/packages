@@ -177,6 +177,10 @@ build() {
 		#'--without-system-zlib'
 	)
 
+	# Change compile flags
+	export CFLAGS+=' -fno-lto'
+	export CXXFLAGS+=' -fno-lto'
+
 	# Run package configuration script
 	./configure "${config_opts[@]}"
 
