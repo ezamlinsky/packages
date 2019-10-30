@@ -23,7 +23,6 @@ groups=('base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	#'guile'
 )
