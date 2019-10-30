@@ -10,9 +10,9 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgbase=('glib2')
+pkgbase='glib2'
 pkgname=('glib2' 'glib2-docs')
-pkgver=2.62.0
+pkgver=2.62.2
 pkgrel=1
 url='https://wiki.gnome.org/Projects/GLib'
 arch=('x86_64')
@@ -21,21 +21,28 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 makedepends=(
+	'attr'
+	'dbus'
 	'dbus'
 	'gettext'
 	'git'
 	'gtk-doc'
+	'libelf'
+	'libffi'
+	'libmount.so'
 	'libutil-linux'
 	'meson'
+	'pcre'
 	'python'
 	'shared-mime-info'
+	'zlib'
 )
 checkdepends=('desktop-file-utils')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=a1af0be78c6cb3bce4791a1598a796c3e912019f  # tags/2.62.0^0
+_commit='ca9f51b82f57e05f6b3c82b98c235623afa47573'  # tags/2.62.2^0
 source=(
 	"git+https://gitlab.gnome.org/GNOME/glib.git#commit=$_commit"
 	'noisy-glib-compile-schemas.diff'
@@ -132,8 +139,8 @@ package_glib2() {
 	license=('LGPL2.1')
 	depends=(
 		'attr'
+		'bash'
 		#'gamin'
-		'gcc-libs'
 		'glibc'
 		'libelf'
 		'libffi'
