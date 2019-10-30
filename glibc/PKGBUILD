@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('glibc')
-pkgver=2.29
-pkgrel=4
+pkgver=2.30
+pkgrel=2
 pkgdesc='GNU C Library'
-url='http://www.gnu.org/software/libc'
+url='https://www.gnu.org/software/libc'
 license=('GPL' 'LGPL')
 arch=('x86_64')
 groups=('base')
@@ -49,14 +49,15 @@ install='glibc.install'
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='34fb5f61d3c3f4b8fc616ea259fa19168b58ecd4'
+_commit='a6aaabd036d735a1b412f441bf6c706832655598'
 source=(
 	"git+https://sourceware.org/git/glibc.git#commit=$_commit"
 	'locale.gen.txt'
 	'locale-gen'
 	'lib32-glibc.conf'
+	'sdt.h'
+	'sdt-config.h'
 	'bz20338.patch'
-	'0001-Revert-elf-Correct-absolute-SHN_ABS-symbol-run-time-.patch'
 	'file-truncated-while-reading-soname-after-patchelf.patch'
 )
 md5sums=(
@@ -64,8 +65,9 @@ md5sums=(
 	'07ac979b6ab5eeb778d55f041529d623'
 	'476e9113489f93b348b21e144b6a8fcf'
 	'6e052f1cb693d5d3203f50f9d4e8c33b'
-	'dc0d3ad59aeaaf591b085a77de6e03e9'
-	'af5d3c5227ac639effe39667a43879a1'
+	'91fec3b7e75510ae2ac42533aa2e695e'
+	'680df504c683640b02ed4a805797c0b2'
+	'430673eccc78e52c249aa4b0f1786450'
 	'0820504d2e83ee15f74a656771361872'
 )
 
@@ -79,7 +81,6 @@ prepare() {
 
 	# Apply patches
 	patch -p1 -i $srcdir/bz20338.patch
-	patch -p1 -i $srcdir/0001-Revert-elf-Correct-absolute-SHN_ABS-symbol-run-time-.patch
 	patch -p1 -i $srcdir/file-truncated-while-reading-soname-after-patchelf.patch
 }
 
@@ -111,7 +112,7 @@ build() {
 		'--enable-hidden-plt'
 		'--enable-pt_chown'
 		'--enable-stackguard-randomization'
-		#'--enable-stack-protector=strong'
+		'--enable-stack-protector=strong'
 		'--enable-lock-elision=yes'
 		'--enable-tunables=yes'
 		'--enable-add-ons'
@@ -144,9 +145,9 @@ build() {
 	mkdir -p build && cd build
 
 	# Change compile flags
-	export CPPFLAGS=''
+	export CPPFLAGS=${CPPFLAGS/-D_FORTIFY_SOURCE=2/}
 	export CFLAGS+=' -fno-lto'
-	export CXXFLAGS="${CFLAGS}"
+	export CXXFLAGS+=' -fno-lto'
 
 	# Run package configuration script
 	../configure "${config_opts[@]}"
@@ -185,27 +186,35 @@ package() {
 	make DESTDIR=$pkgdir install
 
 	# Install nscd
+	install -dm755 $pkgdir/var/db/nscd
 	install -Dm644 ../nscd/nscd.conf $pkgdir/etc/nscd.conf
 	install -Dm644 ../nscd/nscd.service $pkgdir/usr/lib/systemd/system/nscd.service
 	install -Dm644 ../nscd/nscd.tmpfiles $pkgdir/usr/lib/tmpfiles.d/nscd.conf
-	install -dm755 $pkgdir/var/db/nscd
 
 	# Install 'gai.conf'
 	install -Dm644 ../posix/gai.conf $pkgdir/etc/gai.conf
 
 	# Install 'locale-gen'
+	install -dm755 $pkgdir/usr/lib/locale
 	install -Dm644 $srcdir/locale.gen.txt $pkgdir/etc/locale.gen
 	install -Dm755 $srcdir/locale-gen $pkgdir/usr/bin/locale-gen
-	install -dm755 $pkgdir/usr/lib/locale
+
+	# Provide tracing probes to libstdc++ for exceptions, possibly for other
+	# libraries too. Useful for gdb's catch command.
+	install -Dm644 $srcdir/sdt.h $pkgdir/usr/include/sys/sdt.h
+	install -Dm644 $srcdir/sdt-config.h $pkgdir/usr/include/sys/sdt-config.h
 
 	# Generate list of supported locales
-	sed -e '1,3d' -e 's|/| |g' -e 's|\\| |g' -e 's|^|#|g' \
-	../localedata/SUPPORTED >> $pkgdir/etc/locale.gen
+	sed	-e '1,3d' \
+		-e 's|/| |g' \
+		-e 's|\\| |g' \
+		-e 's|^|#|g' \
+		../localedata/SUPPORTED >> $pkgdir/etc/locale.gen
 
 	# Remove 'ld.so.cache'
 	rm -f $pkgdir/etc/ld.so.{cache,conf}
 
-	# Remove files shipped in tzdata
+	# Remove files are shipped in tzdata
 	rm -f $pkgdir/usr/bin/{tzselect,zdump,zic}
 }
 
