@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('tar')
 pkgver=1.32
-pkgrel=1
+pkgrel=2
 pkgdesc='Utility used to store, backup, and transport files'
 url='https://www.gnu.org/software/tar/'
 license=('GPL3')
@@ -25,7 +25,6 @@ groups=('base')
 depends=(
 	'acl'
 	'attr'
-	'gcc-libs'
 	'glibc'
 	#'libselinux'
 )
