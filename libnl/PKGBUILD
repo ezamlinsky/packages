@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libnl')
-pkgver=3.4.0
+pkgver=3.5.0
 pkgrel=1
 pkgdesc='Library for applications dealing with netlink sockets'
 url='https://github.com/thom311/libnl/'
@@ -21,10 +21,7 @@ arch=('x86_64')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=(
-	'gcc-libs'
-	'glibc'
-)
+depends=('glibc')
 
 #==============================================================================#
 #       Package miscellaneous options                                          #
@@ -42,7 +39,7 @@ source=(
 	"https://github.com/thom311/libnl/releases/download/libnl${pkgver//./_}/libnl-$pkgver.tar.gz.sig"
 )
 sha256sums=(
-	'b7287637ae71c6db6f89e1422c995f0407ff2fe50cecd61a312b6a9b0921f5bf'
+	'352133ec9545da76f77e70ccb48c9d7e5324d67f6474744647a7ed382b5e05fa'
 	'SKIP'
 )
 
