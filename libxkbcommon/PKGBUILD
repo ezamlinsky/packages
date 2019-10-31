@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='libxkbcommon'
 pkgname=('libxkbcommon' 'libxkbcommon-x11' 'libxkbcommon-doc')
-pkgver=0.8.4
+pkgver=0.9.1
 pkgrel=1
 url='https://xkbcommon.org/'
 license=('custom')
@@ -38,9 +38,9 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=d40b368b2f4c4cd130f63ac41e4a9d53b684c712  # tags/xkbcommon-0.8.4^0
+_commit='6d83838cc2e89a61d081e6f7f53aa9bccd0ddb34'  # tags/xkbcommon-0.9.1^0
 source=("git+https://github.com/xkbcommon/libxkbcommon#commit=$_commit")
-md5sums=('SKIP')
+sha256sums=('SKIP')
 
 #==============================================================================#
 #       Package building sequence                                              #
@@ -94,7 +94,6 @@ check() {
 package_libxkbcommon() {
 	pkgdesc='Keymap handling library for toolkits and window systems'
 	depends=(
-		'gcc-libs'
 		'glibc'
 		'xkeyboard-config'
 	)
@@ -128,7 +127,6 @@ package_libxkbcommon() {
 package_libxkbcommon-x11() {
 	pkgdesc='Keyboard handling library using XKB data for X11 XCB clients'
 	depends=(
-		'gcc-libs'
 		'glibc'
 		'libxcb'
 		'libxkbcommon'
