@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('pango')
-pkgver=1.44.6
+pkgver=1.44.7
 pkgrel=1
 epoch=1
 pkgdesc='A library for layout and rendering of text'
@@ -27,7 +27,6 @@ depends=(
 	'fontconfig'
 	'freetype2'
 	'fribidi'
-	'gcc-libs'
 	'glib2'
 	'glibc'
 	'harfbuzz'
@@ -50,7 +49,7 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=ee65d75feca3e128c951fdfbf9a61619e2a5239e  # tags/1.44.6^0
+_commit='9f03d48261cb25e59ba029b194e70881d6ae8f37'  # tags/1.44.7^0
 source=("git+https://gitlab.gnome.org/GNOME/pango.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -64,8 +63,10 @@ build() {
 
 	# Default configure options
 	config_opts=(
-		'-Denable_docs=false'
-		'-Dgir=false'
+		'-Dgtk_doc=true'
+		'-Dintrospection=false'
+		'-Dinstall-tests=false'
+		'-Duse_fontconfig=true'
 	)
 
 	# Run package configuration script
