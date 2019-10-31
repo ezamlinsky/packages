@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('expat')
-pkgver=2.2.7
+pkgver=2.2.9
 pkgrel=1
 pkgdesc='An XML parser library'
 url='https://libexpat.github.io/'
@@ -22,7 +22,6 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	#'libbsd'
 )
@@ -35,7 +34,7 @@ source=(
 	"https://github.com/libexpat/libexpat/releases/download/R_${pkgver//./_}/expat-${pkgver}.tar.bz2.asc"
 )
 sha256sums=(
-	'cbc9102f4a31a8dafd42d642e9a3aa31e79a0aedaa1f6efd2795ebc83174ec18'
+	'f1063084dc4302a427dabcca499c8312b3a32a29b7d2506653ecc8f950a9a237'
 	'SKIP'
 )
 
