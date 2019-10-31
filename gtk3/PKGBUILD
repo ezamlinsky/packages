@@ -12,10 +12,10 @@
 #==============================================================================#
 pkgbase='gtk3'
 pkgname=('gtk3' 'gtk-update-icon-cache')
-pkgver=3.24.11
+pkgver=3.24.12
 pkgrel=1
 epoch=1
-url='http://www.gtk.org/'
+url='https://www.gtk.org/'
 license=('LGPL')
 arch=('x86_64')
 
@@ -35,7 +35,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=622111f1caf9104251de79bfa27ccfba9614cc90  # tags/3.24.11^0
+_commit='39e28ab93395c32cc2ed49a67bca24d31bac587e'  # gtk-3-24
 source=(
 	"git+https://gitlab.gnome.org/GNOME/gtk.git#commit=$_commit"
 	'settings.ini'
@@ -50,7 +50,6 @@ sha256sums=(
 	'496064a9dd6214bd58f689dd817dbdc4d7f17d42a8c9940a87018c3f829ce308'
 	'f1d3a0dbfd82f7339301abecdbe5f024337919b48bd0e09296bb0e79863b2541'
 )
-
 #==============================================================================#
 #       Package building sequence                                              #
 #==============================================================================#
@@ -125,13 +124,13 @@ package_gtk3() {
 		'fontconfig'
 		'freetype2'
 		'fribidi'
-		'gcc-libs'
 		'gdk-pixbuf2'
 		'glib2'
 		'glibc'
 		'gtk-update-icon-cache'
 		'harfbuzz'
 		#'json-glib'
+		'libcanberra'
 		#'libcloudproviders'
 		#'libcups'
 		'libepoxy'
@@ -183,7 +182,6 @@ package_gtk3() {
 package_gtk-update-icon-cache() {
 	pkgdesc='GTK+ icon cache updater'
 	depends=(
-		'gcc-libs'
 		'gdk-pixbuf2'
 		'glib2'
 		'glibc'
