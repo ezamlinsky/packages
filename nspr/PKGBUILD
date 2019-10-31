@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('nspr')
-pkgver=4.22
+pkgver=4.23
 pkgrel=1
 pkgdesc='Netscape Portable Runtime'
 url='https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR'
@@ -31,7 +31,7 @@ makedepends=('zip')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$pkgver/src/nspr-$pkgver.tar.gz")
-sha256sums=('c9e4b6cc24856ec93202fe13704b38b38ba219f0f2aeac93090ce2b6c696d430')
+sha256sums=('4b9d821037faf5723da901515ed9cac8b23ef1ea3729022259777393453477a4')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -75,10 +75,6 @@ build() {
 		'--with-mozilla'
 		'--with-pthreads'
 	)
-
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
