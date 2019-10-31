@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libusb')
-pkgver=1.0.22
+pkgver=1.0.23
 pkgrel=1
 pkgdesc='Library that provides generic access to USB devices'
-url='http://libusb.info/'
+url='https://libusb.info/'
 license=('LGPL')
 arch=('x86_64')
 
@@ -22,7 +22,6 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'systemd-libs'
 )
@@ -45,7 +44,7 @@ replaces=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://github.com/libusb/libusb/releases/download/v$pkgver/libusb-$pkgver.tar.bz2")
-md5sums=('466267889daead47674df933cea9cacb')
+md5sums=('1e29700f6a134766d32b36b8d1d61a95')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
