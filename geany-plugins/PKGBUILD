@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='geany-plugins'
-pkgver=1.35
+pkgver=1.36
 pkgrel=2
 pkgdesc='Plugins for Geany'
 url='https://plugins.geany.org/'
@@ -26,7 +26,6 @@ depends=(
 	'cairo'
 	#'ctpl'
 	'enchant'
-	'gcc-libs'
 	'gdk-pixbuf2'
 	'geany'
 	'glib2'
@@ -56,7 +55,7 @@ source=(
 	"https://plugins.geany.org/geany-plugins/geany-plugins-$pkgver.tar.bz2.sig"
 )
 sha256sums=(
-	'b3718ad31c02e178aec108045109b456ef81052b0951ae294b0bf7ce3ff2cb25'
+	'ebe18dd699292174622e8cb8745b020ada8a5be3b604ab980af36e8518df7ce6'
 	'SKIP'
 )
 
@@ -113,7 +112,6 @@ build() {
 		'--enable-pairtaghighlighter'
 		'--enable-shiftcolumn'
 		'--enable-tableconvert'
-		'--enable-workbench'
 		'--enable-xmlsnippets'
 		'--enable-scope'
 		'--enable-vimode'
@@ -155,6 +153,8 @@ build() {
 	# 'libgit2' related options
 		#'--enable-gitchangebar'
 		'--disable-gitchangebar'
+		#'--enable-workbench'
+		'--disable-workbench'
 
 	# 'libsoup' related options
 		'--enable-geniuspaste'
