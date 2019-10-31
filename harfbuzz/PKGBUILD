@@ -12,9 +12,9 @@
 #==============================================================================#
 pkgbase='harfbuzz'
 pkgname=('harfbuzz' 'harfbuzz-icu')
-pkgver=2.6.1
+pkgver=2.6.4
 pkgrel=1
-url='http://www.freedesktop.org/wiki/Software/HarfBuzz'
+url='https://www.freedesktop.org/wiki/Software/HarfBuzz'
 license=('MIT')
 arch=('x86_64')
 
@@ -38,7 +38,7 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=be97e9d678017d4ec66625fa2b17ef3485552cad  # tags/2.6.1^0
+_commit='3a74ee528255cc027d84b204a87b5c25e47bff79'  # tags/2.6.4^0
 source=("git+https://github.com/harfbuzz/harfbuzz#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -174,7 +174,6 @@ package_harfbuzz() {
 package_harfbuzz-icu() {
 	pkgdesc="OpenType text shaping engine (ICU integration)"
 	depends=(
-		'gcc-libs'
 		'glibc'
 		'harfbuzz'
 		'icu'
