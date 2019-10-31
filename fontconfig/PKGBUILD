@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('fontconfig')
-pkgver=2.13.2
+pkgver=2.13.91
 pkgrel=1
 epoch=2
 pkgdesc='A library for configuring and customizing font access'
@@ -25,7 +25,6 @@ arch=('x86_64')
 depends=(
 	'expat'
 	'freetype2'
-	'gcc-libs'
 	'glibc'
 	'libutil-linux'
 	#'libxml2'
@@ -43,7 +42,7 @@ install='fontconfig.install'
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=5f5ec5676c61b9773026a9335c9b0dfa73a73353  # master
+_commit='75eadca26648abf69497691ff0f4c7803b9ff23c'  # master
 source=(
 	"git+https://gitlab.freedesktop.org/fontconfig/fontconfig.git#commit=$_commit"
 	'fontconfig.hook'
@@ -95,11 +94,11 @@ build() {
 		'--with-add-fonts=/usr/local/share/fonts'
 		'--with-default-hinting=slight'
 
-		# 'expat' related options
-			'--disable-libxml2'
+	# 'expat' related options
+		'--disable-libxml2'
 
-		# 'libxml2' related options
-			#'--enable-libxml2'
+	# 'libxml2' related options
+		#'--enable-libxml2'
 	)
 
 	# Run package configuration script
