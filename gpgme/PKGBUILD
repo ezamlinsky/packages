@@ -10,7 +10,7 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgbase=('gpgme')
+pkgbase='gpgme'
 pkgname=('gpgme' 'qgpgme' 'python-gpgme')
 pkgver=1.13.1
 pkgrel=1
@@ -165,7 +165,6 @@ package_qgpgme() {
 package_python-gpgme() {
 	pkgdesc='Python bindings for GPGme'
 	depends=(
-		'gcc-libs'
 		'glibc'
 		'gpgme'
 		'python'
