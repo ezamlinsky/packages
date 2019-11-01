@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('parted')
-pkgver=3.2
-pkgrel=9
+pkgver=3.3
+pkgrel=1
 pkgdesc='A program for creating, destroying, resizing, checking and copying partitions'
 url='https://www.gnu.org/software/parted/parted.html'
 license=('GPL3')
@@ -23,7 +23,6 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'device-mapper'
-	'gcc-libs'
 	'glibc'
 	'libutil-linux'
 	'ncurses'
@@ -38,14 +37,10 @@ makedepends=('pkg-config')
 source=(
 	"https://ftp.gnu.org/gnu/parted/parted-$pkgver.tar.xz"
 	"https://ftp.gnu.org/gnu/parted/parted-$pkgver.tar.xz.sig"
-	'0001-fat16.patch'
-	'0002-include.patch'
 )
 sha256sums=(
-	'858b589c22297cacdf437f3baff6f04b333087521ab274f7ab677cb8c6bb78e4'
+	'57e2b4bd87018625c515421d4524f6e3b55175b472302056391c5f7eccb83d44'
 	'SKIP'
-	'20f54040e58bbbef6ed043c8be98dda5696035349c3efad850972c938f08f84a'
-	'789d6ef8fcff389f9f74bd9e377aff9949ab5b317a80bd38cec39510bd40cef6'
 )
 
 #==============================================================================#
@@ -55,10 +50,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -p1 -i $srcdir/0001-fat16.patch
-	patch -p1 -i $srcdir/0002-include.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
