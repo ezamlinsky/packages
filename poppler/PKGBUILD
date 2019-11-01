@@ -13,7 +13,7 @@
 pkgbase='poppler'
 pkgname=('poppler' 'poppler-glib' 'poppler-qt5')
 pkgver=0.80.0
-pkgrel=1
+pkgrel=2
 url='https://poppler.freedesktop.org/'
 license=('GPL')
 arch=('x86_64')
@@ -36,7 +36,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=01c92874c3e109cb5cfdbc5ea987ea79283c3c80
+_commit='01c92874c3e109cb5cfdbc5ea987ea79283c3c80'
 source=(
 	"https://poppler.freedesktop.org/poppler-$pkgver.tar.xz"
 	"https://poppler.freedesktop.org/poppler-$pkgver.tar.xz.sig"
