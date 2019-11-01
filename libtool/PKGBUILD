@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libtool')
 pkgver=2.4.6+42+gb88cebd5
-pkgrel=5
+pkgrel=6
 pkgdesc='A generic library support script'
 url='http://www.gnu.org/software/libtool'
 license=('GPL')
@@ -23,7 +23,6 @@ groups=('base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'sh'
 	'tar'
