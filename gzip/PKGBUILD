@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('gzip')
 pkgver=1.10
-pkgrel=1
+pkgrel=2
 pkgdesc='GNU compression utility'
 url='https://www.gnu.org/software/gzip/'
 license=('GPL3')
@@ -23,7 +23,7 @@ groups=('base' 'base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
+	'bash'
 	'glibc'
 	'grep'
 	'less'
