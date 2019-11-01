@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='fuse3'
 pkgname=('fuse3' 'fuse-common')
-pkgver=3.6.2
-pkgrel=2
+pkgver=3.7.0
+pkgrel=1
 url='https://github.com/libfuse/libfuse'
 license=('GPL2')
 arch=('x86_64')
@@ -33,12 +33,10 @@ makedepends=(
 source=(
 	"https://github.com/libfuse/libfuse/releases/download/fuse-$pkgver/fuse-$pkgver.tar.xz"
 	"https://github.com/libfuse/libfuse/releases/download/fuse-$pkgver/fuse-$pkgver.tar.xz.asc"
-	'fuse.conf'
 )
 sha1sums=(
-	'2bdef7a3f1f9e63fed87559c6e77d27e5f2c2e0c'
+	'baa0c174d1ecad85be5cd7caea37c5bee083ab2f'
 	'SKIP'
-	'3b42e37a741d4651099225987dc40e7f02a716ad'
 )
 
 #==============================================================================#
@@ -79,7 +77,6 @@ package_fuse3() {
 	pkgdesc='A library that makes it possible to implement a filesystem in a userspace program.'
 	depends=(
 		'fuse-common'
-		'gcc-libs'
 		'glibc'
 	)
 
