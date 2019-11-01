@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-panel')
-pkgver=4.14.0
+pkgver=4.14.1
 pkgrel=1
 pkgdesc='Panel for the Xfce desktop environment'
-url='http://www.xfce.org/'
+url='https://www.xfce.org/'
 license=('GPL2')
 arch=('x86_64')
 groups=('xfce4')
@@ -24,13 +24,13 @@ groups=('xfce4')
 #==============================================================================#
 depends=(
 	'atk'
+	'bash'
 	'cairo'
 	'dbus'
 	'dbus-glib'
 	'desktop-file-utils'
 	'exo'
 	'garcon'
-	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
@@ -56,7 +56,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("http://archive.xfce.org/src/xfce/xfce4-panel/${pkgver%.*}/xfce4-panel-$pkgver.tar.bz2")
-sha256sums=('d5f8f3bd7e142139987e5e62cda26135a424baabb5e47aa0c23b4169d0a66ef4')
+sha256sums=('9c3c78b49ddfac7d42a804e6a6ad9d22ad64ec60bbe17d8724bc52d3e3f6d114')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
