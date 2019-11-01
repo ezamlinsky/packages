@@ -23,24 +23,21 @@ groups=('xorg-apps' 'xorg')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'libx11'
 	'libxkbfile'
 )
-makedepends=('xorg-util-macros')
+makedepends=(
+	'git'
+	'xorg-util-macros'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=(
-	"https://xorg.freedesktop.org/releases/individual/app/xkbcomp-$pkgver.tar.bz2"
-	"https://xorg.freedesktop.org/releases/individual/app/xkbcomp-$pkgver.tar.bz2.sig"
-)
-sha512sums=(
-	'b00d1eb08c19be86044418c8ea3bfc3c3973406c481878270138a70ed9dab348acb8e4d0af8678879598ffbd7df1c640a63d0abad3d7481758be99af8dd7734e'
-	'SKIP'
-)
+_commit='29fda8e50e4a4a127348e63fcf9f47600beab93c'  # master
+source=("git+https://gitlab.freedesktop.org/xorg/app/xkbcomp#commit=$_commit")
+sha512sums=('SKIP')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -48,7 +45,7 @@ sha512sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd xkbcomp-$pkgver
+	cd xkbcomp
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -62,7 +59,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd xkbcomp-$pkgver
+	cd xkbcomp
 
 	# Default configure options
 	config_opts=(
@@ -96,7 +93,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd xkbcomp-$pkgver
+	cd xkbcomp
 
 	# Install files
 	make DESTDIR=$pkgdir install
