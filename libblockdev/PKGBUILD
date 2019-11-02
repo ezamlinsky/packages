@@ -34,8 +34,6 @@ depends=(
 	#'ndctl'
 	'nss'
 	'parted'
-	#'python'
-	#'python2'
 	'systemd-libs'
 	'volume_key'
 )

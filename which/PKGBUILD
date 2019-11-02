@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('which')
 pkgver=2.21
-pkgrel=3
+pkgrel=4
 pkgdesc='A utility to show the full path of commands'
 url='http://savannah.gnu.org/projects/which'
 license=('GPL3')
@@ -23,7 +23,6 @@ groups=('base' 'base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'sh'
 )
