@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('file')
 pkgver=5.37
-pkgrel=2
+pkgrel=3
 pkgdesc='File type identification utility'
 url='https://www.darwinsys.com/file/'
 license=('custom')
@@ -23,7 +23,6 @@ groups=('base' 'base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	#'libseccomp'
 	'zlib'
@@ -82,8 +81,8 @@ build() {
 		'--enable-fsect-man5'
 
 	# 'libseccomp' related options
-		#'--enable-libseccomp'
-		'--disable-libseccomp'
+		'--enable-libseccomp'
+		#'--disable-libseccomp'
 
 	# 'zlib' related options
 		'--enable-zlib'
