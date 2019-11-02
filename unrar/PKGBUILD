@@ -12,10 +12,10 @@
 #==============================================================================#
 pkgbase='unrar'
 pkgname=('unrar' 'libunrar')
-pkgver=5.8.1
+pkgver=5.8.3
 pkgrel=1
 epoch=1
-url='http://www.rarlab.com/rar_add.htm'
+url='https://www.rarlab.com/rar_add.htm'
 license=('custom')
 arch=('x86_64')
 
@@ -23,7 +23,7 @@ arch=('x86_64')
 #        Package relations                                                     #
 #==============================================================================#
 source=("https://www.rarlab.com/rar/unrarsrc-$pkgver.tar.gz")
-sha256sums=('035f1f436f0dc2aea09aec146b9cc3e47ca2442f2c62b4ad9374c7c9cc20e632')
+sha256sums=('3591685c8f5bbcb0be09de3d0a0544adb88966b9cccb80986f6cd2b534fd91a6')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -32,10 +32,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgbase
-
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
 
 	# Set correct CFLAGS
 	sed -e "s/-O2/$CFLAGS/" -i makefile
