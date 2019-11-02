@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libsoup')
-pkgver=2.68.1
+pkgver=2.68.2
 pkgrel=1
 pkgdesc='HTTP client/server library for GNOME'
 url='https://wiki.gnome.org/Projects/libsoup'
@@ -23,7 +23,6 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'brotli'
-	'gcc-libs'
 	'glib2'
 	#'glib-networking'
 	'glibc'
@@ -49,7 +48,7 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=15a3d17bdefebede9262933752a897cf51976a05  # tags/2.68.1^0
+_commit='5b2cf0eab0386322ed3f25d9b671c00dfbb93471'	# tags/2.68.2^0
 source=("git+https://gitlab.gnome.org/GNOME/libsoup.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -81,12 +80,12 @@ build() {
 		'-Dgnome=true'
 		'-Dgtk_doc=true'
 		'-Dtests=false'
-		'-Dintrospection=disabled'
 		'-Dinstalled_tests=false'
+		'-Dintrospection=disabled'
 
 	# 'brotli' related options
-		'-Dbrotli=enabled',
-		#'-Dbrotli=disabled',
+		'-Dbrotli=enabled'
+		#'-Dbrotli=disabled'
 
 	# 'glib-networking' related options
 		#'-Dtls_check=true'
