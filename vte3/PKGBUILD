@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='vte3'
 pkgname=('vte3' 'vte-common')
-pkgver=0.58.0
+pkgver=0.58.2
 pkgrel=1
 url='https://wiki.gnome.org/Apps/Terminal/VTE'
 license=('LGPL')
@@ -35,7 +35,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=0a0abd8ff68b521fabd7dfeca3ce00a382722fcf  # tags/0.58.0^0
+_commit='b7440da36396cbdbaca005adef3789d2a8852985'  # tags/0.58.2^0
 source=("git+https://gitlab.gnome.org/GNOME/vte.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -119,6 +119,7 @@ package_vte3() {
 		'pcre2'
 		#'vala'
 		'vte-common'
+		'zlib'
 	)
 
 	# Change directory to source directory
