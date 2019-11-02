@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libburn')
-pkgver=1.5.0
+pkgver=1.5.2
 pkgrel=1
 pkgdesc='Library for reading, mastering and writing optical discs'
 url='https://dev.lovelyhq.com/libburnia'
@@ -22,7 +22,6 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	#'libcdio'
 )
@@ -35,7 +34,7 @@ source=(
 	"http://files.libburnia-project.org/releases/libburn-$pkgver.tar.gz.sig"
 )
 sha256sums=(
-	'582b12c236c1365211946f2fe3c254976af37bbec244051f7742a98ded9be2bd'
+	'7b32db1719d7f6516cce82a9d00dfddfb3581725db732ea87d41ea8ef0ce5227'
 	'SKIP'
 )
 
