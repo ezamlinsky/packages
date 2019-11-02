@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='gvfs'
 pkgname=('gvfs' 'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb')
-pkgver=1.42.0
+pkgver=1.42.1
 pkgrel=1
 url='https://wiki.gnome.org/Projects/gvfs'
 license=('LGPL')
@@ -68,7 +68,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='8a3a605d7f345f2122fad4c7528c9c7f792796b7'
+_commit='8f709637415f73033b185e1d1edc77736030f865'  # tags/1.42.1^0
 source=(
 	"git+https://gitlab.gnome.org/GNOME/gvfs.git#commit=$_commit"
 	'gvfsd.hook'
@@ -216,7 +216,6 @@ package_gvfs() {
 	depends=(
 		#'avahi'
 		'fuse3'
-		'gcc-libs'
 		#'gcr'
 		'glib2'
 		'glibc'
@@ -363,7 +362,6 @@ package_gvfs-afc() {
 	pkgdesc='Virtual filesystem implementation for GIO (AFC backend; Apple mobile devices)'
 	depends=(
 		"gvfs=$pkgver"
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'libimobiledevice'
@@ -381,7 +379,6 @@ package_gvfs-goa() {
 	pkgdesc='Virtual filesystem implementation for GIO (Gnome Online Accounts backend; cloud storage)'
 	depends=(
 		"gvfs=$pkgver"
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'gnome-online-accounts'
@@ -398,7 +395,6 @@ package_gvfs-google() {
 	pkgdesc='Virtual filesystem implementation for GIO (Google Drive backend)'
 	depends=(
 		"gvfs-goa=$pkgver"
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'gnome-online-accounts'
@@ -416,7 +412,6 @@ package_gvfs-gphoto2() {
 	pkgdesc='Virtual filesystem implementation for GIO (gphoto2 backend; PTP camera, MTP media player)'
 	depends=(
 		"gvfs=$pkgver"
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'libgphoto2'
@@ -434,7 +429,6 @@ package_gvfs-mtp() {
 	pkgdesc='Virtual filesystem implementation for GIO (MTP backend; Android, media player)'
 	depends=(
 		"gvfs=$pkgver"
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'libgudev'
@@ -453,7 +447,6 @@ package_gvfs-nfs() {
 	pkgdesc='Virtual filesystem implementation for GIO (NFS backend)'
 	depends=(
 		"gvfs=$pkgver"
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'libnfs'
@@ -471,7 +464,6 @@ package_gvfs-smb() {
 	pkgdesc='Virtual filesystem implementation for GIO (SMB/CIFS backend; Windows client)'
 	depends=(
 		"gvfs=$pkgver"
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'smbclient'
