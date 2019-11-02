@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('linux-firmware')
-pkgver=20190815.07b925b
+pkgver=20191022.2b016af
 pkgrel=1
 pkgdesc='Firmware files for Linux'
-url='http://git.kernel.org/?p=linux/kernel/git/firmware/linux-firmware.git;a=summary'
+url='https://git.kernel.org/?p=linux/kernel/git/firmware/linux-firmware.git;a=summary'
 license=('GPL2' 'GPL3' 'custom')
 arch=('any')
 groups=('base')
@@ -63,8 +63,8 @@ options=(!strip)
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=07b925b450bfb4cf3e141c612ec5b104658cd020
-source=("git+https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git#commit=${_commit}")
+_commit='2b016afc348ba4b5fb2016ffcb2822f4a293da0c'
+source=("git+https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git#commit=${_commit}?signed")
 md5sums=('SKIP')
 
 #==============================================================================#
