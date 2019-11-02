@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('polkit')
 pkgver=0.116
-pkgrel=2
+pkgrel=3
 pkgdesc='Application development toolkit for controlling system-wide privileges'
 url='https://www.freedesktop.org/wiki/Software/polkit/'
 license=('LGPL')
@@ -41,7 +41,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=941e9329f8d3d43ace8335d206365b212824e686  # tags/0.116
+_commit='941e9329f8d3d43ace8335d206365b212824e686'  # tags/0.116
 source=("git+https://gitlab.freedesktop.org/polkit/polkit.git#commit=$_commit")
 sha256sums=('SKIP')
 
