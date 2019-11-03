@@ -10,10 +10,10 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgname='x264'
-pkgver=157.r72db4377
+pkgname=('x264')
+pkgver=0.157.r2980.34c06d1
 pkgrel=1
-epoch=2
+epoch=3
 pkgdesc='Open Source H264/AVC video encoder'
 url='https://www.videolan.org/developers/x264.html'
 license=('GPL')
@@ -24,8 +24,8 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	#'ffms2'
+	#'gpac'
 	'glibc'
-	'libavcodec.so'
 	'libavformat.so'
 	'libavutil.so'
 	#'liblsmash.so'
@@ -34,7 +34,6 @@ depends=(
 makedepends=(
 	'ffmpeg'
 	'git'
-	'l-smash'
 	'nasm'
 )
 
@@ -59,8 +58,8 @@ replaces=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=72db437770fd1ce3961f624dd57a8e75ff65ae0b
-source=("git+https://code.videolan.org/videolan/x264.git#commit=${_commit}")
+_commit='34c06d1c17ad968fbdda153cb772f77ee31b3095'
+source=("git+https://code.videolan.org/videolan/x264.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -83,15 +82,27 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-debug'
+		'--enable-thread'
+		'--enable-cli'
+		'--enable-interlaced'
+		'--enable-opencl'
+		'--enable-asm'
 		'--enable-pic'
 		'--enable-lto'
 		'--enable-strip'
+		'--bit-depth=all'
+		'--chroma-format=all'
 
 	# 'ffms2' related options
 		#'--enable-ffms'
 		'--disable-ffms'
 		#'--enable-avs'
 		'--disable-avs'
+
+	# 'gpac' related options
+		#'--enable-gpac'
+		'--disable-gpac'
 
 	# 'libavformat.so' related options
 		'--enable-lavf'
@@ -107,7 +118,7 @@ build() {
 	)
 
 	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
+	export CFLAGS+=' -fno-lto'
 	export CXXFLAGS="${CFLAGS}"
 
 	# Run package configuration script
