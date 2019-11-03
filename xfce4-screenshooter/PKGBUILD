@@ -25,7 +25,6 @@ groups=('xfce4-goodies')
 depends=(
 	'cairo'
 	'exo'
-	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
