@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('mpv')
-pkgver=0.29.1
-pkgrel=8
+pkgver=0.30.0
+pkgrel=2
 epoch=1
 pkgdesc='A free, open source, and cross-platform media player'
 url='https://mpv.io/'
@@ -24,7 +24,6 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'alsa-lib'
-	#'crossc'
 	'desktop-file-utils'
 	#'glew-wayland'
 	'glibc'
@@ -42,10 +41,10 @@ depends=(
 	#'libcdio-paranoia'
 	'libdrm'
 	#'libdvdnav'
-	#'libdvdread'
 	'libegl'
 	'libgl'
 	'libjpeg-turbo'
+	#'libplacebo'
 	'libpulse'
 	'libva-drm.so'
 	#'libva-wayland.so'
@@ -70,10 +69,10 @@ depends=(
 	#'smbclient'
 	#'sndio'
 	#'uchardet'
-	#'v4l-utils'
 	#'vapoursynth'
 	#'vulkan-icd-loader'
 	#'wayland'
+	#'zimg'
 	'zlib'
 )
 makedepends=(
@@ -101,12 +100,10 @@ _waf_version=2.0.9
 source=(
 	"$pkgname-$pkgver.tar.gz::https://github.com/mpv-player/$pkgname/archive/v$pkgver.tar.gz"
 	"https://waf.io/waf-${_waf_version}"
-	'0001-libarchive-add-fallback-for-systems-without-C-UTF-8.patch'
 )
 sha256sums=(
-	'f9f9d461d1990f9728660b4ccb0e8cb5dce29ccaa6af567bec481b79291ca623'
+	'33a1bcb7e74ff17f070e754c15c52228cf44f2cefbfd8f34886ae81df214ca35'
 	'2a8e0816f023995e557f79ea8940d322bec18f286917c8f9a6fa2dc3875dfa48'
-	'0f8a1ba2628a50a8637137dfff8f66fdf1e7beb6ff159309842dcb6f39363d5e'
 )
 
 #==============================================================================#
@@ -116,9 +113,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -Np1 -i $srcdir/0001-libarchive-add-fallback-for-systems-without-C-UTF-8.patch
 
 	# Instal waf
 	install -m755 $srcdir/waf-$_waf_version waf
@@ -144,7 +138,6 @@ build() {
 		'--enable-libmpv-shared'
 		'--enable-cplugins'
 		'--enable-plain-gl'
-		'--enable-tv'
 		'--enable-dvbin'
 		'--disable-debug-build'
 		'--disable-oss-audio'
@@ -155,10 +148,6 @@ build() {
 	# 'alsa-lib' related options
 		'--enable-alsa'
 		#'--disable-alsa'
-
-	# 'crossc' related options
-		#'--enable-crossc'
-		'--disable-crossc'
 
 	# 'glew-wayland' related options
 		#'--enable-gl-wayland'
@@ -210,13 +199,13 @@ build() {
 		#'--enable-dvdnav'
 		'--disable-dvdnav'
 
-	# 'libdvdread' related options
-		#'--enable-dvdread'
-		'--disable-dvdread'
-
 	# 'libjpeg-turbo' related options
 		'--enable-jpeg'
 		#'--disable-jpeg'
+
+	# 'libplacebo' related options
+		#'--enable-libplacebo'
+		'--disable-libplacebo'
 
 	# 'libpulse' related options
 		'--enable-pulse'
@@ -241,10 +230,6 @@ build() {
 	# 'libva-x11.so & libegl' related options
 		'--enable-vaapi-x-egl'
 		#'--disable-vaapi-x-egl'
-
-	# 'libva-x11.so & libgl' related options
-		'--enable-vaapi-glx'
-		#'--disable-vaapi-glx'
 
 	# 'libvdpau' related options
 		#'--enable-vdpau'
@@ -299,10 +284,16 @@ build() {
 	# 'sdl2' related options
 		#'--enable-sdl2'
 		'--disable-sdl2'
+		#'--enable-sdl2-audio'
+		'--disable-sdl2-audio'
+		#'--enable-sdl2-video'
+		'--disable-sdl2-video'
 
 	# 'shaderc' related options
 		#'--enable-shaderc'
 		'--disable-shaderc'
+		#'--enable-spirv-cross'
+		'--disable-spirv-cross'
 
 	# 'smbclient' related options
 		#'--enable-libsmbclient'
@@ -316,19 +307,9 @@ build() {
 		#'--enable-uchardet'
 		'--disable-uchardet'
 
-	# 'v4l-utils' related options
-		#'--enable-libv4l2'
-		'--disable-libv4l2'
-		#'--enable-tv-v4l2'
-		'--disable-tv-v4l2'
-		#'--enable-audio-input'
-		'--disable-audio-input'
-
 	# 'vapoursynth' related options
 		#'--enable-vapoursynth'
 		'--disable-vapoursynth'
-		#'--enable-vapoursynth-lazy'
-		'--disable-vapoursynth-lazy'
 
 	# 'vulkan-icd-loader' related options
 		#'--enable-vulkan'
@@ -342,14 +323,14 @@ build() {
 		#'--enable-wayland-scanner'
 		'--disable-wayland-scanner'
 
+	# 'zimg' related options
+		#'--enable-zimg'
+		'--disable-zimg'
+
 	# 'zlib' related options
 		'--enable-zlib'
 		#'--disable-zlib'
 	)
-
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
 
 	# Run package configuration script
 	./waf configure ${config_opts[@]}
