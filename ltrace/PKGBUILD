@@ -117,7 +117,7 @@ package() {
 	make DESTDIR=$pkgdir install
 
 	# Install license file
-	install -Dm644 COPYING $pkgdir/usr/share/licenses/package_name/LICENSE
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/ltrace/LICENSE
 }
 
 ################################################################################

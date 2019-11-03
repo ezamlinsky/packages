@@ -12,10 +12,10 @@
 #==============================================================================#
 pkgbase='llvm'
 pkgname=('llvm' 'llvm-libs' 'llvm-ocaml')
-pkgver=8.0.1
-pkgrel=1
+pkgver=9.0.0
+pkgrel=4
 url='https://llvm.org/'
-license=('custom:University of Illinois/NCSA Open Source License')
+license=('custom:Apache 2.0 with LLVM Exception')
 arch=('x86_64')
 
 #==============================================================================#
@@ -32,7 +32,6 @@ makedepends=(
 	'ocaml'
 	'ocaml-ctypes'
 	'ocaml-findlib'
-	'ocaml-findlib'
 	'python-recommonmark'
 	'python-sphinx'
 )
@@ -41,12 +40,12 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/$pkgname-$pkgver.src.tar.xz"
-	"https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/$pkgname-$pkgver.src.tar.xz.sig"
+	"https://releases.llvm.org/$pkgver/llvm-$pkgver.src.tar.xz"
+	"https://releases.llvm.org/$pkgver/llvm-$pkgver.src.tar.xz.sig"
 	'llvm-config.h'
 )
 sha256sums=(
-	'44787a6d02f7140f145e2250d56c9f849334e11f9ae379827510ed72f12b75e7'
+	'd6a0565cf21f22e9b4353b2eb92622e8365000a9e90a16b09b56f8157eabfe84'
 	'SKIP'
 	'597dc5968c695bbdbb0eac9e8eb5117fcd2773bc91edf5ec103ecffffab8bc48'
 )
@@ -151,7 +150,6 @@ package_llvm() {
 		'glibc'
 		'llvm-libs'
 		'ncurses'
-		'perl'
 		'zlib'
 	)
 	optdepends=('python-setuptools: for using lit (LLVM Integrated Tester)')
@@ -221,7 +219,7 @@ package_llvm-ocaml() {
 	depends=(
 		'llvm'
 		'ocaml-ctypes'
-		'ocaml=4.07.1'
+		'ocaml=4.09.0'
 	)
 
 	# Copy files
