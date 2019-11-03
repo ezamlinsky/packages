@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('x265')
-pkgver=3.1.2
+pkgver=3.2.1
 pkgrel=1
 pkgdesc='Open Source H265/HEVC video encoder'
 url='https://bitbucket.org/multicoreware/x265'
@@ -40,7 +40,8 @@ provides=('libx265.so')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("hg+https://bitbucket.org/multicoreware/x265#tag=$pkgver")
+_commit='7fa570ead8d361bf6055cd2a881a8e15f12110ae'
+source=("hg+https://bitbucket.org/multicoreware/x265#revision=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -58,14 +59,27 @@ build() {
 		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
 		'-DCMAKE_INSTALL_PREFIX=/usr'
 		'-DCMAKE_BUILD_TYPE=Release'
+		'-DWARNINGS_AS_ERRORS=OFF'
 		'-DNATIVE_BUILD=ON'
-		'-DHIGH_BIT_DEPTH=ON'
+		'-DENABLE_ASSEMBLY=ON'
 		'-DENABLE_SHARED=ON'
+		'-DENABLE_PIC=ON'
 		'-DENABLE_HDR10_PLUS=ON'
+		'-DENABLE_SVT_HEVC=OFF'
+		'-DENABLE_CLI=ON'
+		'-DENABLE_TESTS=OFF'
+		'-DENABLE_AGGRESSIVE_CHECKS=OFF'
+		'-DCHECKED_BUILD=OFF'
+		'-DHIGH_BIT_DEPTH=ON'
+		'-DDETAILED_CU_STATS=OFF'
 
 	# 'numactl' related options
 		#'-DENABLE_LIBNUMA=ON'
 		'-DENABLE_LIBNUMA=OFF'
+
+	# 'vmaf' related options
+		#'-DENABLE_LIBVMAF=ON'
+		'-DENABLE_LIBVMAF=OFF'
 	)
 
 	# Create build directory
