@@ -10,8 +10,8 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgname='nodejs'
-pkgver=12.10.0
+pkgname=('nodejs')
+pkgver=13.0.1
 pkgrel=1
 pkgdesc='Evented I/O for V8 javascript'
 url='https://nodejs.org/'
@@ -41,8 +41,8 @@ optdepends=('npm: nodejs package manager')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("nodejs-$pkgver.tar.gz::https://github.com/nodejs/node/archive/v${pkgver}.tar.gz")
-sha512sums=('dcca3776f6794523313de5770c6a696b6354b567b960053e400ed5f7c3313d16720f4ef23e783c10b38a641346fdcc80a560d3434805b75f732559f9a00da5b3')
+source=("nodejs-$pkgver.tar.gz::https://github.com/nodejs/node/archive/v$pkgver.tar.gz")
+sha512sums=('033afe8199fe1fce30887de3ab6986a3c133920cabea6711b00d1686bce5d1e9872b633009c99f87dbda0450c2096456b62056805ccb771b634fbf8aaceb2206')
 
 #==============================================================================#
 #       Package building sequence                                              #
@@ -85,10 +85,6 @@ build() {
 		'--shared-zlib'
 	)
 
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
-
 	# Run package configuration script
 	./configure "${config_opts[@]}"
 
@@ -120,10 +116,6 @@ package() {
 
 	# Change directory to source directory
 	cd node-$pkgver
-
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
 
 	# Install files
 	make DESTDIR=$pkgdir install
