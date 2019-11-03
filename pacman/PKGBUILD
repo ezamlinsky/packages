@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('pacman')
-pkgver=5.2.0
+pkgver=5.2.1
 pkgrel=2
 pkgdesc='A library-based package manager with dependency support'
-url='http://www.archlinux.org/pacman/'
+url='https://www.archlinux.org/pacman/'
 license=('GPL')
 arch=('x86_64')
 groups=('base' 'base-devel')
@@ -26,13 +26,13 @@ depends=(
 	'archlinux-keyring'
 	'bash'
 	'curl'
-	'gcc-libs'
 	'glibc'
 	'gpgme'
 	'libarchive'
 	#'nettle'
 	'openssl'
 	'pacman-mirrorlist'
+	'perl'
 )
 makedepends=('asciidoc')
 checkdepends=(
@@ -64,7 +64,7 @@ source=(
 	'makepkg.conf'
 )
 sha256sums=(
-	'4df564447abba9236e0ad3228b781a95f6375a96693b9ae6558dc144b6ecb440'
+	'1930c407265fd039cb3a8e6edc82f69e122aa9239d216d9d57b9d1b9315af312'
 	'SKIP'
 	'3353f363088c73f1f86a890547c0f87c7473e5caf43bbbc768c2e9a7397f2aa2'
 	'8c100b64450f5a19a16325dd05c143d49395bdeb96bd957f863cde4b95d3cb86'
