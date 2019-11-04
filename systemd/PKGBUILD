@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='systemd'
 pkgname=('systemd' 'systemd-libs' 'systemd-resolvconf' 'systemd-sysvcompat')
-pkgver=243.0
+pkgver=243.78
 pkgrel=1
 url='https://www.github.com/systemd/systemd'
 arch=('x86_64')
@@ -80,7 +80,7 @@ options=('emptydirs')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='efb536d0cbe2e58f80e501d19999928c75e08f6a'
+_commit='ef677436aa203c24816021dd698b57f219f0ff64'
 source=(
 	"git+https://github.com/systemd/systemd-stable#tag=v${pkgver%.*}?signed"
 	"git+https://github.com/systemd/systemd#tag=v${pkgver%.*}?signed"
@@ -424,7 +424,6 @@ package_systemd() {
 		'cryptsetup'
 		'curl'
 		'dbus'
-		'gcc-libs'
 		'glibc'
 		#'gnutls'
 		'hwids'
@@ -605,7 +604,6 @@ package_systemd-libs() {
 	pkgdesc='Systemd client libraries'
 	license=('LGPL2.1')
 	depends=(
-		'gcc-libs'
 		'glibc'
 		'libgcrypt'
 		'lz4'
