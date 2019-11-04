@@ -1,0 +1,94 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('pciutils')
+pkgver=3.6.2
+pkgrel=1
+pkgdesc='PCI bus configuration space access library and tools'
+url='https://mj.ucw.cz/sw/pciutils/'
+license=('GPL2')
+arch=('x86_64')
+groups=('base')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'hwids'
+	'kmod'
+	'sh'
+	'systemd-libs'
+	'zlib'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/pciutils-$pkgver.tar.gz"
+	"ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/pciutils-$pkgver.tar.gz.sign"
+)
+md5sums=(
+	'a1c5ec13f81a1c9cf380c93623959005'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		"OPT=$CFLAGS -fPIC -DPIC"
+		'SHARED=yes'
+		'DNS=yes'
+		'ZLIB=yes'
+
+	# 'hwids' related options
+		'HWDB=yes'
+		#'HWDB=no'
+
+	# 'kmod' rlated options
+		'LIBKMOD=yes'
+		#'LIBKMOD=no'
+	)
+
+	# Build package
+	make "${config_opts[@]}"
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make PREFIX=/usr SBINDIR=/usr/bin DESTDIR=$pkgdir install install-lib
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/pciutils/LICENSE
+
+	# Remove 'pci.ids.gz' file
+	rm $pkgdir/usr/share/pci.ids.gz
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
