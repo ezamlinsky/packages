@@ -247,7 +247,6 @@ package_pulseaudio() {
 		"libpulse=$pkgver-$pkgrel"
 		'alsa-lib'
 		'dbus'
-		'gcc-libs'
 		'gdbm'
 		'glib2'
 		'glibc'
@@ -337,7 +336,6 @@ package_libpulse() {
 	license=('LGPL')
 	depends=(
 		'dbus'
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		#'libasyncns'
@@ -362,7 +360,6 @@ package_pulseaudio-zeroconf() {
 		"pulseaudio=$pkgver-$pkgrel"
 		'avahi'
 		'dbus'
-		'gcc-libs'
 		'glibc'
 	)
 
@@ -378,7 +375,6 @@ package_pulseaudio-lirc() {
 	depends=(
 		"libpulse=$pkgver-$pkgrel"
 		"pulseaudio=$pkgver-$pkgrel"
-		'gcc-libs'
 		'glibc'
 		'lirc'
 	)
@@ -396,7 +392,6 @@ package_pulseaudio-jack() {
 		"libpulse=$pkgver-$pkgrel"
 		"pulseaudio=$pkgver-$pkgrel"
 		'dbus'
-		'gcc-libs'
 		'glibc'
 		'jack2'
 	)
@@ -414,7 +409,6 @@ package_pulseaudio-bluetooth() {
 		"libpulse=$pkgver-$pkgrel"
 		"pulseaudio=$pkgver-$pkgrel"
 		'dbus'
-		'gcc-libs'
 		'glibc'
 		'sbc'
 	)
@@ -434,7 +428,6 @@ package_pulseaudio-equalizer() {
 		"pulseaudio=$pkgver-$pkgrel"
 		'dbus'
 		'fftw'
-		'gcc-libs'
 		'glibc'
 	)
 
