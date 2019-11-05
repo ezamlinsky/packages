@@ -25,7 +25,9 @@ depends=(
 	'gcc-libs'
 	'glibc'
 	'ncurses'
+	'perl'
 	'readline'
+	'sh'
 )
 optdepends=('perl: for ispellaff2myspell')
 
