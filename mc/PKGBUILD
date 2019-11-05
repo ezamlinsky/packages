@@ -24,7 +24,6 @@ arch=('x86_64')
 depends=(
 	#'aspell'
 	'e2fsprogs'
-	'gcc-libs'
 	'glib2'
 	'glibc'
 	'gpm'
