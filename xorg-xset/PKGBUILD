@@ -26,7 +26,6 @@ groups=(
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'libx11'
 	'libxext'
