@@ -22,10 +22,7 @@ arch=('x86_64')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=(
-	'gcc-libs'
-	'glibc'
-)
+depends=('glibc')
 makedepends=('git')
 checkdepends=('diffutils')
 
@@ -34,6 +31,18 @@ checkdepends=('diffutils')
 #==============================================================================#
 source=("git+https://github.com/lz4/lz4.git#tag=v$pkgver")
 md5sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Set correct CFLAGS
+	sed -e "s/CFLAGS   ?= -O3/CFLAGS   ?= $CFLAGS/" -i programs/Makefile
+}
 
 #==============================================================================#
 #       Package building sequence                                              #
