@@ -25,6 +25,7 @@ depends=(
 	'gcc-libs'
 	'glibc'
 	'lz4'
+	'sh'
 	'xz'
 	'zlib'
 )

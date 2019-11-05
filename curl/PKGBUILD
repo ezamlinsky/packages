@@ -28,7 +28,6 @@ depends=(
 	'brotli'
 	'c-ares'
 	'ca-certificates'
-	'gcc-libs'
 	'glibc'
 	#'gnutls'
 	#'krb5'
