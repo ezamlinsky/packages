@@ -23,7 +23,6 @@ groups=('base')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'grep'
 	'less'
@@ -52,13 +51,8 @@ prepare() {
 	# Change directory to source directory
 	cd $pkgname-$pkgver
 
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
-
 	# Set correct CFLAGS
-	sed -e "s/-O2/$CFLAGS/" -i Makefile
-	sed -e "s/-O2/$CFLAGS/" -i Makefile-libbz2_so
+	sed -e "s/-O2/$CFLAGS/" -i Makefile Makefile-libbz2_so
 
 	# Set correct LDFLAGS
 	sed -e "s/ -shared / $LDFLAGS\0/g" -i Makefile-libbz2_so
@@ -76,7 +70,7 @@ build() {
 	make -f Makefile-libbz2_so
 
 	# Build package
-	make
+	make LDFLAGS=$LDFLAGS
 }
 
 #==============================================================================#
@@ -125,6 +119,12 @@ package() {
 	ln -sf bzip2.1 usr/share/man/man1/bunzip2.1
 	ln -sf bzip2.1 usr/share/man/man1/bzcat.1
 	ln -sf bzip2.1 usr/share/man/man1/bzip2recover.1
+
+	# Fix non correct symbolic links
+	ln -sf bzgrep $pkgdir/usr/bin/bzegrep
+	ln -sf bzgrep $pkgdir/usr/bin/bzfgrep
+	ln -sf bzmore $pkgdir/usr/bin/bzless
+	ln -sf bzdiff $pkgdir/usr/bin/bzcmp
 }
 
 ################################################################################
