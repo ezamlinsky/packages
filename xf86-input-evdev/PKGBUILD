@@ -23,7 +23,6 @@ groups=('xorg-drivers')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'libevdev'
 	'mtdev'
