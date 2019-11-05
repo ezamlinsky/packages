@@ -24,9 +24,7 @@ groups=('xfce4-goodies')
 #==============================================================================#
 depends=(
 	'cairo'
-	'dbus-glib'
 	'file'
-	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
