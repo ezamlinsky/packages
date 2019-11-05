@@ -22,7 +22,6 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'attr'
 )
@@ -55,7 +54,7 @@ prepare() {
 	sed -e "s/-O2/$CFLAGS/" -i Make.Rules
 
 	# Set correct LDFLAGS
-	sed -e "s/-shared/$LDFLAGS -shared/" -i Make.Rules
+	sed -e "s/LDFLAGS :=/LDFLAGS := $LDFLAGS/" -i Make.Rules
 }
 
 #==============================================================================#
