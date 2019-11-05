@@ -27,7 +27,6 @@ depends=(
 	'curl'
 	'ffmpegthumbnailer'
 	'freetype2'
-	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
