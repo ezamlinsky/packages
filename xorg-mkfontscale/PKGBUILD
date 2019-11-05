@@ -23,9 +23,9 @@ groups=('xorg-apps' 'xorg')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'bash'
 	'bzip2'
 	'freetype2'
-	'gcc-libs'
 	'glibc'
 	'libfontenc'
 	'zlib'
