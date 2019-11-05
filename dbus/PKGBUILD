@@ -148,7 +148,6 @@ package_dbus() {
 	depends=(
 		#'apparmor'
 		'expat'
-		'gcc-libs'
 		'glibc'
 		#'libselinux'
 		'libx11'
