@@ -25,7 +25,6 @@ depends=(
 	'acl'
 	'bzip2'
 	'expat'
-	'gcc-libs'
 	'glibc'
 	#'libxml2'#
 	'lz4'
