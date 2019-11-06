@@ -75,7 +75,7 @@ build() {
 	)
 
 	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector -fno-lto'
+	export CFLAGS+=' -fno-lto'
 	export CXXFLAGS="${CFLAGS}"
 
 	# Run package configuration script
