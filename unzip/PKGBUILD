@@ -72,10 +72,6 @@ prepare() {
 	patch -p1 -i $srcdir/csiz-underflow.patch
 	patch -p1 -i $srcdir/nextbyte-overflow.patch
 
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
-
 	# Set correct CFLAGS
 	sed -e "s/CF_NOOPT =/CF_NOOPT = $CFLAGS/" -i unix/Makefile
 
