@@ -147,10 +147,6 @@ build() {
 		'--disable-connlabel'
 	)
 
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
-
 	# Run package configuration script
 	./configure "${config_opts[@]}"
 
