@@ -68,10 +68,6 @@ build() {
 	# Change directory to source directory
 	cd $pkgbase-$pkgver
 
-	# Change compile flags
-	export CFLAGS+=' -fno-stack-protector'
-	export CXXFLAGS="${CFLAGS}"
-
 	# Default configure options
 	config_opts=(
 		"-DCMAKE_C_FLAGS='$CFLAGS'"
