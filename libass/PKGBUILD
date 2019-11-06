@@ -24,7 +24,6 @@ arch=('x86_64')
 depends=(
 	'fontconfig'
 	'fribidi'
-	'gcc-libs'
 	'glibc'
 	'harfbuzz'
 	'libfreetype.so'
