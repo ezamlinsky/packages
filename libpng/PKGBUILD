@@ -22,7 +22,6 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'sh'
 	'zlib'
@@ -116,7 +115,7 @@ package() {
 
 	# Instal portable anymap utils
 	cd contrib/pngminus
-	make PNGLIB_SHARED="-L $pkgdir/usr/lib -lpng" png2pnm pnm2png
+	make LDFLAGS=$LDFLAGS PNGLIB_SHARED="-L $pkgdir/usr/lib -lpng" png2pnm pnm2png
 	install -m755 png2pnm pnm2png $pkgdir/usr/bin/
 }
 
