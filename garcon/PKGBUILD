@@ -23,7 +23,6 @@ groups=('xfce4')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
