@@ -23,7 +23,6 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'bzip2'
-	'gcc-libs'
 	'glibc'
 	'gnutls'
 	'libassuan'
@@ -36,6 +35,7 @@ depends=(
 	'npth'
 	#'ntbtls'
 	'readline'
+	'sh'
 	'sqlite'
 	'zlib'
 )
