@@ -10,35 +10,35 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgname=('sysstat')
-pkgver=12.1.7
+pkgname=('lm_sensors')
+pkgver=3.6.0
 pkgrel=1
-pkgdesc='A collection of performance monitoring tools (iostat,isag,mpstat,pidstat,sadf,sar)'
-url='http://pagesperso-orange.fr/sebastien.godard/'
-license=('GPL')
+pkgdesc='Collection of user space tools for general SMBus access and hardware monitoring'
+url='https://hwmon.wiki.kernel.org/lm_sensors'
+license=('GPL' 'LGPL')
 arch=('x86_64')
 
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'bash'
 	'glibc'
-	'lm_sensors'
-	#'pcp'
-	'sh'
+	'perl'
 )
-makedepends=('systemd')
-optdepends=(
-	'tk: to use isag'
-	'gnuplot: to use isag'
+makedepends=(
+	'git'
+	'sed'
 )
+optdepends=('rrdtool: for logging with sensord')
 
 #==============================================================================#
 #       Package miscellaneous options                                          #
 #==============================================================================#
 backup=(
-	'etc/conf.d/sysstat'
-	'etc/conf.d/sysstat.ioconf'
+	'etc/conf.d/sensord'
+	'etc/healthd.conf'
+	'etc/sensors3.conf'
 )
 options=('emptydirs')
 
@@ -46,12 +46,16 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://pagesperso-orange.fr/sebastien.godard/sysstat-$pkgver.tar.xz"
-	'lib64-fix.patch'
+	"https://github.com/lm-sensors/lm-sensors/archive/V${pkgver//./-}.tar.gz"
+	'healthd'
+	'healthd.conf'
+	'healthd.service'
 )
-sha512sums=(
-	'aaa5cd72ca4804852d5abc629cea4c12b1edeab8472fdc7ffc4c20d5dab013ef55a82865821750d18a5edb9e8eb868b221fb0b60d4e80d9eb170f7afa95cd21b'
-	'46ec3eebb12232d30cddba60f16a57cd8d625513cf002d9e501797a6660f9da9cb4116ec81d0c292644fb6d91eb05c7be458da667260b238bcfef532a020b114'
+sha256sums=(
+	'0591f9fa0339f0d15e75326d0365871c2d4e2ed8aa1ff759b3a55d3734b7d197'
+	'0ac9afb2a9155dd74ab393756ed552cd542dde1081149beb2ab4ec7ff55b8f4a'
+	'5d17a366b175cf9cb4bb0115c030d4b8d91231546f713784a74935b6e533da9f'
+	'2638cd363e60f8d36bcac468f414a6ba29a1b5599f40fc651ca953858c8429d7'
 )
 
 #==============================================================================#
@@ -60,24 +64,19 @@ sha512sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -p1 -i $srcdir/lib64-fix.patch
+	cd lm-sensors-${pkgver//./-}
 
 	# Change config directory
-	sed -e 's|SYSCONFIG_DIR=/etc/sysconfig|SYSCONFIG_DIR=/etc/conf.d|g' -i configure.in
+	sed -e 's|/etc/sysconfig|/etc/conf.d|' -i prog/{detect/sensors-detect,init/{sensord,lm_sensors}.service}
+
+	# Reset environment file
+	sed -e 's/EnvironmentFile=/EnvironmentFile=-/' -i prog/init/lm_sensors.service
+
+	# Set correct CFLAGS
+	sed -e "s/-O2/$CFLAGS/" -i Makefile
 
 	# Set correct LDFLAGS
-	sed -e "s/LFLAGS =/LFLAGS =$LDFLAGS /g" -i Makefile.in
-
-	# Run automatic configure script
-	autoreconf -fi
-
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
+	sed -e "s/EXLDFLAGS :=/EXLDFLAGS := $LDFLAGS /g" -i Makefile
 }
 
 #==============================================================================#
@@ -86,48 +85,10 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
-
-	# Default configure options
-	config_opts=(
-		'--prefix=/usr'
-		'--bindir=/usr/bin'
-		'--sbindir=/usr/bin'
-		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib'
-		'--sysconfdir=/etc'
-		'--localstatedir=/var'
-		'--enable-silent-rules'
-		'--enable-shared'
-		'--disable-static'
-		'--disable-debuginfo'
-		'--enable-stripping'
-		'--enable-documentation'
-		'--enable-compress-manpg'
-		'--enable-file-attr'
-		'--enable-collect-all'
-		'--enable-install-cron'
-		'--enable-copy-only'
-
-	# 'lm_sensors' related options
-		'--enable-sensors'
-		#'--disable-sensors'
-
-	# 'pcp' related options
-		#'--enable-pcp'
-		'--disable-pcp'
-	)
-
-	# Run package configuration script
-	./configure "${config_opts[@]}"
-
-	# Set correct LDFLAGS to build a shared archive
-	if [ -f libtool ]; then
-		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
-	fi
+	cd lm-sensors-${pkgver//./-}
 
 	# Build package
-	make
+	make PREFIX=/usr
 }
 
 #==============================================================================#
@@ -136,13 +97,23 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd lm-sensors-${pkgver//./-}
 
 	# Install files
-	make DESTDIR=$pkgdir install
+	make PREFIX=/usr SBINDIR=/usr/bin MANDIR=/usr/share/man DESTDIR=$pkgdir install
+
+	# Install 'healthd' daemon
+	install -Dm755 $srcdir/healthd $pkgdir/usr/bin/healthd
+
+	# Install config files
+	install -Dm644 $srcdir/healthd.conf $pkgdir/etc/healthd.conf
+
+	# Install systemd *.service files
+	install -Dm644 $srcdir/healthd.service $pkgdir/usr/lib/systemd/system/healthd.service
+	install -Dm644 prog/init/*.service $pkgdir/usr/lib/systemd/system/
 
 	# Install license file
-	install -Dm644 COPYING $pkgdir/usr/share/licenses/sysstat/LICENSE
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/lm_sensors/LICENSE
 }
 
 ################################################################################
