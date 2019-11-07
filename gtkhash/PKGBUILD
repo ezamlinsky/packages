@@ -142,7 +142,6 @@ build() {
 package_gtkhash() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums'
 	depends=(
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		#'gtk2'
@@ -194,7 +193,6 @@ package_gtkhash() {
 package_gtkhash-nemo() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums (Nemo filemanager plugin)'
 	depends=(
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'gtk3'
@@ -216,7 +214,6 @@ package_gtkhash-nemo() {
 package_gtkhash-nautilus() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums (Nautilus filemanager plugin)'
 	depends=(
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'gtk3'
@@ -238,7 +235,6 @@ package_gtkhash-nautilus() {
 package_gtkhash-thunar() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums (Thunar filemanager plugin)'
 	depends=(
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'gtk3'
@@ -262,7 +258,6 @@ package_gtkhash-caja() {
 	pkgdesc='A GTK+ utility for computing message digests or checksums (Caja filemanager plugin)'
 	depends=(
 		'caja'
-		'gcc-libs'
 		'glib2'
 		'glibc'
 		'gtk3'
