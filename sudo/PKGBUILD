@@ -43,6 +43,7 @@ makedepends=(
 #==============================================================================#
 backup=(
 	'etc/sudoers'
+	'etc/sudo.conf'
 	'etc/pam.d/sudo'
 )
 options=('emptydirs')
