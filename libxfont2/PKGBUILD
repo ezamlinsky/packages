@@ -25,7 +25,6 @@ depends=(
 	'bzip2'
 	'fontsproto'
 	'freetype2'
-	'gcc-libs'
 	'glibc'
 	'libfontenc'
 	'xproto'
