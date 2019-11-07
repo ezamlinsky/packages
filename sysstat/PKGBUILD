@@ -1,0 +1,150 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('sysstat')
+pkgver=12.1.7
+pkgrel=1
+pkgdesc='A collection of performance monitoring tools (iostat,isag,mpstat,pidstat,sadf,sar)'
+url='http://pagesperso-orange.fr/sebastien.godard/'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'lm_sensors'
+	#'pcp'
+	'sh'
+)
+makedepends=('systemd')
+optdepends=(
+	'tk: to use isag'
+	'gnuplot: to use isag'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=(
+	'etc/conf.d/sysstat'
+	'etc/conf.d/sysstat.ioconf'
+)
+options=('emptydirs')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"http://pagesperso-orange.fr/sebastien.godard/sysstat-$pkgver.tar.xz"
+	'lib64-fix.patch'
+)
+sha512sums=(
+	'aaa5cd72ca4804852d5abc629cea4c12b1edeab8472fdc7ffc4c20d5dab013ef55a82865821750d18a5edb9e8eb868b221fb0b60d4e80d9eb170f7afa95cd21b'
+	'46ec3eebb12232d30cddba60f16a57cd8d625513cf002d9e501797a6660f9da9cb4116ec81d0c292644fb6d91eb05c7be458da667260b238bcfef532a020b114'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/lib64-fix.patch
+
+	# Change config directory
+	sed -e "s|SYSCONFIG_DIR=/etc/sysconfig|SYSCONFIG_DIR=/etc/conf.d|g" -i configure.in
+
+	# Set correct LDFLAGS
+	sed -e "s/LFLAGS =/LFLAGS =$LDFLAGS /g" -i Makefile.in
+
+	# Run automatic configure script
+	autoreconf -fi
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--disable-debuginfo'
+		'--enable-stripping'
+		'--enable-documentation'
+		'--enable-compress-manpg'
+		'--enable-file-attr'
+		'--enable-collect-all'
+		'--enable-install-cron'
+		'--enable-copy-only'
+
+	# 'lm_sensors' related options
+		'--enable-sensors'
+		#'--disable-sensors'
+
+	# 'pcp' related options
+		#'--enable-pcp'
+		'--disable-pcp'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/sysstat/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
