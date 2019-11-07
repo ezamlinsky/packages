@@ -22,11 +22,11 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'libgcrypt'
 	'libxml2'
 	#'python2'
+	'sh'
 )
 makedepends=('git')
 checkdepends=(
