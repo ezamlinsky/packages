@@ -22,7 +22,6 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glib2'
 	'glibc'
 	'iso-codes'
@@ -43,7 +42,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=396955bd2ba2db34a42b3807b03155fcc11dfe50  # tags/libxklavier-5.4^0
+_commit='396955bd2ba2db34a42b3807b03155fcc11dfe50'  # tags/libxklavier-5.4^0
 source=("git+https://anongit.freedesktop.org/git/libxklavier#commit=$_commit")
 sha256sums=('SKIP')
 
