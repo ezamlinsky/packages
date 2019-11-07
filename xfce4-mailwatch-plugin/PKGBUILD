@@ -23,6 +23,7 @@ groups=('xfce4-goodies')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'bash'
 	'exo'
 	'gdk-pixbuf2'
 	'glib2'

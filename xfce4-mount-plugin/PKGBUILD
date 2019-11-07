@@ -23,7 +23,6 @@ groups=('xfce4-goodies')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glib2'
 	'glibc'
 	'gtk3'
