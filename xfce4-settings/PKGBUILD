@@ -25,7 +25,6 @@ groups=('xfce4')
 # #########
 depends=(
 	'adwaita-icon-theme'
-	'atk'
 	'cairo'
 	#'colord'
 	'dbus'
@@ -33,7 +32,6 @@ depends=(
 	'exo'
 	'fontconfig'
 	'garcon'
-	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
@@ -49,6 +47,7 @@ depends=(
 	'libxklavier'
 	'libxrandr'
 	'pango'
+	'sh'
 	'upower'
 	'xfconf'
 )
