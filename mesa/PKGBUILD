@@ -152,8 +152,8 @@ build() {
 		'-Dshared-llvm=true'
 
 	# 'lm_sensors' related options
-		#'-Dlmsensors=true'
-		'-Dlmsensors=false'
+		'-Dlmsensors=true'
+		#'-Dlmsensors=false'
 
 	# 'libselinux' related options
 		#'-Dselinux=true'
@@ -208,7 +208,7 @@ package_mesa() {
 		'libxvmc'
 		'libxxf86vm'
 		'llvm-libs'
-		#'lm_sensors'
+		'lm_sensors'
 		#'wayland'
 		'zlib'
 	)
