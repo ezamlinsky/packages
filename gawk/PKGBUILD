@@ -23,7 +23,6 @@ groups=('base' 'base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'gcc-libs'
 	'glibc'
 	'gmp'
 	#'libsigsegv'
