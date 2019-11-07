@@ -1,0 +1,147 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('js60')
+pkgver=60.9.0
+pkgrel=1
+pkgdesc='JavaScript interpreter and libraries - Version 60'
+url='https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey'
+license=('MPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	'icu'
+	'readline'
+	'sh'
+	'zlib'
+)
+makedepends=(
+	'autoconf2.13'
+	'python2'
+	'zip'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://archive.mozilla.org/pub/firefox/releases/${pkgver}esr/source/firefox-${pkgver}esr.source.tar.xz"
+	"https://archive.mozilla.org/pub/firefox/releases/${pkgver}esr/source/firefox-${pkgver}esr.source.tar.xz.asc"
+	'bug1415202.patch'
+	'mozjs60-fix-soname.patch'
+)
+sha256sums=(
+	'9f453c8cc5669e46e38f977764d49a36295bf0d023619d9aac782e6bb3e8c53f'
+	'SKIP'
+	'0b410aa6ebd0236cd3ea524340c2da2235973a42cd0eaa90f7f394cd5bcbab95'
+	'c792837930defe27355941080e9b80ec1d45003c097e4707860acc13d43bc519'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd firefox-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/bug1415202.patch
+	patch -Np1 -i $srcdir/mozjs60-fix-soname.patch
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd firefox-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--libdir=/usr/lib'
+		'--disable-debug'
+		'--disable-debug-symbols'
+		'--disable-rust-debug'
+		'--disable-tests'
+		'--enable-release'
+		'--enable-optimize'
+		'--enable-hardening'
+		'--enable-gold'
+		'--enable-linker=gold'
+		'--enable-pie'
+		'--enable-strip'
+		'--enable-install-strip'
+		'--enable-js-shell'
+		'--enable-shared-js'
+		'--enable-export-js'
+		'--enable-posix-nspr-emulation'
+		'--with-pthreads'
+		'--with-intl-api'
+
+	# 'icu' related options
+		'--with-system-icu'
+
+	# 'readline' related options
+		'--enable-readline'
+
+	# 'zlib' related options
+		'--with-system-zlib'
+	)
+
+	# Set Python version
+	export PYTHON=/usr/bin/python2
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	sh ../js/src/configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd firefox-$pkgver/build
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Correct file permissions
+	chmod a-x $pkgdir/usr/lib/pkgconfig/*.pc
+	chmod a-x $pkgdir/usr/include/mozjs-60/*.h
+
+	# Remove non required files
+	rm $pkgdir/usr/lib/*.ajs
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
