@@ -117,6 +117,7 @@ package_gpgme() {
 		'gnupg>=2'
 		'libassuan'
 		'libgpg-error'
+		'sh'
 	)
 
 	# Change directory to source directory

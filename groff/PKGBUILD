@@ -23,6 +23,7 @@ groups=('base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'bash'
 	'gcc-libs'
 	'glibc'
 	'perl'

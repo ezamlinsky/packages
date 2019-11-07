@@ -26,7 +26,6 @@ depends=(
 	'cairo'
 	'desktop-file-utils'
 	'fontconfig'
-	'gcc-libs'
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
