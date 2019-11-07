@@ -24,8 +24,8 @@ groups=('gnome')
 #==============================================================================#
 depends=(
 	'cairo'
-	'gcc-libs'
 	'glib2'
+	'glibc'
 	'gtk2'
 )
 makedepends=(
