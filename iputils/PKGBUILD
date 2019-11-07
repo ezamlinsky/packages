@@ -1,0 +1,131 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('iputils')
+pkgver=20190709
+pkgrel=1
+pkgdesc='Network monitoring tools, including ping'
+url='http://www.skbuff.net/iputils/'
+license=('GPL')
+arch=('x86_64')
+groups=('base')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'libcap'
+	#'libgcrypt'
+	#'libidn2'
+	#'nettle'
+	'openssl'
+)
+makedepends=(
+	'docbook-xsl'
+	'git'
+	'meson'
+	'perl-sgmls'
+)
+optdepends=('xinetd: for tftpd')
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+conflicts=(
+	'arping'
+	'netkit-base'
+	'netkit-tftpd'
+)
+replaces=('netkit-base')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+install='iputils.install'
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit='13e0084'
+source=("git+https://github.com/iputils/iputils.git#commit=$_commit")
+sha1sums=('SKIP')
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'-DENABLE_RDISC_SERVER=true'
+		'-DNINFOD_MESSAGES=true'
+		'-DUSE_GETTEXT=true'
+		'-DNO_SETCAP_OR_SUID=false'
+		'-DBUILD_MANS=true'
+		'-DBUILD_HTML_MANS=false'
+		'-DBUILD_ARPING=true'
+		'-DBUILD_CLOCKDIFF=true'
+		'-DBUILD_PING=true'
+		'-DBUILD_RARPD=true'
+		'-DBUILD_RDISC=true'
+		'-DBUILD_TFTPD=true'
+		'-DBUILD_TRACEPATH=true'
+		'-DBUILD_TRACEROUTE6=true'
+		'-DBUILD_NINFOD=true'
+
+	# 'libcap' related options
+		'-DUSE_CAP=true'
+		#'-DUSE_CAP=false'
+
+	# 'libgcrypt' related option
+		#'-DUSE_CRYPTO=gcrypt'
+
+	# 'libidn2' related options
+		#'-DUSE_IDN=true'
+		'-DUSE_IDN=false'
+
+	# 'nettle' related options
+		#'-DUSE_CRYPTO=nettle'
+
+	# 'openssl' related options
+		'-DUSE_CRYPTO=openssl'
+	)
+
+	# Run package configuration script
+	arch-meson build "${config_opts[@]}"
+
+	# Build package
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	DESTDIR=$pkgdir ninja -C build install
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/iputils/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
