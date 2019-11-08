@@ -96,8 +96,6 @@ build() {
 		'--enable-got=target'
 		'--enable-compressed-debug-sections=all'
 		'--enable-deterministic-archives'
-		'--enable-64-bit-bfd'
-		'--enable-64-bit-archive'
 		'--enable-threads=posix'
 		'--enable-plugins'
 		'--enable-lto'
