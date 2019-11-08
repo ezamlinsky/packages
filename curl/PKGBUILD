@@ -11,8 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('curl')
-pkgoname=('curl')
-pkgver=7.66.0
+pkgver=7.67.0
 pkgrel=1
 pkgdesc='An URL retrieval utility and library'
 url='https://curl.haxx.se'
@@ -26,7 +25,7 @@ depends=(
 	#'axtls'
 	'bash'
 	'brotli'
-	'c-ares'
+	#'c-ares'
 	'ca-certificates'
 	'glibc'
 	#'gnutls'
@@ -60,11 +59,11 @@ replaces=('curl')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://curl.haxx.se/download/$pkgoname-$pkgver.tar.gz"
-	"https://curl.haxx.se/download/$pkgoname-$pkgver.tar.gz.asc"
+	"https://curl.haxx.se/download/curl-$pkgver.tar.gz"
+	"https://curl.haxx.se/download/curl-$pkgver.tar.gz.asc"
 )
 sha512sums=(
-	'2a7d5e8b11eeb78c7a22bbaec0c10977d2c3e8cdabeb768e9d7cabd59e72e30a6d638b27f3815d6384954e96cc133c9670ce8a2a7c8aa03dde0ccf838aa93dae'
+	'73365f964df733b5e79d690ba7260a279986a9637ba0026b37cca2eca7ba8e37967251751bdf26de730f6f432713da8b7e0a315e84f1e9dad0e0bfd3d7882f92'
 	'SKIP'
 )
 
@@ -74,7 +73,7 @@ sha512sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgoname-$pkgver
+	cd $pkgname-$pkgver
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -88,7 +87,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgoname-$pkgver
+	cd $pkgname-$pkgver
 
 	# Default configure options
 	config_opts=(
@@ -141,8 +140,8 @@ build() {
 		#'--without-brotli'
 
 	# 'c-ares' related options
-		'--enable-ares'
-		#'--disable-ares'
+		#'--enable-ares'
+		'--disable-ares'
 
 	# 'ca-certificates' related options
 		'--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt'
@@ -247,7 +246,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgoname-$pkgver
+	cd $pkgname-$pkgver
 
 	# Install files
 	make DESTDIR=$pkgdir install
