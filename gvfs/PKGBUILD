@@ -26,7 +26,6 @@ makedepends=(
 	'avahi'
 	'cmake'
 	'dbus'
-	'dconf'
 	'docbook-xsl'
 	'fuse2'
 	'fuse3'
@@ -219,6 +218,7 @@ package_gvfs() {
 		#'gcr'
 		'glib2'
 		'glibc'
+		'gsettings-desktop-schemas'
 		'libarchive'
 		#'libbluray'
 		#'libcdio-paranoia'
@@ -228,6 +228,7 @@ package_gvfs() {
 		'libsoup'
 		'libxml2'
 		'polkit'
+		'psmisc'
 		'systemd-libs'
 		'udisks2'
 	)
