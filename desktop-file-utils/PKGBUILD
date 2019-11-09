@@ -30,7 +30,7 @@ makedepends=('git')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=27d370de9ca5121550c343859455d0f1515e1ec5  # tags/0.24^0
+_commit='27d370de9ca5121550c343859455d0f1515e1ec5'  # tags/0.24^0
 source=(
 	"git+https://anongit.freedesktop.org/git/xdg/desktop-file-utils#commit=$_commit"
 	'update-desktop-database.hook'

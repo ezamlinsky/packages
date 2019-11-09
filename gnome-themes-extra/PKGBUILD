@@ -46,7 +46,7 @@ replaces=('gnome-themes-standard<3.27.92')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=9f581269243dd7e76b3eb8cec9cf4128ab17da9e  # tags/3.28^0
+_commit='9f581269243dd7e76b3eb8cec9cf4128ab17da9e'  # tags/3.28^0
 source=("git+https://gitlab.gnome.org/GNOME/gnome-themes-extra.git#commit=$_commit")
 sha256sums=('SKIP')
 

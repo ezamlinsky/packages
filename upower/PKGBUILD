@@ -47,7 +47,7 @@ options=('emptydirs')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=e1548bba61206a05bbc318b3d49ae24571755ac6  # tags/UPOWER_0_99_11^0
+_commit='e1548bba61206a05bbc318b3d49ae24571755ac6'  # tags/UPOWER_0_99_11^0
 source=("git+https://gitlab.freedesktop.org/upower/upower.git#commit=$_commit")
 md5sums=('SKIP')
 

@@ -31,7 +31,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=59f0ec837adc4fe02ea1c77965b880e1cfeeb4b9  # tags/2.42.0^0
+_commit='59f0ec837adc4fe02ea1c77965b880e1cfeeb4b9'  # tags/2.42.0^0
 source=("git+https://gitlab.gnome.org/GNOME/pangomm.git#commit=$_commit")
 sha256sums=('SKIP')
 

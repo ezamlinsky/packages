@@ -44,7 +44,7 @@ optdepends=('pulseaudio: Audio backend')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=57cf49f1e8675d58bf215c2fd9ba3b8c01cf254a  # tags/v4.0^0
+_commit='57cf49f1e8675d58bf215c2fd9ba3b8c01cf254a'  # tags/v4.0^0
 source=("git+https://gitlab.freedesktop.org/pulseaudio/pavucontrol.git#commit=$_commit")
 sha256sums=('SKIP')
 

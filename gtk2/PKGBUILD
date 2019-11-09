@@ -62,7 +62,7 @@ install='gtk2.install'
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=ed7d3e25f8b6debae6ccc8b50d1329155338cab8  # tags/2.24.32^0
+_commit='ed7d3e25f8b6debae6ccc8b50d1329155338cab8'  # tags/2.24.32^0
 source=(
 	"git+https://git.gnome.org/browse/gtk+#commit=$_commit"
 	'gtkrc'

@@ -35,7 +35,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=633bde11f93ee971ba8902c6fadbc29c121f71af  # tags/ATK_2_34_1^0
+_commit='633bde11f93ee971ba8902c6fadbc29c121f71af'  # tags/ATK_2_34_1^0
 source=("git+https://gitlab.gnome.org/GNOME/atk.git#commit=$_commit")
 sha256sums=('SKIP')
 

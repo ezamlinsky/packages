@@ -31,7 +31,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=16b1481e00084682d5ae5d38178e3e418976dfae  # tags/1.5.3^0
+_commit='16b1481e00084682d5ae5d38178e3e418976dfae'  # tags/1.5.3^0
 source=("git+https://github.com/anholt/libepoxy#commit=$_commit")
 sha256sums=('SKIP')
 

@@ -81,7 +81,7 @@ install='xf86-video-intel.install'
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=6f4972d5c368c30e971a23c1dc370d3e43761282 # master
+_commit='6f4972d5c368c30e971a23c1dc370d3e43761282' # master
 source=(
 	"git+https://anongit.freedesktop.org/git/xorg/driver/xf86-video-intel#commit=$_commit"
 	'0001-SNA-fix-PRIME-output-support-since-xserver-1.20.patch'

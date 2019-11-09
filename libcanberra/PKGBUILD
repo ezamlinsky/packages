@@ -45,7 +45,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=c0620e432650e81062c1967cc669829dbd29b310  # master
+_commit='c0620e432650e81062c1967cc669829dbd29b310'  # master
 source=(
 	"git+http://git.0pointer.net/clone/libcanberra.git#commit=$_commit"
 	'libcanberra.xinit'

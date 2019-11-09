@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('adwaita-icon-theme')
-pkgver=3.34.0
+pkgver=3.34.3
 pkgrel=1
 pkgdesc='GNOME standard icons'
 url='https://git.gnome.org/browse/adwaita-icon-theme'
@@ -35,7 +35,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=4b07f58bf29380bf65c3828122c07c61e53e285a  # tags/2.34.0^0
+_commit='f3582481bc7e00c855bc8b169457e01b6ca91a4a'  # tags/3.34.3^0
 source=("git+https://gitlab.gnome.org/GNOME/adwaita-icon-theme.git#commit=$_commit")
 sha256sums=('SKIP')
 

@@ -37,7 +37,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=23cc709db8fab94f11fa48772bff396b20aea8b0  # tags/dbus-1.12.16^0
+_commit='23cc709db8fab94f11fa48772bff396b20aea8b0'  # tags/dbus-1.12.16^0
 source=("git+https://gitlab.freedesktop.org/dbus/dbus.git#commit=$_commit")
 sha256sums=('SKIP')
 

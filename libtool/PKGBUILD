@@ -53,7 +53,7 @@ replaces=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=b88cebd510add4420dd8f5367e3cc6e6e1f267cd
+_commit='b88cebd510add4420dd8f5367e3cc6e6e1f267cd'
 source=(
 	"git+https://git.savannah.gnu.org/git/libtool.git#commit=$_commit"
 	'git+https://git.savannah.gnu.org/git/gnulib.git'

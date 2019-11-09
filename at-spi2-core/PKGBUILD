@@ -39,7 +39,7 @@ optdepends=('dbus-broker: Alternative bus implementation')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=6da122f1e8d6b02dda0f368610ab72fc3d1720cf  # tags/AT_SPI2_CORE_2_34_0^0
+_commit='6da122f1e8d6b02dda0f368610ab72fc3d1720cf'  # tags/AT_SPI2_CORE_2_34_0^0
 source=("git+https://gitlab.gnome.org/GNOME/at-spi2-core.git#commit=$_commit")
 sha256sums=('SKIP')
 

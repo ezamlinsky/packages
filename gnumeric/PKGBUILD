@@ -57,7 +57,7 @@ optdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=fd8eedb30acc50c1096bf6d6a126d265e35bada3  # tags/GNUMERIC_1_12_45^0
+_commit='fd8eedb30acc50c1096bf6d6a126d265e35bada3'  # tags/GNUMERIC_1_12_45^0
 source=(
 	"git+https://gitlab.gnome.org/GNOME/gnumeric.git#commit=$_commit"
 	'revert-warnings.patch'

@@ -31,7 +31,7 @@ makedepends=('git')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=1fd19417b8a4dd9945347e98dfa97e4cfd798d77
+_commit='1fd19417b8a4dd9945347e98dfa97e4cfd798d77'
 source=(
 	"git+https://github.com/telmich/gpm.git#commit=$_commit"
 	'0001-glibc-sigemptyset.patch'

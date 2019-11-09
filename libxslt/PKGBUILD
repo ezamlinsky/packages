@@ -37,7 +37,7 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=f1eb717f04d9cc297cc5e58e94b81ac96f47e741  # tags/v1.1.33^0
+_commit='f1eb717f04d9cc297cc5e58e94b81ac96f47e741'  # tags/v1.1.33^0
 source=("git+https://gitlab.gnome.org/GNOME/libxslt.git#commit=$_commit")
 sha256sums=('SKIP')
 

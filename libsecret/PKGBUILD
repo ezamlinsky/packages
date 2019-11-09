@@ -47,7 +47,7 @@ optdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=f576dfbe50f9aed22802ad0db0356d081f467d7a  # tags/0.19.1^0
+_commit='f576dfbe50f9aed22802ad0db0356d081f467d7a'  # tags/0.19.1^0
 source=("git+https://gitlab.gnome.org/GNOME/libsecret.git#commit=$_commit")
 sha256sums=('SKIP')
 

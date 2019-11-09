@@ -38,7 +38,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=f8a8c1f59db355b46962577e7b74f1a1e8149dc6  # tags/v2.9.9^0
+_commit='f8a8c1f59db355b46962577e7b74f1a1e8149dc6'  # tags/v2.9.9^0
 source=(
 	"git+https://git.gnome.org/browse/libxml2#commit=$_commit"
 	'https://www.w3.org/XML/Test/xmlts20130923.tar.gz'

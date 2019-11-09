@@ -49,7 +49,7 @@ options=('emptydirs')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=0547886c0a7ae79145998495a6e3af6a1450d0c7 # master # 2019-04-19
+_commit='0547886c0a7ae79145998495a6e3af6a1450d0c7' # master # 2019-04-19
 source=("git+https://gitlab.freedesktop.org/xdg/xdg-utils.git#commit=$_commit")
 sha256sums=('SKIP')
 

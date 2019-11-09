@@ -40,7 +40,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=0fe1a89dbf1930fc2554dbe76adad5d962054ead  # tags/v1.0.3-rc1^0
+_commit='0fe1a89dbf1930fc2554dbe76adad5d962054ead'  # tags/v1.0.3-rc1^0
 #source=("git+https://chromium.googlesource.com/webm/libwebp#commit=$_commit")
 source=("git+https://github.com/webmproject/libwebp.git#commit=$_commit")
 sha256sums=('SKIP')

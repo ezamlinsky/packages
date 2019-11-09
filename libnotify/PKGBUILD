@@ -40,7 +40,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=44f92222124b12987406d0768e760ecf9f7e27f8  # tags/0.7.8^0
+_commit='44f92222124b12987406d0768e760ecf9f7e27f8'  # tags/0.7.8^0
 source=("git+https://gitlab.gnome.org/GNOME/libnotify.git#commit=$_commit")
 sha256sums=('SKIP')
 

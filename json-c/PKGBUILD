@@ -27,7 +27,7 @@ makedepends=('git')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit=985c46fec39d1d3043f98e8d8cdb9d040131b3bb  # tags/json-c-0.13.1-20180305^0
+_commit='985c46fec39d1d3043f98e8d8cdb9d040131b3bb'  # tags/json-c-0.13.1-20180305^0
 source=("git+https://github.com/json-c/json-c#commit=$_commit")
 sha256sums=('SKIP')
 
