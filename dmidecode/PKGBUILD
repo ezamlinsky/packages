@@ -1,0 +1,79 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('dmidecode')
+pkgver=3.2
+pkgrel=1
+pkgdesc='Desktop Management Interface table related utilities'
+url='https://www.nongnu.org/dmidecode'
+license=('GPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=('glibc')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://download.savannah.nongnu.org/releases/dmidecode/dmidecode-$pkgver.tar.xz"
+	"https://download.savannah.nongnu.org/releases/dmidecode/dmidecode-$pkgver.tar.xz.sig"
+)
+sha256sums=(
+	'077006fa2da0d06d6383728112f2edef9684e9c8da56752e97cd45a11f838edd'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Change target directory for binary files
+	sed -e 's:sbin:bin:g' -i Makefile
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Build package
+	make CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir prefix=/usr install
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/dmidecode/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
