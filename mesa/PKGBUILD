@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='mesa'
 pkgname=('mesa' 'libva-mesa-driver' 'mesa-vdpau'  'opencl-mesa' 'vulkan-intel' 'vulkan-mesa-layer' 'vulkan-radeon')
-pkgver=19.2.2
-pkgrel=1
+pkgver=19.2.3
+pkgrel=2
 url='https://www.mesa3d.org/'
 license=('custom')
 arch=('x86_64')
@@ -69,11 +69,13 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/mesa3d/mesa/archive/mesa-${pkgver}.tar.gz"
+	"https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz"
+	"https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz.sig"
 	'LICENSE'
 )
 sha512sums=(
-	'534b12513980942f6d2fffb05193cc69df0b8fa1e9a5b5c8a0f10603ab0422aecc7732d0f2b7d702d75529032c9987713c9f9381a0cc330d9489af263dd3295a'
+	'a64a6b508c28a61b9f5a50f639d0cdca2546caa2118c2478100e3535961d76bf3877357d4a7ddd7dc1d3dfc617883c8ee188915523b003aed8db03e0d5e1c007'
+	'SKIP'
 	'f9f0d0ccf166fe6cb684478b6f1e1ab1f2850431c06aa041738563eb1808a004e52cdec823c103c9e180f03ffc083e95974d291353f0220fe52ae6d4897fecc7'
 )
 
@@ -83,7 +85,7 @@ sha512sums=(
 build() {
 
 	# Change directory to source directory
-	cd $pkgbase-$pkgbase-$pkgver
+	cd $pkgbase-$pkgver
 
 	# Default configure options
 	config_opts=(
@@ -245,7 +247,7 @@ package_mesa() {
 	backup=('etc/drirc')
 
 	# Change directory to source directory
-	cd $pkgbase-$pkgbase-$pkgver
+	cd $pkgbase-$pkgver
 
 	# Install files
 	DESTDIR=$pkgdir ninja -C build install
