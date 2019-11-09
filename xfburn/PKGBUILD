@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfburn')
-pkgver=0.5.5
+pkgver=0.6.1
 pkgrel=1
 pkgdesc='A simple CD/DVD burning tool based on libburnia libraries'
-url='http://goodies.xfce.org/projects/applications/xfburn'
+url='https://goodies.xfce.org/projects/applications/xfburn'
 license=('GPL')
 arch=('x86_64')
 groups=('xfce4-goodies')
@@ -29,7 +29,7 @@ depends=(
 	'glib2'
 	'glibc'
 	#'gst-plugins-base-libs'
-	'gtk2'
+	'gtk3'
 	'libburn'
 	'libgudev'
 	'libisofs'
@@ -42,7 +42,7 @@ makedepends=('intltool')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("http://archive.xfce.org/src/apps/xfburn/${pkgver%.*}/xfburn-$pkgver.tar.bz2")
-sha256sums=('aa173aa8a6c0887a4b236aee3753760e943f3e2be99af1f2d5343a6df345ade1')
+sha256sums=('b3772b103a89652f7cc06751ec667d34da9344b22bb15ed623c1d8e46851b379')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
