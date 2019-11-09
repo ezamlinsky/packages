@@ -13,7 +13,7 @@
 pkgbase='systemd'
 pkgname=('systemd' 'systemd-libs' 'systemd-resolvconf' 'systemd-sysvcompat')
 pkgver=243.78
-pkgrel=1
+pkgrel=2
 url='https://www.github.com/systemd/systemd'
 arch=('x86_64')
 
@@ -141,7 +141,7 @@ prepare() {
 	git merge --ff-only "${_commit}"
 
 	# Apply all backports
-	backports=()
+	backports=('12c829376a95ee0a734b8dbd347042062516f0a9')
 	for backport_commit in "${backports[@]}"; do
 		git log --oneline -1 "${backport_commit}"
 		git cherry-pick -n "${backport_commit}"
