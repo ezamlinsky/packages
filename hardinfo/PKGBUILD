@@ -1,0 +1,112 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('hardinfo')
+pkgver=0.5.1.816.g877ea2b
+pkgrel=1
+pkgdesc='A system information and benchmark tool'
+url='https://github.com/lpereira/hardinfo'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk2'
+	'gtk3'
+	'libsoup'
+	'libx11'
+	'pango'
+)
+makedepends=(
+	'cmake'
+	'git'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit='877ea2bc7777626c6fe77b6934a09261f1f1409e'
+source=("$pkgname::git+https://github.com/lpereira/hardinfo#commit=$_commit")
+sha1sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		"-DCMAKE_C_FLAGS='$CFLAGS -fno-lto'"
+		"-DCMAKE_CXX_FLAGS='$CXXFLAGS -fno-lto'"
+		"-DCMAKE_LD_FLAGS='$LDFLAGS'"
+		'-DCMAKE_INSTALL_PREFIX=/usr'
+		'-DCMAKE_INSTALL_LIBDIR=lib'
+		'-DCMAKE_BUILD_TYPE=Release'
+		'-DHARDINFO_NOSYNC=OFF'
+
+	# 'gtk2' related options
+		'-DHARDINFO_GTK3=OFF'
+
+	# 'gtk3' related options
+		#'-DHARDINFO_GTK3=ON'
+	)
+
+	# Create build directory
+	mkdir -p build && cd build
+
+	# Run package configuration script
+	cmake .. "${config_opts[@]}"
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname/build
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 ../LICENSE $pkgdir/usr/share/licenses/hardinfo/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
