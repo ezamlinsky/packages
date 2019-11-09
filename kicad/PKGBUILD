@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname='kicad'
 pkgver=5.1.4
-pkgrel=1
+pkgrel=3
 pkgdesc='Electronic schematic and printed circuit board (PCB) design tools'
 url='http://kicad-pcb.org/'
 license=('GPL')
