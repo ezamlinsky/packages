@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('mkinitcpio')
 pkgver=27
-pkgrel=1
+pkgrel=2
 pkgdesc='Modular initramfs image creation utility'
 url='https://projects.archlinux.org/mkinitcpio.git/'
 license=('GPL')
@@ -60,11 +60,25 @@ install='mkinitcpio.install'
 source=(
 	"https://sources.archlinux.org/other/mkinitcpio/mkinitcpio-$pkgver.tar.gz"
 	"https://sources.archlinux.org/other/mkinitcpio/mkinitcpio-$pkgver.tar.gz.sig"
+	'0001-mkinitcpio-remove-preset-pacsave.patch'
 )
 sha256sums=(
 	'e6bff1cb78b677538eb9aace900b715fd59de8fc210b74fb9d899dfaa32bc354'
 	'SKIP'
+	'845569fa760f70c868ecb3dc8ae9667287970526dddaf403fdafcb716e8b3d51'
 )
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -Np1 -i $srcdir/0001-mkinitcpio-remove-preset-pacsave.patch
+}
 
 #==============================================================================#
 #       Package self testing sequence                                          #
