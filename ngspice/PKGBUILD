@@ -87,7 +87,6 @@ build() {
 		'--enable-predictor'
 		'--enable-newtrunc'
 		'--enable-experimental'
-		'--enable-sense2'
 		'--enable-xspice'
 		'--enable-cider'
 		'--enable-pss'
