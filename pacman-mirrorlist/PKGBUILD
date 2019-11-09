@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('pacman-mirrorlist')
-pkgver=20190821
+pkgver=20191001
 pkgrel=1
 pkgdesc='Arch Linux mirror list for use by pacman'
 url='https://www.archlinux.org/mirrorlist/'
@@ -27,7 +27,7 @@ backup=('etc/pacman.d/mirrorlist')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=('mirrorlist')
-sha256sums=('9b5203f563bee373f47a052109fd970a9fb8045b76daf3ed75502551a93dff7c')
+sha256sums=('SKIP')
 
 #==============================================================================#
 #       Package installation sequence                                          #
