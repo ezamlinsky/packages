@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('archlinux-keyring')
-pkgver=20190827
+pkgver=20191018
 pkgrel=1
 pkgdesc='Arch Linux PGP keyring'
 url='https://projects.archlinux.org/archlinux-keyring.git/'
@@ -31,7 +31,7 @@ source=(
 	"https://sources.archlinux.org/other/archlinux-keyring/archlinux-keyring-$pkgver.tar.gz.sig"
 )
 sha256sums=(
-	'a911c0ca42dc3ce32455d3ed0b191a0bf0a7450d915016fb590972b68542afa1'
+	'78f574659cdb1eaa0d63a84d25cd122c40d46231b6a957314ea38e284251a327'
 	'SKIP'
 )
 
