@@ -1,0 +1,86 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('keyutils')
+pkgver=1.6.1
+pkgrel=1
+pkgdesc='Linux Key Management Utilities'
+url='https://www.kernel.org/'
+license=('GPL2' 'LGPL2.1')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'glibc'
+	'sh'
+)
+makedepends=('git')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=('etc/request-key.conf')
+options=('emptydirs')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"git+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git#tag=v${pkgver}?signed"
+	'request-key.conf.patch'
+)
+sha256sums=(
+	'SKIP'
+	'203c602c61ed94ccd423a0a453d74143d678c641a9a4486367576ee8af2cb8d6'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Apply patches
+	patch -Np0 -i $srcdir/request-key.conf.patch
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Build package
+	make CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}"
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir SBINDIR=/usr/bin BINDIR=/usr/bin LIBDIR=/usr/lib USRLIBDIR=/usr/lib install
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
