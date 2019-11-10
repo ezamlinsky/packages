@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('iso-codes')
-pkgver=4.3
+pkgver=4.4
 pkgrel=1
 pkgdesc='Lists of the country, language, and currency names'
 url='https://salsa.debian.org/iso-codes-team/iso-codes'
@@ -29,7 +29,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='43398a317371e309361ce43072603863cb2f57e1'  # tags/iso-codes-4.3^0
+_commit='38edb926592954b87eb527124da0ec68d2a748f3'  # tags/iso-codes-4.4^0
 source=("git+https://salsa.debian.org/iso-codes-team/iso-codes/#commit=$_commit")
 sha256sums=('SKIP')
 
