@@ -233,7 +233,7 @@ package() {
 	make DESTDIR=$pkgdir bashcompletiondir=/usr/share/bash-completion/completions install
 
 	# Install license file
-	install -Dm644 COPYING $pkgdir/usr/share/licenses/package_name/LICENSE
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/grub/LICENSE
 
 	# Change directory to target directory
 	cd $pkgdir

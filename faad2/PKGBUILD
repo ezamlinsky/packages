@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='faad2'
-pkgver=2.8.8
+pkgver=2.9.1
 pkgrel=1
 pkgdesc='ISO AAC audio decoder'
 url='http://faac.sourceforge.net/'
@@ -30,16 +30,28 @@ depends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://downloads.sourceforge.net/sourceforge/faac/faad2-$pkgver.tar.gz")
-sha256sums=('985c3fadb9789d2815e50f4ff714511c79c2710ac27a4aaaf5c0c2662141426d')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/knik0/faad2/archive/${pkgver//./_}.tar.gz")
+sha256sums=('7fa33cff76abdda5a220ca5de0b2e05a77354f3b97f735193c2940224898aa9a')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-${pkgver//./_}
+
+	# Run bootstrap script
+	./bootstrap
+}
 
 #==============================================================================#
 #       Package building sequence                                              #
-#==============================================================================#
+##==============================================================================#
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-${pkgver//./_}
 
 	# Default configure options
 	config_opts=(
@@ -82,7 +94,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-${pkgver//./_}
 
 	# Run internal checks
 	make -k check
@@ -94,13 +106,13 @@ check() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-${pkgver//./_}
 
 	# Install files
 	make DESTDIR=$pkgdir install
 
 	# Install license file
-	install -Dm644 COPYING $pkgdir/usr/share/licenses/package_name/LICENSE
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/faad2/LICENSE
 }
 
 ################################################################################

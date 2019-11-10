@@ -76,7 +76,7 @@ package() {
 	install -Dm755 contrib/pzstd/pzstd $pkgdir/usr/bin/pzstd
 
 	# Install license file
-	install -Dm644 LICENSE $pkgdir/usr/share/licenses/package_name/LICENSE
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/zstd/LICENSE
 }
 
 ################################################################################
