@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('gnumeric')
-pkgver=1.12.45
-pkgrel=2
+pkgver=1.12.46
+pkgrel=1
 pkgdesc='A GNOME Spreadsheet Program'
 url='http://www.gnome.org/projects/gnumeric/'
 license=('GPL')
@@ -57,7 +57,7 @@ optdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='fd8eedb30acc50c1096bf6d6a126d265e35bada3'  # tags/GNUMERIC_1_12_45^0
+_commit='40f0abbc353028a9a06bbfcd530763d1e9f900de'  # tags/GNUMERIC_1_12_46^0
 source=(
 	"git+https://gitlab.gnome.org/GNOME/gnumeric.git#commit=$_commit"
 	'revert-warnings.patch'
