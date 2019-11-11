@@ -1,0 +1,160 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('nmap')
+pkgver=7.80
+pkgrel=1
+pkgdesc='Utility for network discovery and security auditing'
+url='https://nmap.org/'
+license=('GPL2')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'gcc-libs'
+	'glibc'
+	#'libdnet'
+	#'liblinear'
+	'libpcap'
+	#'libssh2'
+	#'lua'
+	'openssl'
+	'pcre'
+	'sh'
+	#'zlib'
+)
+makedepends=('pygtk')
+optdepends=(
+	'pygtk: zenmap'
+	'sudo: privilege escalation for zenmap'
+	'xterm: privilege escalation for zenmap'
+	'kde-cli-tools: privilege escalation for zenmap'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://nmap.org/dist/nmap-$pkgver.tar.bz2"
+	"https://nmap.org/dist/sigs/nmap-$pkgver.tar.bz2.asc"
+)
+sha256sums=(
+	'fcfa5a0e42099e12e4bf7a68ebe6fde05553383a682e816a7ec9256ab4773faa'
+	'SKIP'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--with-ndiff'
+		'--with-nping'
+		'--with-ncat'
+		'--with-nmap-update'
+		'--with-zenmap'
+
+	# 'libdnet' related options
+		#'--with-libdnet'
+		'--with-libdnet=included'
+
+	# 'liblinear' related options
+		#'--with-liblinear'
+		'--with-liblinear=included'
+
+	# 'libpcap' related options
+		'--with-libpcap'
+		#'--with-libpcap=included'
+
+	# 'libssh2' related options
+		#'--with-libssh2'
+		'--with-libssh2=included'
+		#'--without-libssh2'
+
+	# 'lua' related options
+		#'--with-liblua'
+		#'--with-liblua=included'
+		'--without-liblua'
+
+	# 'openssl' related options
+		'--with-openssl'
+		#'--without-openssl'
+
+	# 'pcre' related options
+		'--with-libpcre'
+		#'--with-libpcre=included'
+
+	# 'zlib' related options
+		#'--with-libz'
+		'--with-libz=included'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/nmap/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
