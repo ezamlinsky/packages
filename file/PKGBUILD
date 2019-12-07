@@ -78,11 +78,13 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-elf'
+		'--enable-elf-core'
 		'--enable-fsect-man5'
 
 	# 'libseccomp' related options
-		'--enable-libseccomp'
-		#'--disable-libseccomp'
+		#'--enable-libseccomp'
+		'--disable-libseccomp'
 
 	# 'zlib' related options
 		'--enable-zlib'
