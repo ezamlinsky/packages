@@ -110,6 +110,9 @@ package() {
 
 	# Install files
 	make DESTDIR=$pkgdir install
+
+	# Remove non required files
+	rm -rf $pkgdir/usr/share/man/man2
 }
 
 ################################################################################
