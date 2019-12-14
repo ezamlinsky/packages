@@ -1,0 +1,285 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgbase='postgresql'
+pkgname=('postgresql' 'postgresql-libs')
+pkgver=12.1
+pkgrel=2
+pkgdesc='Sophisticated object-relational DBMS'
+url='https://www.postgresql.org/'
+license=('custom:PostgreSQL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'clang'
+	'gcc-libs'
+	'icu'
+	'krb5'
+	'libldap'
+	#'libselinux'
+	'libutil-linux'
+	'libxml2'
+	'libxslt'
+	'llvm'
+	'openssl'
+	'pam'
+	'perl'
+	'python'
+	'readline'
+	'systemd'
+	'tcl'
+	'zlib'
+)
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+source=(
+	"https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-$pkgver.tar.bz2"
+	'postgresql-run-socket.patch'
+	'postgresql-perl-rpath.patch'
+	'postgresql.pam'
+	'postgresql.service'
+	'postgresql-check-db-dir'
+	'postgresql.sysusers'
+	'postgresql.tmpfiles'
+)
+sha256sums=(
+	'a09bf3abbaf6763980d0f8acbb943b7629a8b20073de18d867aecdb7988483ed'
+	'8538619cb8bea51078b605ad64fe22abd6050373c7ae3ad6595178da52f6a7d9'
+	'5f73b54ca6206bd2c469c507830261ebd167baca074698d8889d769c33f98a31'
+	'57dfd072fd7ef0018c6b0a798367aac1abb5979060ff3f9df22d1048bb71c0d5'
+	'25fb140b90345828dc01a4f286345757e700a47178bab03d217a7a5a79105b57'
+	'bb24b8ce8c69935b7527ed54e10a8823068e31c8aa5b8ffea81ce6993264e8db'
+	'7fa8f0ef3f9d40abd4749cc327c2f52478cb6dfb6e2405bd0279c95e9ff99f12'
+	'4a4c0bb9ceb156cc47e9446d8393d1f72b4fe9ea1d39ba17213359df9211da57'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/postgresql-run-socket.patch
+	patch -p1 -i $srcdir/postgresql-perl-rpath.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgbase-$pkgver
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-spinlocks'
+		'--enable-atomics'
+		'--enable-thread-safety'
+		'--disable-profiling'
+		'--disable-debug'
+		'--disable-cassert'
+		'--disable-tap-tests'
+		'--disable-depend'
+		'--enable-float4-byval'
+		'--enable-float8-byval'
+		'--with-uuid=e2fs'
+		'--with-system-tzdata=/usr/share/zoneinfo'
+
+	# 'icu' related options
+		'--with-icu'
+		#'--without-icu'
+
+	# 'krb5' related options
+		#'--with-gssapi'
+		'--without-gssapi'
+
+	# 'libldap' related options
+		#'--with-ldap'
+		'--without-ldap'
+
+	# 'libselinux' related options
+		#'--with-selinux'
+		'--without-selinux'
+
+	# 'libxml2' related options
+		'--with-libxml'
+		#'--without-libxml'
+
+	# 'libxslt' related options
+		'--with-libxslt'
+		#'--without-libxslt'
+
+	# 'llvm-libs' related options
+		'--with-llvm'
+		#'--without-llvm'
+
+	# 'openssl' related options
+		'--with-openssl'
+		#'--without-openssl'
+
+	# 'pam' related options
+		'--with-pam'
+		#'--without-pam'
+
+	# 'perl' related options
+		'--with-perl'
+		#'--without-perl'
+
+	# 'python' related options
+		#'--with-python'
+		'--without-python'
+
+	# 'readline' related options
+		'--with-readline'
+		#'--without-readline'
+
+	# 'systemd-libs' related options
+		'--with-systemd'
+		#'--without-systemd'
+
+	# 'tcl' related options
+		#'--with-tcl'
+		'--without-tcl'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Postgresql                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_postgresql() {
+	pkgdesc='Sophisticated object-relational DBMS'
+	depends=(
+		"postgresql-libs>=${pkgver}"
+		'gcc-libs'
+		'glibc'
+		'icu'
+		#'krb5'
+		#'libldap'
+		'libutil-linux'
+		'libxml2'
+		'libxslt'
+		'llvm-libs'
+		'openssl>=1.0.0'
+		'pam'
+		'perl'
+		#'python'
+		'systemd-libs'
+		#'tcl'
+		'zlib'
+	)
+	optdepends=('postgresql-old-upgrade: upgrade from previous major version using pg_upgrade')
+	backup=('etc/pam.d/postgresql')
+
+	# Change directory to source directory
+	cd $pkgname-$pkgver
+
+	# Install files
+	make DESTDIR=$pkgdir install
+	make -C contrib DESTDIR=$pkgdir install
+	make -C doc/src/sgml DESTDIR=$pkgdir install-man
+
+	# Install distro specific files
+	install -Dm 755 $srcdir/postgresql-check-db-dir $pkgdir/usr/bin/postgresql-check-db-dir
+	install -Dm 644 $srcdir/postgresql.pam $pkgdir/etc/pam.d/postgresql
+	install -Dm 644 $srcdir/postgresql.service $pkgdir/usr/lib/systemd/system/postgresql.service
+	install -Dm 644 $srcdir/postgresql.sysusers $pkgdir/usr/lib/sysusers.d/postgresql.conf
+	install -Dm 644 $srcdir/postgresql.tmpfiles $pkgdir/usr/lib/tmpfiles.d/postgresql.conf
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'postgresql-libs' package
+	mkdir -p $srcdir/postgresql-libs/usr/{bin,include/postgresql,lib,share/{man/man1,postgresql}}
+	for util in clusterdb createdb createuser dropdb dropuser ecpg pg_config pg_dump pg_dumpall pg_isready pg_restore psql reindexdb vacuumdb
+	do
+		mv usr/bin/$util $srcdir/postgresql-libs/usr/bin || true
+		mv usr/share/man/man1/$util.1 $srcdir/postgresql-libs/usr/share/man/man1/ || true
+	done
+	mv usr/include/*.h $srcdir/postgresql-libs/usr/include || true
+	mv usr/include/libpq $srcdir/postgresql-libs/usr/include/ || true
+	mv usr/include/postgresql/informix $srcdir/postgresql-libs/usr/include/postgresql/ || true
+	mv usr/include/postgresql/internal $srcdir/postgresql-libs/usr/include/postgresql/ || true
+	mv usr/lib/pkgconfig $srcdir/postgresql-libs/usr/lib/ || true
+	mv usr/lib/*.so* $srcdir/postgresql-libs/usr/lib || true
+	mv usr/share/postgresql/pg_service.conf.sample $srcdir/postgresql-libs/usr/share/postgresql || true
+	mv usr/share/postgresql/psqlrc.sample $srcdir/postgresql-libs/usr/share/postgresql || true
+
+	# Remove non required files
+	rmdir usr/share/doc/postgresql/html
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Postgresql-libs                                                        #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_postgresql-libs() {
+	pkgdesc='Libraries for use with PostgreSQL'
+	depends=(
+		'glibc'
+		#'krb5'
+		#'libldap'
+		'openssl>=1.0.0'
+		'readline>=6.0'
+		'zlib'
+	)
+	provides=('postgresql-client')
+	conflicts=('postgresql-client')
+
+	# Copy files
+	mv $srcdir/postgresql-libs/* $pkgdir
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
