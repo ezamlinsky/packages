@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('tzdata')
 pkgver=2019c
-pkgrel=2
+pkgrel=3
 pkgdesc='Sources for time zone and daylight saving time data'
 url='http://www.iana.org/time-zones'
 license=('GPL')
