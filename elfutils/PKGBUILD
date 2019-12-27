@@ -13,7 +13,7 @@
 pkgbase='elfutils'
 pkgname=('elfutils' 'libelf')
 pkgver=0.177
-pkgrel=1
+pkgrel=2
 url='https://sourceware.org/elfutils/'
 license=('LGPL3' 'GPL' 'GPL3')
 arch=('x86_64')
