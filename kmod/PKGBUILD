@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('kmod')
-pkgver=26
-pkgrel=3
+pkgver=27
+pkgrel=1
 pkgdesc='Linux kernel module management tools and library'
 url='https://git.kernel.org/?p=utils/kernel/kmod/kmod.git;a=summary'
 license=('GPL2')
@@ -46,6 +46,11 @@ conflicts=('module-init-tools')
 replaces=('module-init-tools')
 
 #==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('emptydirs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
@@ -54,15 +59,13 @@ source=(
 	'depmod-search.conf'
 	'depmod.hook'
 	'depmod.script'
-	'0001-Link-against-libcrypto-not-all-of-openssl.patch'
 )
 md5sums=(
-	'1129c243199bdd7db01b55a61aa19601'
+	'3973a74786670d3062d89a827e266581'
 	'SKIP'
 	'dd62cbf62bd8f212f51ef8c43bec9a77'
-	'72ce5e14ee3ad8bc06945e0ad4c642ce'
+	'e179ace75721e92b04b2e145b69dab29'
 	'18fb3d1f6024a5a84514c8276cb3ebff'
-	'e918bef174c1057fa13a5ba8c4a30a46'
 )
 
 #==============================================================================#
@@ -72,9 +75,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -p1 -i $srcdir/0001-Link-against-libcrypto-not-all-of-openssl.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
