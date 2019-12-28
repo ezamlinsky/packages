@@ -11,20 +11,20 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('file')
-pkgver=5.37
+pkgver=5.38
 pkgrel=3
 pkgdesc='File type identification utility'
 url='https://www.darwinsys.com/file/'
 license=('custom')
 arch=('x86_64')
-groups=('base' 'base-devel')
+groups=('base-devel')
 
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
 	'glibc'
-	#'libseccomp'
+	'libseccomp'
 	'zlib'
 )
 
@@ -32,12 +32,16 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"ftp://ftp.astron.com/pub/file/file-$pkgver.tar.gz"
-	"ftp://ftp.astron.com/pub/file/file-$pkgver.tar.gz.asc"
+	"ftp://ftp.astron.com/pub/$pkgname/$pkgname-$pkgver.tar.gz"
+	"ftp://ftp.astron.com/pub/$pkgname/$pkgname-$pkgver.tar.gz.asc"
+	'file-5.38-seccomp-tcgets.patch'
+	'0001-Revert-Don-t-depend-on-the-execute-bit-to-determine-.patch'
 )
-md5sums=(
-	'80c29aca745466c6c24d11f059329075'
+sha256sums=(
+	'593c2ffc2ab349c5aea0f55fedfe4d681737b6b62376a9b3ad1e77b2cc19fa34'
 	'SKIP'
+	'da6197e89ca53bd4f0d9009fa3a18c6fdb66dc07eb92e6bd77207eadb4548cfe'
+	'5636b444d147d6598c3defd0ce0a9b28056f2f64b09ef7f032337ed0308b8490'
 )
 
 #==============================================================================#
@@ -47,6 +51,10 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/file-5.38-seccomp-tcgets.patch
+	patch -p1 -i $srcdir/0001-Revert-Don-t-depend-on-the-execute-bit-to-determine-.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -83,8 +91,8 @@ build() {
 		'--enable-fsect-man5'
 
 	# 'libseccomp' related options
-		#'--enable-libseccomp'
-		'--disable-libseccomp'
+		'--enable-libseccomp'
+		#'--disable-libseccomp'
 
 	# 'zlib' related options
 		'--enable-zlib'
