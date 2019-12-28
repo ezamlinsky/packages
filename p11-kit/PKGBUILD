@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('p11-kit')
-pkgver=0.23.18.1
-pkgrel=1
+pkgver=0.23.20
+pkgrel=2
 pkgdesc='Provides a way to load and enumerate PKCS#11 modules'
 url='https://p11-glue.freedesktop.org'
 license=('BSD')
@@ -35,6 +35,11 @@ makedepends=(
 )
 
 #==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libp11-kit.so')
+
+#==============================================================================#
 #       Package miscellaneous options                                          #
 #==============================================================================#
 install='p11-kit.install'
@@ -42,26 +47,8 @@ install='p11-kit.install'
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=(
-	"git+https://github.com/p11-glue/p11-kit?signed#tag=$pkgver"
-	'0001-Build-and-install-libnssckbi-p11-kit.so.patch'
-)
-sha256sums=(
-	'SKIP'
-	'e832eece10587ac50ae42ca4515786b51e67fea0647716061e51cd94f5e058cd'
-)
-
-#==============================================================================#
-#       Package preparation sequence                                           #
-#==============================================================================#
-prepare() {
-
-	# Change directory to source directory
-	cd $pkgname
-
-	# Apply patches
-	patch -Np1 -i $srcdir/0001-Build-and-install-libnssckbi-p11-kit.so.patch
-}
+source=("git+https://github.com/p11-glue/p11-kit?signed#tag=$pkgver")
+sha256sums=('SKIP')
 
 #==============================================================================#
 #       Package building sequence                                              #
