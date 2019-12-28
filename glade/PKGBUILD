@@ -1,0 +1,138 @@
+################################################################################
+# Encoding: UTF-8                                                  Tab size: 4 #
+#                                                                              #
+#                  ARCH LINUX PACKAGE BUILD DESCRIPTION FILE                   #
+#                                                                              #
+# Ordnung muss sein!                             Copyleft (Ɔ) 2019, Arch Linux #
+################################################################################
+# Maintainer: Jack Black <ezamlinsky@gmail.com>
+
+#==============================================================================#
+#       Package information                                                    #
+#==============================================================================#
+pkgname=('glade')
+pkgver=3.22.2
+pkgrel=1
+pkgdesc='User Interface Builder for GTK+ applications'
+url='https://glade.gnome.org/'
+license=('GPL' 'LGPL')
+arch=('x86_64')
+
+#==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+depends=(
+	'cairo'
+	'gdk-pixbuf2'
+	'glib2'
+	'glibc'
+	'gtk3'
+	'libxml2'
+	'pango'
+	#'python'
+	#'webkit2gtk'
+)
+makedepends=(
+	'docbook-xsl'
+	'git'
+	'gnome-common'
+	'gobject-introspection'
+	'gtk-doc'
+	'intltool'
+	'itstool'
+	'python-gobject'
+)
+optdepends=('devhelp: development help')
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libgladeui-2.so')
+
+#==============================================================================#
+#       Package sources and integrity                                          #
+#==============================================================================#
+_commit='1f0e1db7178c5038b2f61dc708b0939cb21d9254'
+source=("git+https://gitlab.gnome.org/GNOME/glade.git#commit=$_commit")
+sha256sums=('SKIP')
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
+}
+
+#==============================================================================#
+#       Package building sequence                                              #
+#==============================================================================#
+build() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Default configure options
+	config_opts=(
+		'--prefix=/usr'
+		'--bindir=/usr/bin'
+		'--sbindir=/usr/bin'
+		'--libdir=/usr/lib'
+		'--libexecdir=/usr/lib'
+		'--sysconfdir=/etc'
+		'--localstatedir=/var'
+		'--enable-silent-rules'
+		'--enable-shared'
+		'--disable-static'
+		'--enable-man-pages'
+		'--disable-gtk-doc'
+		'--enable-debug=no'
+		'--enable-introspection=no'
+		'--enable-compile-warnings=minimum'
+		'--enable-gladeui'
+
+	# 'python' related options
+		#'--enable-python'
+		'--disable-python'
+
+	# 'webkit2gtk' related options
+		#'--enable-webkit2gtk'
+		'--disable-webkit2gtk'
+	)
+
+	# Run package configuration script
+	./configure "${config_opts[@]}"
+
+	# Set correct LDFLAGS to build a shared archive
+	if [ -f libtool ]; then
+		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
+	fi
+
+	# Build package
+	make
+}
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
+package() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Install files
+	make DESTDIR=$pkgdir install
+
+	# Install license file
+	install -Dm644 COPYING $pkgdir/usr/share/licenses/glade/LICENSE
+}
+
+################################################################################
+#                                 END OF FILE                                  #
+################################################################################
