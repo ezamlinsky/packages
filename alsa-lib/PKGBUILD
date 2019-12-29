@@ -29,10 +29,18 @@ makedepends=('python2')
 optdepends=('python2: for python smixer plugin')
 
 #==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'libasound.so'
+	'libatopology.so'
+)
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("ftp://ftp.alsa-project.org/pub/lib/alsa-lib-$pkgver.tar.bz2")
-sha512sums=('402e39cca82d17555e3e52ef06b8ed9dcf58531da393809a7b5cf18658299fa90ee8a60bfc5213482d7a02b13140c441f1333b144556f44ab4adb786a2fb3c49')
+source=("https://www.alsa-project.org/files/pub/lib/$pkgname-$pkgver.tar.bz2")
+sha512sums=('d21adb3ff998918c7d1820f9ce2aaf4202dd45ccb87cb092d49da8b2402b6ddaad06325be0fd59f17393a5d9958e3743bfccb4b14bdb947a42e7d791d73c7033')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
