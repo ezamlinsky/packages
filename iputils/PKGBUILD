@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('iputils')
 pkgver=20190709
-pkgrel=1
+pkgrel=2
 pkgdesc='Network monitoring tools, including ping'
 url='http://www.skbuff.net/iputils/'
 license=('GPL')
@@ -57,8 +57,26 @@ install='iputils.install'
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='13e0084'
-source=("git+https://github.com/iputils/iputils.git#commit=$_commit")
-sha1sums=('SKIP')
+source=(
+	"git+https://github.com/iputils/iputils.git#commit=$_commit"
+	'fix-setuid-redeclared.patch'
+)
+sha1sums=(
+	'SKIP'
+	'ea7c400d1c397d514de718957c28730d87cef656'
+)
+
+#==============================================================================#
+#       Package preparation sequence                                           #
+#==============================================================================#
+prepare() {
+
+	# Change directory to source directory
+	cd $pkgname
+
+	# Apply patches
+	patch -p1 -i $srcdir/fix-setuid-redeclared.patch
+}
 
 #==============================================================================#
 #       Package building sequence                                              #
