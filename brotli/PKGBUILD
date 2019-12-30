@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname='brotli'
 pkgver=1.0.7
-pkgrel=1
+pkgrel=3
 pkgdesc='Brotli compression library'
 url='https://github.com/google/brotli'
 license=('MIT')
