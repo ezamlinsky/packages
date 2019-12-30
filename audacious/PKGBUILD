@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname='audacious'
 pkgver=3.10.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Lightweight, advanced audio player focused on audio quality'
 url='http://audacious-media-player.org/'
 license=('BSD')
