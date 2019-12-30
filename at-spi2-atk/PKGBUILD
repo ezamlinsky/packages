@@ -11,11 +11,11 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='at-spi2-atk'
-pkgver=2.34.1
+pkgver=2.34.2
 pkgrel=1
 pkgdesc='A GTK+ module that bridges ATK to D-Bus at-spi'
 url='https://wiki.gnome.org/Accessibility'
-license=('GPL2')
+license=('LGPL')
 arch=('x86_64')
 
 #==============================================================================#
@@ -36,7 +36,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='043b793de2161a0548835424f4d087ac90d1172d'  # tags/AT_SPI2_ATK_2_34_1^0
+_commit='eac8e935128753f8204ecc3904e6e3e7b231e3ea'
 source=("git+https://gitlab.gnome.org/GNOME/at-spi2-atk.git#commit=$_commit")
 sha256sums=('SKIP')
 
