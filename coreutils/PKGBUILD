@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('coreutils')
-pkgver=8.31
-pkgrel=2
+pkgver=8.32
+pkgrel=1
 pkgdesc='The basic file, shell and text manipulation utilities of the GNU operating system'
 url='https://www.gnu.org/software/coreutils/'
 license=('GPL3')
@@ -37,11 +37,11 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/gnu/coreutils/coreutils-$pkgver.tar.xz"
-	"https://ftp.gnu.org/gnu/coreutils/coreutils-$pkgver.tar.xz.sig"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.xz.sig"
 )
-md5sums=(
-	'0009a224d8e288e8ec406ef0161f9293'
+sha256sums=(
+	'4458d8de7849df44ccab15e16b1548b285224dbba5f08fac070c1c0e0bcc4cfa'
 	'SKIP'
 )
 
