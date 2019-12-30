@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('iproute2')
-pkgver=5.3.0
+pkgver=5.5.0
 pkgrel=1
 pkgdesc='IP Routing Utilities'
 url='https://git.kernel.org/pub/scm/network/iproute2/iproute2.git'
@@ -62,7 +62,7 @@ source=(
 	'0001-make-iproute2-fhs-compliant.patch'
 )
 sha256sums=(
-	'cb1c1e45993a3bd2438543fd4332d70f1726a6e6ff97dc613a8258c993117b3f'
+	'bac543435cac208a11db44c9cc8e35aa902befef8750594654ee71941c388f7b'
 	'SKIP'
 	'f60fefe4c17d3b768824bb50ae6416292bcebba06d73452e23f4147b46b827d3'
 )
