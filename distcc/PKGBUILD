@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('distcc')
 pkgver=3.3.3
-pkgrel=1
+pkgrel=4
 pkgdesc='Distributed C, C++ and Objective-C compiler'
 url='http://distcc.org'
 license=('GPL')
