@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('evince')
-pkgver=3.34.1
+pkgver=3.36.0
 pkgrel=1
 pkgdesc='Document viewer (PDF, Postscript, djvu, tiff, dvi, XPS, SyncTex support with gedit, comics books (cbr,cbz,cb7 and cbt))'
 url='https://wiki.gnome.org/Apps/Evince'
@@ -31,6 +31,7 @@ depends=(
 	'glib2'
 	'glibc'
 	#'gnome-desktop'
+	#'gsettings-desktop-schemas'
 	#'gspell'
 	#'gst-plugins-base-libs'
 	'gtk3'
@@ -61,12 +62,23 @@ makedepends=(
 	'python'
 	'yelp-tools'
 )
-optdepends=('gvfs: bookmark support and session saving')
+optdepends=(
+	'texlive-bin: DVI support'
+	'gvfs: bookmark support and session saving'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'libevdocument3.so'
+	'libevview3.so'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='6f9b550f42ad236185d4bc650ffe6ade04fd09ab'  # tags/3.34.1^0
+_commit='605711b172378fb55192b984455e0af8e00b3181'
 source=("git+https://gitlab.gnome.org/GNOME/evince.git#commit=$_commit")
 sha256sums=('SKIP')
 
