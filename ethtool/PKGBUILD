@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('ethtool')
-pkgver=5.3
+pkgver=5.4
 pkgrel=1
 epoch=1
 pkgdesc='Utility for controlling network drivers and hardware'
@@ -28,11 +28,11 @@ depends=('glibc')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.kernel.org/pub/software/network/ethtool/ethtool-$pkgver.tar.xz"
-	"https://www.kernel.org/pub/software/network/ethtool/ethtool-$pkgver.tar.sign"
+	"https://www.kernel.org/pub/software/network/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/software/network/$pkgname/$pkgname-$pkgver.tar.sign"
 )
 sha1sums=(
-	'ba9b8fbcada58099245aaa3b76cd9e5feb19c5d7'
+	'67113d5adf08ec0cb2a3cb3b5de63280de6f7f3b'
 	'SKIP'
 )
 
