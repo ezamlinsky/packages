@@ -22,8 +22,8 @@ arch=('x86_64')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://sourceware.org/elfutils/ftp/$pkgver/elfutils-$pkgver.tar.bz2"
-	"https://sourceware.org/elfutils/ftp/$pkgver/elfutils-$pkgver.tar.bz2.sig"
+	"ftp://sourceware.org/pub/elfutils/$pkgver/elfutils-$pkgver.tar.bz2"
+	"ftp://sourceware.org/pub/elfutils/$pkgver/elfutils-$pkgver.tar.bz2.sig"
 )
 sha1sums=(
 	'922161f84baaae845382338098071544b98ca92d'
