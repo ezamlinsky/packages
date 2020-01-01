@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libnotify')
-pkgver=0.7.8
+pkgver=0.7.9
 pkgrel=1
 pkgdesc='Library for sending desktop notifications'
 url='https://developer.gnome.org/notification-spec/'
@@ -38,9 +38,14 @@ makedepends=(
 )
 
 #==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libnotify.so')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='44f92222124b12987406d0768e760ecf9f7e27f8'  # tags/0.7.8^0
+_commit='98a4bf483a69c6436311bcb9834d9d93235c96b7'
 source=("git+https://gitlab.gnome.org/GNOME/libnotify.git#commit=$_commit")
 sha256sums=('SKIP')
 
