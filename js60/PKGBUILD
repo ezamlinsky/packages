@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('js60')
 pkgver=60.9.0
-pkgrel=1
+pkgrel=2
 pkgdesc='JavaScript interpreter and libraries - Version 60'
 url='https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey'
 license=('MPL')
