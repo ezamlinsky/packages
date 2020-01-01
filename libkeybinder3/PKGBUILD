@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libkeybinder3')
 pkgver=0.3.2
-pkgrel=2
+pkgrel=3
 pkgdesc='A library for registering global keyboard shortcuts'
 url='https://github.com/engla/keybinder/tree/keybinder-3.0'
 license=('MIT')
@@ -39,10 +39,12 @@ optdepends=('lua-lgi: lua bindings')
 source=(
 	"https://github.com/kupferlauncher/keybinder/releases/download/keybinder-3.0-v$pkgver/keybinder-3.0-$pkgver.tar.gz"
 	"https://github.com/kupferlauncher/keybinder/releases/download/keybinder-3.0-v$pkgver/keybinder-3.0-$pkgver.tar.gz.sig"
+	'libkeybinder3-gtk-doc.patch::https://github.com/kupferlauncher/keybinder/pull/18.patch'
 )
 sha1sums=(
 	'd23c12440b54cb0f40e7e876c22001dc7b5714b0'
 	'SKIP'
+	'32333351bda812c4449e943f7da860fe443a4d0a'
 )
 
 #==============================================================================#
@@ -52,6 +54,9 @@ prepare() {
 
 	# Change directory to source directory
 	cd keybinder-3.0-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/libkeybinder3-gtk-doc.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
