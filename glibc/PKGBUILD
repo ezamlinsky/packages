@@ -43,7 +43,7 @@ backup=(
 	'etc/locale.gen'
 	'etc/nscd.conf'
 )
-options=('emptydirs')
+options=('emptydirs' 'staticlibs')
 install='glibc.install'
 
 #==============================================================================#
