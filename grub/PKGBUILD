@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('grub')
 pkgver=2.04
-pkgrel=3
+pkgrel=5
 epoch=2
 pkgdesc='GNU GRand Unified Bootloader (2)'
 url='https://www.gnu.org/software/grub/'
