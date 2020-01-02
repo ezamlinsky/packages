@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libpipeline')
-pkgver=1.5.1
+pkgver=1.5.2
 pkgrel=1
 pkgdesc='A C library for manipulating pipelines of subprocesses in a flexible and convenient way'
-url='https://libpipeline.nongnu.org/'
+url='https://nongnu.org/libpipeline/'
 license=('GPL')
 arch=('x86_64')
 
@@ -27,11 +27,11 @@ depends=('glibc')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://download.savannah.gnu.org/releases/libpipeline/libpipeline-$pkgver.tar.gz"
-	"https://download.savannah.gnu.org/releases/libpipeline/libpipeline-$pkgver.tar.gz.asc"
+	"https://download.savannah.gnu.org/releases/libpipeline/$pkgname-$pkgver.tar.gz"
+	"https://download.savannah.gnu.org/releases/libpipeline/$pkgname-$pkgver.tar.gz.asc"
 )
 sha256sums=(
-	'd633706b7d845f08b42bc66ddbe845d57e726bf89298e2cee29f09577e2f902f'
+	'fd59c649c1ae9d67604d1644f116ad4d297eaa66f838e3dfab96b41e85b059fb'
 	'SKIP'
 )
 
