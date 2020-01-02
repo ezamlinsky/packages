@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libvpx')
-pkgver=1.8.1
+pkgver=1.8.2
 pkgrel=1
 pkgdesc='VP8 and VP9 codec'
 url='https://www.webmproject.org/'
@@ -35,7 +35,7 @@ provides=('libvpx.so')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://codeload.github.com/webmproject/libvpx/zip/v${pkgver}")
+source=('git+https://chromium.googlesource.com/webm/libvpx#tag=7ec7a33a081aeeb53fed1a8d87e4cbd189152527')
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -44,7 +44,7 @@ sha256sums=('SKIP')
 build() {
 
 	# Change directory to source directory
-	cd libvpx-$pkgver
+	cd $pkgname
 
 	# Default configure options
 	config_opts=(
@@ -96,7 +96,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd libvpx-$pkgver
+	cd $pkgname
 
 	# Install files
 	make DESTDIR=$pkgdir install
