@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='llvm'
 pkgname=('llvm' 'llvm-libs' 'llvm-ocaml')
-pkgver=9.0.0
-pkgrel=4
+pkgver=9.0.1
+pkgrel=1
 url='https://llvm.org/'
 license=('custom:Apache 2.0 with LLVM Exception')
 arch=('x86_64')
@@ -40,12 +40,12 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://releases.llvm.org/$pkgver/llvm-$pkgver.src.tar.xz"
-	"https://releases.llvm.org/$pkgver/llvm-$pkgver.src.tar.xz.sig"
+	"https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/$pkgname-$pkgver.src.tar.xz"
+	"https://github.com/llvm/llvm-project/releases/download/llvmorg-$pkgver/$pkgname-$pkgver.src.tar.xz.sig"
 	'llvm-config.h'
 )
 sha256sums=(
-	'd6a0565cf21f22e9b4353b2eb92622e8365000a9e90a16b09b56f8157eabfe84'
+	'00a1ee1f389f81e9979f3a640a01c431b3021de0d42278f6508391a2f0b81c9a'
 	'SKIP'
 	'597dc5968c695bbdbb0eac9e8eb5117fcd2773bc91edf5ec103ecffffab8bc48'
 )
