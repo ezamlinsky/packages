@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname='nettle'
 pkgver=3.5.1
-pkgrel=1
+pkgrel=2
 pkgdesc='A low-level cryptographic library'
 url='https://www.lysator.liu.se/~nisse/nettle'
 license=('GPL2')
