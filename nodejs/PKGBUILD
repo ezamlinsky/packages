@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('nodejs')
-pkgver=13.0.1
+pkgver=13.10.1
 pkgrel=1
 pkgdesc='Evented I/O for V8 javascript'
 url='https://nodejs.org/'
@@ -42,7 +42,7 @@ optdepends=('npm: nodejs package manager')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("nodejs-$pkgver.tar.gz::https://github.com/nodejs/node/archive/v$pkgver.tar.gz")
-sha512sums=('033afe8199fe1fce30887de3ab6986a3c133920cabea6711b00d1686bce5d1e9872b633009c99f87dbda0450c2096456b62056805ccb771b634fbf8aaceb2206')
+sha512sums=('ec7ac831a620b7d598662476736d64ba848b33458095d180e61e74def42d1eec198a6648aac482e31988e17ee656d85da9d720896774d97afee4b07352c55c8f')
 
 #==============================================================================#
 #       Package building sequence                                              #
