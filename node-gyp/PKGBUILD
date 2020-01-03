@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('node-gyp')
-pkgver=6.0.0
+pkgver=6.1.0
 pkgrel=1
 pkgdesc='Node.js native addon build tool'
 url='https://github.com/nodejs/node-gyp'
@@ -31,9 +31,9 @@ makedepends=('npm')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://registry.npmjs.org/node-gyp/-/node-gyp-$pkgver.tgz")
+source=("https://registry.npmjs.org/$pkgname/-/$pkgname-$pkgver.tgz")
 noextract=("node-gyp-$pkgver.tgz")
-sha512sums=('433e9775ad9b2b376ca285c84daac67f6b9a08971887bb9afa37913227c11664f3d297a8d095ba223a6a10b957f998875e986c2b321281a0ac65e41c8796be34')
+sha512sums=('878036cc394eba379e69a4f1d3aaf8572fbc319d7aefd954fb06c22834b866dbd8d80dfb0c44a8dfba1e8c8c349ad991dfeaef370b6ce41e8aa6dd4aacd61d37')
 
 #==============================================================================#
 #       Package installation sequence                                          #
