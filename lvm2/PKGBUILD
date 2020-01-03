@@ -13,7 +13,7 @@
 pkgbase='lvm2'
 pkgname=('lvm2' 'device-mapper')
 pkgver=2.02.186
-pkgrel=2
+pkgrel=5
 url='https://sourceware.org/lvm2/'
 license=('GPL2' 'LGPL2.1')
 arch=('x86_64')
@@ -28,7 +28,7 @@ makedepends=(
 	#'python'
 	#'python2'
 	'systemd'
-	'thin-provisioning-tools'
+#	'thin-provisioning-tools'
 )
 
 #==============================================================================#
@@ -40,7 +40,7 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"git+https://sourceware.org/git/lvm2.git#tag=v${pkgver//./_}?signed"
+	"git://sourceware.org/git/lvm2.git#tag=v${pkgver//./_}?signed"
 	'lvm2_install'
 	'lvm2_hook'
 	'sd-lvm2_install'
@@ -85,6 +85,7 @@ build() {
 
 	# Default configure options
 	config_opts=(
+		'CONFIG_SHELL=/bin/bash'
 		'--prefix=/usr'
 		'--bindir=/usr/bin'
 		'--sbindir=/usr/bin'
@@ -133,6 +134,8 @@ build() {
 		'--enable-udev-systemd-background-jobs'
 		'--with-systemdsystemunitdir=/usr/lib/systemd/system'
 	)
+
+	export CONFIG_SHELL=/bin/bash
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
