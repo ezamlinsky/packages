@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('libxss')
 pkgver=1.2.3
-pkgrel=1
+pkgrel=2
 pkgdesc='X11 Screen Saver extension library'
 url='https://gitlab.freedesktop.org/xorg/lib/libxscrnsaver'
 license=('custom')
