@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('mkinitcpio-busybox')
-pkgver=1.30.1
+pkgver=1.31.1
 pkgrel=1
 pkgdesc='Base initramfs tools'
-url='http://www.busybox.net/'
+url='https://www.busybox.net/'
 license=('GPL')
 arch=('x86_64')
 
@@ -32,9 +32,9 @@ source=(
 	'config'
 )
 sha256sums=(
-	'3d1d04a4dbd34048f4794815a5c48ebb9eb53c5277e09ffffc060323b95dfbdc'
+	'd0f940a72f648943c1f2211e0e3117387c31d765137d92bd8284a3fb9752a998'
 	'SKIP'
-	'e35b09565b87d0a35c8085b4d34477d8795d23fb969a674b5d7f9579279dd7d4'
+	'2d724738dfb062b8676a8df0488a5e288fc7ceb305633fa6b8d672a722837e81'
 )
 
 #==============================================================================#
