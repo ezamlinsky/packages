@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('numactl')
 pkgver=2.0.13
-pkgrel=1
+pkgrel=2
 pkgdesc='Simple NUMA policy support'
 url='http://oss.sgi.com/projects/libnuma/'
 license=('LGPL2.1' 'GPL2')
