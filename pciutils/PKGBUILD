@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('pciutils')
-pkgver=3.6.2
+pkgver=3.6.4
 pkgrel=1
 pkgdesc='PCI bus configuration space access library and tools'
 url='https://mj.ucw.cz/sw/pciutils/'
@@ -30,18 +30,13 @@ depends=(
 	'systemd-libs'
 	'zlib'
 )
+makedepends=('git')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=(
-	"ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/pciutils-$pkgver.tar.gz"
-	"ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/pciutils-$pkgver.tar.gz.sign"
-)
-md5sums=(
-	'a1c5ec13f81a1c9cf380c93623959005'
-	'SKIP'
-)
+source=("git+https://github.com/pciutils/pciutils.git#tag=v$pkgver?signed")
+md5sums=('SKIP')
 
 #==============================================================================#
 #       Package building sequence                                              #
@@ -49,7 +44,7 @@ md5sums=(
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname
 
 	# Default configure options
 	config_opts=(
@@ -77,7 +72,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname
 
 	# Install files
 	make PREFIX=/usr SBINDIR=/usr/bin DESTDIR=$pkgdir install install-lib
