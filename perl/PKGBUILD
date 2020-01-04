@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('perl')
-pkgver=5.30.0
-pkgrel=3
+pkgver=5.30.1
+pkgrel=1
 pkgdesc='A highly capable, feature-rich programming language'
-url='http://www.perl.org'
+url='https://www.perl.org'
 license=('GPL' 'PerlArtistic')
 arch=('x86_64')
 groups=('base')
@@ -95,7 +95,7 @@ provides=(
 	'perl-math-complex=1.5901'
 	'perl-memoize=1.03_01'
 	'perl-mime-base64=3.15'
-	'perl-module-corelist=5.20190522'
+	'perl-module-corelist=5.20191110'
 	'perl-module-load-conditional=0.68'
 	'perl-module-load=0.34'
 	'perl-module-loaded=0.08'
@@ -156,8 +156,7 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.cpan.org/src/5.0/perl-${pkgver}.tar.xz"
-	'https://rt.perl.org/Public/Ticket/Attachment/1640272/838796/0001-perl-134194-fix-parsing-supplemental-groups-from.patch'
+	"https://www.cpan.org/src/5.0/perl-$pkgver.tar.xz"
 	'perlbin.sh'
 	'perlbin.csh'
 	'perlbin.fish'
@@ -165,26 +164,13 @@ source=(
 	'detect-old-perl-modules.hook'
 )
 sha512sums=(
-	'68a295eccd64debd9d6a10f0d5577f872a19ad8c2d702798f6b0f45b8c3af6ab3230768056e2131e9e2e2506d1035b27cfd627c845e32263fe448649c4b98ae9'
-	'0737f8c40fb5efc024861de52a6a76f537f7d862575e980b2f9c68ebf9a4b5186fba92efb5244ea95f212bcf0ade915ce14c44a33cd7d04d79a08f7bc9dd37b7'
-	'46724344828e7f86e016f9c8d588bf52b2e764e65e0acc1a38899a530c99bc6e4fd8b46fa0d4bbd685aa2074dd5bcbf9029ac3bb3f2d0ee9adfc4f6c0745f373'
-	'fc1344a02c741d61af6f6b5967f29cc6f43c2059761522b150261924dd7e1989da5254c03ffa0627accd9af01bc152edd24e84a6b59579acb9ee1900b6ce9383'
+	'8f3339efdcd1bb58fa58a90042181bef86bb09e4598c737e446ed43b56d2ab23d67eced5e36fb08fc61e076acfdb572a12e46a1277f5299a3f412054df0b88bf'
+	'b7678078d64cc593a3503c45f023c49915d0d703f1cea8282f4191f1e3aa62764cc6cfcae3dc3828101415b8e15d5ed8b1b79d423ef387550ae33172b0de92bc'
+	'53eb0cddfd637014f3d3a101665db8dcafe5ac5bf3d319a259974334eb89c1c405097518ae96b6d18e520194633c7be57c9b2cd9ae6398443eb08f1a2008d112'
 	'881e2efe05ba818cd7300f126800b56bb0685cb5c9c5fb7e67ef6aaf5abd17d2391a979d5d16d109c5111f4b35504ba83d19b0e6eda4431e8421fcbea19d2f1a'
 	'bd48af7a6209f2ad51aa1747a7238ecb11607a53f61460d873202bf14b55c3b7dd6f66f4a9f2cac8a24240313789a9a44dbc81b73587de46a6b1866bdfca5e26'
 	'6b5b2ba606d443da22c6c1a754829abd36f3fdfef1089bcf06c8f9db0217f2c2f02ebc14958ffa7afe618c9a80bd1025e76704f67466c0c3db7d40ef2c0e56b3'
 )
-
-#==============================================================================#
-#       Package preparation sequence                                           #
-#==============================================================================#
-prepare() {
-
-	# Change directory to source directory
-	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -p1 -i $srcdir/0001-perl-134194-fix-parsing-supplemental-groups-from.patch
-}
 
 #==============================================================================#
 #       Package building sequence                                              #
@@ -243,8 +229,7 @@ check() {
 	cd $pkgname-$pkgver
 
 	# Run internal checks
-	TEST_JOBS=$(echo $MAKEFLAGS | sed 's/.*-j\([0-9][0-9]*\).*/\1/') \
-	make test_harness
+	make test
 }
 
 #==============================================================================#
