@@ -13,7 +13,7 @@
 pkgname=('openssl')
 pkgoname=('openssl')
 pkgver=1.1.1.d
-pkgrel=1
+pkgrel=2
 pkgdesc='The Open Source toolkit for Secure Sockets Layer and Transport Layer Security'
 url='https://www.openssl.org'
 license=('custom:BSD')
