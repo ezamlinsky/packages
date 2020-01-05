@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('polkit')
 pkgver=0.116
-pkgrel=3
+pkgrel=5
 pkgdesc='Application development toolkit for controlling system-wide privileges'
 url='https://www.freedesktop.org/wiki/Software/polkit/'
 license=('LGPL')
