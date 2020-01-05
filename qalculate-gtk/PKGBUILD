@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('qalculate-gtk')
-pkgver=3.5.0
+pkgver=3.8.0
 pkgrel=1
 pkgdesc='GTK frontend for libqalculate'
 url='https://qalculate.github.io/'
@@ -41,7 +41,7 @@ optdepends=('yelp: for displaying the help')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://github.com/Qalculate/qalculate-gtk/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz")
-sha1sums=('96d951d995b3d91e430381bf43f8e3d5309d93b4')
+sha256sums=('9a2abf5f5c06f6a3a58d41844de7a666d0304c0c261bc2acd1f64ed105a0cd5c')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
