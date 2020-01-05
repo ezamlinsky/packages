@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('shadow')
-pkgver=4.7
-pkgrel=2
+pkgver=4.8.1
+pkgrel=1
 pkgdesc='Password and account management tool suite with support for shadow files and PAM'
 url='https://github.com/shadow-maint/shadow'
 license=('BSD')
