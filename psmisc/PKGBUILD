@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('psmisc')
-pkgver=23.2
-pkgrel=1
+pkgver=23.3
+pkgrel=2
 pkgdesc='Miscellaneous procfs tools'
 url='http://psmisc.sourceforge.net/'
 license=('GPL')
@@ -31,8 +31,8 @@ depends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://downloads.sourceforge.net/psmisc/psmisc-$pkgver.tar.xz")
-sha256sums=('4b7cbffdc9373474da49b85dc3457ae511c43dc7fa7d94513fe06f89dcb87880')
+source=("http://downloads.sourceforge.net/psmisc/$pkgname-$pkgver.tar.xz")
+sha256sums=('41750e1a5abf7ed2647b094f58127c73dbce6876f77ba4e0a7e0995ae5c7279a')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
