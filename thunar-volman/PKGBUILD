@@ -41,7 +41,7 @@ makedepends=('intltool')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://archive.xfce.org/src/apps/thunar-volman/${pkgver%.*}/thunar-volman-$pkgver.tar.bz2")
+source=("https://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('7ea7c6693334f2248cf399586af8974dfb7db9aad685ee31ac100e62e19a1837')
 
 #==============================================================================#
