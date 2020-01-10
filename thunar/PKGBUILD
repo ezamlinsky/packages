@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('thunar')
-pkgver=1.8.9
-pkgrel=2
+pkgver=1.8.12
+pkgrel=1
 pkgdesc='Modern file manager for Xfce'
 url='https://docs.xfce.org/xfce/thunar/start'
 license=('GPL2' 'LGPL2.1')
@@ -59,8 +59,8 @@ optdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/Thunar-$pkgver.tar.bz2")
-sha256sums=('7a758e7ac03501c520c304f8845353315c954d429b17d591b8eea8b14f1350b9')
+source=("https://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
+sha256sums=('29295bee0b1f5bfd525e37405e5d32b497ae539b15183dd14e6ca49e252225f8')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -68,7 +68,7 @@ sha256sums=('7a758e7ac03501c520c304f8845353315c954d429b17d591b8eea8b14f1350b9')
 prepare() {
 
 	# Change directory to source directory
-	cd Thunar-$pkgver
+	cd $pkgname-$pkgver
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -82,7 +82,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd Thunar-$pkgver
+	cd $pkgname-$pkgver
 
 	# Default configure options
 	config_opts=(
@@ -150,7 +150,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd Thunar-$pkgver
+	cd $pkgname-$pkgver
 
 	# Install files
 	make DESTDIR=$pkgdir install
