@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('usbutils')
 pkgver=012
-pkgrel=1
+pkgrel=2
 pkgdesc='USB Device Utilities'
 url='http://linux-usb.sourceforge.net/'
 license=('GPL')
