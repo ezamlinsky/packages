@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='util-linux'
 pkgname=('util-linux' 'libutil-linux')
-pkgver=2.35
+pkgver=2.35.1
 pkgrel=1
 url='https://github.com/karelzak/util-linux'
 license=('GPL2')
@@ -30,9 +30,10 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
+_basever=${pkgver%.*}
 source=(
-	"https://www.kernel.org/pub/linux/utils/util-linux/v$pkgver/util-linux-$pkgver.tar.xz"
-	"https://www.kernel.org/pub/linux/utils/util-linux/v$pkgver/util-linux-$pkgver.tar.sign"
+	"https://www.kernel.org/pub/linux/utils/util-linux/v$_basever/util-linux-$_basever.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/util-linux/v$_basever/util-linux-$_basever.tar.sign"
 	'pam-login'
 	'pam-common'
 	'pam-runuser'
@@ -61,7 +62,7 @@ sha256sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgbase-$pkgver
+	cd $pkgbase-$_basever
 
 	# Set 'sbin' directory to 'bin' directory
 	sed -e 's/\/sbin/\/bin/g' -i configure.ac
@@ -78,7 +79,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgbase-$pkgver
+	cd $pkgbase-$_basever
 
 	# Default configure options
 	config_opts=(
@@ -189,23 +190,23 @@ package_util-linux() {
 	pkgdesc='Miscellaneous system utilities for Linux'
 	groups=('base' 'base-devel')
 	depends=(
-#		'audit'
+		#'audit'
 		'coreutils'
 		'glibc'
 		'libcap-ng'
-#		'libselinux'
-#		'libsmack'
-#		'libuser'
-#		'libutempter'
+		#'libselinux'
+		#'libsmack'
+		#'libuser'
+		#'libutempter'
 		'libutil-linux'
 		'ncurses'
 		'pam'
-#		'python'
-#		'python2'
+		#'python'
+		#'python2'
 		'pcre2'
 		'readline'
-#		'shadow'
-#		'slang'
+		#'shadow'
+		#'slang'
 		'systemd-libs'
 		'zlib'
 	)
@@ -227,7 +228,7 @@ package_util-linux() {
 	)
 
 	# Change directory to source directory
-	cd $pkgbase-$pkgver
+	cd $pkgbase-$_basever
 
 	# Install files
 	make DESTDIR=$pkgdir install
