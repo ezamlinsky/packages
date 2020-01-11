@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='unrar'
 pkgname=('unrar' 'libunrar')
-pkgver=5.8.3
+pkgver=5.9.1
 pkgrel=1
 epoch=1
 url='https://www.rarlab.com/rar_add.htm'
@@ -23,7 +23,7 @@ arch=('x86_64')
 #        Package relations                                                     #
 #==============================================================================#
 source=("https://www.rarlab.com/rar/unrarsrc-$pkgver.tar.gz")
-sha256sums=('3591685c8f5bbcb0be09de3d0a0544adb88966b9cccb80986f6cd2b534fd91a6')
+sha256sums=('0eb1d1b8e02102fccae775a6d6b79336b69e2cf90e2045de92594dcfb58de100')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
