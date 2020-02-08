@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='gcc'
 pkgname=('gcc' 'gcc-libs')
-pkgver=9.2.0
-pkgrel=4
+pkgver=9.2.1
+pkgrel=2
 url='https://gcc.gnu.org'
 license=('GPL' 'LGPL' 'FDL' 'custom')
 arch=('x86_64')
@@ -39,9 +39,9 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
+_commit='6957d3e4eef1f4243eb23ff62aea06139ef4415a'
 source=(
-	"https://ftp.gnu.org/gnu/gcc/gcc-$pkgver/gcc-$pkgver.tar.xz"
-	"https://ftp.gnu.org/gnu/gcc/gcc-$pkgver/gcc-$pkgver.tar.xz.sig"
+	"git://gcc.gnu.org/git/gcc.git#commit=$_commit"
 	'c89'
 	'c99'
 	'gdc_phobos_path.patch'
@@ -49,7 +49,6 @@ source=(
 	'gdc_thunk_weak_ref.patch'
 )
 sha256sums=(
-	'ea6ef08f121239da5695f76c9b33637a118dcf63e24164422231917fa61fb206'
 	'SKIP'
 	'de48736f6e4153f03d0a5d38ceb6c6fdb7f054e8f47ddd6af0a3dbf14f27b931'
 	'2513c6d9984dd0a2058557bf00f06d8d5181734e41dcfe07be7ed86f2959622a'
@@ -64,7 +63,7 @@ sha256sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgbase-${pkgver//+/-}
+	cd $pkgbase
 
 	# Apply patches
 	patch -p1 -i $srcdir/gdc_phobos_path.patch
@@ -89,7 +88,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgbase-${pkgver//+/-}
+	cd $pkgbase
 
 	# Default configure options
 	config_opts=(
@@ -141,7 +140,6 @@ build() {
 		'--enable-__cxa_atexit'
 		'--enable-c99'
 		'--enable-cstdio=stdio'
-		'--enable-clocale=auto'
 		'--enable-long-long'
 		'--enable-wchar_t'
 		'--enable-extern-template'
@@ -203,7 +201,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgbase-${pkgver//+/-}
+	cd $pkgbase
 
 	# Run internal checks
 	make -k check
@@ -234,7 +232,7 @@ package_gcc() {
 	replaces=('gcc-multilib')
 
 	# Change directory to source directory
-	cd $pkgbase-${pkgver//+/-}
+	cd $pkgbase
 
 	# Install files
 	make DESTDIR=$pkgdir install
@@ -257,9 +255,6 @@ package_gcc() {
 	# Set auto loadable modules for GDB
 	mkdir -p $pkgdir/usr/share/gdb/auto-load/usr/lib/
 	mv $pkgdir/usr/lib/libstdc++.so.6.*-gdb.py $pkgdir/usr/share/gdb/auto-load/usr/lib
-
-	# Install Runtime Library Exception
-	install -Dm644 COPYING.RUNTIME $pkgdir/usr/share/licenses/gcc/RUNTIME.LIBRARY.EXCEPTION
 
 	# Change directory to target directory
 	cd $pkgdir
@@ -304,10 +299,6 @@ package_gcc-libs() {
 
 	# Copy files
 	mv $srcdir/gcc-libs/* $pkgdir
-
-	# Install Runtime Library Exception
-	install -Dm644 $pkgbase-${pkgver//+/-}/COPYING.RUNTIME \
-	$pkgdir/usr/share/licenses/gcc-libs/RUNTIME.LIBRARY.EXCEPTION
 }
 
 ################################################################################
