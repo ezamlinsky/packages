@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('gmp')
-pkgver=6.1.2
-pkgrel=2
+pkgver=6.2.0
+pkgrel=1
 pkgdesc='A free library for arbitrary precision arithmetic'
-url='http://gmplib.org/'
+url='https://gmplib.org/'
 license=('LGPL3' 'GPL')
 arch=('x86_64')
 
@@ -31,11 +31,11 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://gmplib.org/download/gmp/gmp-$pkgver.tar.xz"
-	"https://gmplib.org/download/gmp/gmp-$pkgver.tar.xz.sig"
+	"https://gmplib.org/download/gmp/gmp-$pkgver.tar.lz"
+	"https://gmplib.org/download/gmp/gmp-$pkgver.tar.lz.sig"
 )
 md5sums=(
-	'f58fa8001d60c4c77595fbbb62b63c1d'
+	'e3e08ac185842a882204ba3c37985127'
 	'SKIP'
 )
 
