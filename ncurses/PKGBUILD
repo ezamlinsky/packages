@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('ncurses')
-pkgver=6.1
-pkgrel=6
+pkgver=6.2
+pkgrel=1
 pkgdesc='System V Release 4.0 curses emulation library'
-url='http://invisible-island.net/ncurses/ncurses.html'
+url='https://invisible-island.net/ncurses/ncurses.html'
 license=('MIT')
 arch=('x86_64')
 
@@ -47,7 +47,7 @@ source=(
 	"https://ftp.gnu.org/pub/gnu/ncurses/ncurses-$pkgver.tar.gz.sig"
 )
 md5sums=(
-	'98c889aaf8d23910d2b92d65be2e737a'
+	'e812da327b1c2214ac1aed440ea3ae8d'
 	'SKIP'
 )
 
