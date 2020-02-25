@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('readline')
-pkgver=8.0.001
+pkgver=8.0.004
 pkgrel=1
 pkgdesc='GNU readline library'
-url='http://tiswww.case.edu/php/chet/readline/rltop.html'
+url='https://tiswww.case.edu/php/chet/readline/rltop.html'
 license=('GPL')
 arch=('x86_64')
 
@@ -48,12 +48,24 @@ source=(
 	"https://ftp.gnu.org/gnu/readline/readline-$_basever.tar.gz.sig"
 	"https://ftp.gnu.org/gnu/readline/readline-$_basever-patches/readline${_basever//./}-001"
 	"https://ftp.gnu.org/gnu/readline/readline-$_basever-patches/readline${_basever//./}-001.sig"
+	"https://ftp.gnu.org/gnu/readline/readline-$_basever-patches/readline${_basever//./}-002"
+	"https://ftp.gnu.org/gnu/readline/readline-$_basever-patches/readline${_basever//./}-002.sig"
+	"https://ftp.gnu.org/gnu/readline/readline-$_basever-patches/readline${_basever//./}-003"
+	"https://ftp.gnu.org/gnu/readline/readline-$_basever-patches/readline${_basever//./}-003.sig"
+	"https://ftp.gnu.org/gnu/readline/readline-$_basever-patches/readline${_basever//./}-004"
+	"https://ftp.gnu.org/gnu/readline/readline-$_basever-patches/readline${_basever//./}-004.sig"
 	'inputrc'
 )
 md5sums=(
 	'7e6c1f16aee3244a69aba6e438295ca3'
 	'SKIP'
 	'c3e27b8a0d8e37a4172654e5f3ef2eec'
+	'SKIP'
+	'2e631f1973dfe4b0ef042c40b8fdb47e'
+	'SKIP'
+	'9d2344b399237fa7abdbcf966b364c97'
+	'SKIP'
+	'0c0406762a9afcd34c6a77268fea0ccb'
 	'SKIP'
 	'58d54966c1191db45973cb3191ac621a'
 )
@@ -68,6 +80,9 @@ prepare() {
 
 	# Apply patches
 	patch -p0 -i $srcdir/readline${_basever//./}-001
+	patch -p0 -i $srcdir/readline${_basever//./}-002
+	patch -p0 -i $srcdir/readline${_basever//./}-003
+	patch -p0 -i $srcdir/readline${_basever//./}-004
 
 	# Remove RPATH from shared objects (FS#14366)
 	sed -i 's|-Wl,-rpath,$(libdir) ||g' support/shobj-conf
