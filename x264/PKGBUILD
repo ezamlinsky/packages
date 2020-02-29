@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('x264')
-pkgver=0.157.r2980.34c06d1
+pkgver=0.159.r2991.1771b55
 pkgrel=1
 epoch=3
 pkgdesc='Open Source H264/AVC video encoder'
@@ -58,7 +58,7 @@ replaces=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='34c06d1c17ad968fbdda153cb772f77ee31b3095'
+_commit='1771b556ee45207f8711744ccbd5d42a3949b14c'
 source=("git+https://code.videolan.org/videolan/x264.git#commit=$_commit")
 sha256sums=('SKIP')
 
