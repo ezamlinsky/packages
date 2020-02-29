@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='vte3'
 pkgname=('vte3' 'vte-common')
-pkgver=0.58.3
+pkgver=0.60.0
 pkgrel=1
 url='https://wiki.gnome.org/Apps/Terminal/VTE'
 license=('LGPL')
@@ -35,7 +35,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='73f9e209f70050ea88ed3d80e819ea1a04c5a6e1'
+_commit='bf56194f78fc13a99023358efb6f7af0f228240c'
 source=("git+https://gitlab.gnome.org/GNOME/vte.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -49,10 +49,12 @@ build() {
 
 	# Default configure options
 	config_opts=(
+		'-Db_lto=false'
 		'-Ddebugg=false'
 		'-Ddocs=true'
 		'-Dgir=false'
 		'-Diconv=true'
+		'-Da11y=true'
 
 	# 'fribidi' related options
 		'-Dfribidi=true'
@@ -69,6 +71,14 @@ build() {
 	# 'gtk4' related options
 		#'-Dgtk4=true'
 		'-Dgtk4=false'
+
+	# 'icu' related options
+		'-Dicu=true'
+		#'-Dicu=false'
+
+	# 'systemd-libs' related options
+		'-D_systemd=true'
+		#'-D_systemd=false'
 
 	# 'vala' related options
 		#'-Dvapi=true'
@@ -114,8 +124,10 @@ package_vte3() {
 		'gnutls'
 		'gtk3'
 		#'gtk4'
+		'icu'
 		'pango'
 		'pcre2'
+		'systemd-libs'
 		#'vala'
 		'vte-common'
 		'zlib'
@@ -131,15 +143,17 @@ package_vte3() {
 	cd $pkgdir
 
 	# Split 'vte-common' package
-	mkdir -p $srcdir/vte-common
+	mkdir -p $srcdir/vte-common/usr/lib
 	mv etc $srcdir/vte-common || true
+	mv usr/lib/vte-urlencode-cwd $srcdir/vte-common/usr/lib || true
+	mv usr/lib/systemd $srcdir/vte-common/usr/lib || true
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       Vte-common                                                             #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_vte-common() {
-	pkgdesc='Common files used by vte and vte3'
+	pkgdesc='Files shared by VTE libraries'
 	depends=('sh')
 
 	# Copy files
