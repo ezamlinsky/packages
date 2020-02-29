@@ -197,11 +197,11 @@ package_wxgtk-common() {
 	# Change directory to target directory
 	cd $pkgdir
 
-	# Split 'wxgtk' package
-	mkdir -p $srcdir/wxgtk/usr/{bin,lib}
-	mv usr/bin/wx-config  $srcdir/wxgtk/usr/bin
-	mv usr/lib/libwx_gtk* $srcdir/wxgtk/usr/lib
-	mv usr/lib/wx $srcdir/wxgtk/usr/lib
+	# Split 'wxgtk3' package
+	mkdir -p $srcdir/wxgtk3/usr/{bin,lib}
+	mv usr/bin/wx-config  $srcdir/wxgtk3/usr/bin/wx-config-gtk3
+	mv usr/lib/libwx_gtk* $srcdir/wxgtk3/usr/lib
+	mv usr/lib/wx $srcdir/wxgtk3/usr/lib
 }
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -236,10 +236,10 @@ package_wxgtk3() {
 	conflicts=('wxgtk<3.0.3.1-2')
 
 	# Copy files
-	mv $srcdir/wxgtk/* $pkgdir
+	mv $srcdir/wxgtk3/* $pkgdir
 
 	# Install license file
-	install -Dm644 $srcdir/wxWidgets-$pkgver/docs/licence.txt $pkgdir/usr/share/licenses/wxgtk/LICENSE
+	install -Dm644 $srcdir/wxWidgets-$pkgver/docs/licence.txt $pkgdir/usr/share/licenses/wxgtk3/LICENSE
 }
 
 ################################################################################
