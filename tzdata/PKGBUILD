@@ -15,8 +15,8 @@ pkgver=2019c
 pkgrel=3
 pkgdesc='Sources for time zone and daylight saving time data'
 url='http://www.iana.org/time-zones'
-license=('GPL')
-arch=('any')
+license=('custom: public domain')
+arch=('x86_64')
 
 #==============================================================================#
 #       Package dependencies                                                   #
@@ -77,7 +77,7 @@ package() {
 	cd $srcdir
 
 	# Install files
-	make DESTDIR=$pkgdir install
+	make LFLAGS=$LDFLAGS DESTDIR=$pkgdir install
 
 	# Create required time zone files
 	zic -y ./yearistype -d $pkgdir/usr/share/zoneinfo ${timezones[@]}
@@ -90,6 +90,9 @@ package() {
 
 	# Remove non required files
 	rm -f $pkgdir/etc/localtime
+
+	# Install license file
+	install -Dm644 LICENSE $pkgdir/usr/share/licenses/tzdata/LICENSE
 }
 
 ################################################################################
