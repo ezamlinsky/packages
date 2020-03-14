@@ -33,14 +33,12 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://sourceware.org/pub/bzip2/bzip2-$pkgver.tar.gz"
-	"https://sourceware.org/pub/bzip2/bzip2-$pkgver.tar.gz.sig"
-	'bzip2-ldflags.patch'
+	"https://sourceware.org/pub/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://sourceware.org/pub/$pkgname/$pkgname-$pkgver.tar.gz.sig"
 )
 sha256sums=(
 	'ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269'
 	'SKIP'
-	'fd7b402b94d42a642bd13430bf489077017de3dbbef9fb4656ccb6fb3c751504'
 )
 
 #==============================================================================#
