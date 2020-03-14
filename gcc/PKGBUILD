@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='gcc'
 pkgname=('gcc' 'gcc-libs')
-pkgver=9.2.1
-pkgrel=2
+pkgver=9.3.0
+pkgrel=1
 url='https://gcc.gnu.org'
 license=('GPL' 'LGPL' 'FDL' 'custom')
 arch=('x86_64')
@@ -24,6 +24,7 @@ arch=('x86_64')
 makedepends=(
 	'binutils'
 	'doxygen'
+	'git'
 	'gmp'
 	'isl'
 	'libmpc'
@@ -37,24 +38,24 @@ checkdepends=(
 )
 
 #==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('staticlibs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='6957d3e4eef1f4243eb23ff62aea06139ef4415a'
 source=(
-	"git://gcc.gnu.org/git/gcc.git#commit=$_commit"
+	"https://ftp.gnu.org/gnu/gcc/gcc-$pkgver/gcc-$pkgver.tar.xz"
+	"https://ftp.gnu.org/gnu/gcc/gcc-$pkgver/gcc-$pkgver.tar.xz.sig"
 	'c89'
 	'c99'
-	'gdc_phobos_path.patch'
-	'gdc_artificial_decl.patch'
-	'gdc_thunk_weak_ref.patch'
 )
 sha256sums=(
+	'71e197867611f6054aa1119b13a0c0abac12834765fe2d81f35ac57f84f742d1'
 	'SKIP'
 	'de48736f6e4153f03d0a5d38ceb6c6fdb7f054e8f47ddd6af0a3dbf14f27b931'
 	'2513c6d9984dd0a2058557bf00f06d8d5181734e41dcfe07be7ed86f2959622a'
-	'c86372c207d174c0918d4aedf1cb79f7fc093649eb1ad8d9450dccc46849d308'
-	'3862757491160700ac2fb723096f6f636f30320cccc6efd9537149ed348b57d1'
-	'9699d7105375754f0dcf6abff87d09b270565bfc6578a13641770f3fc62d678a'
 )
 
 #==============================================================================#
@@ -63,12 +64,7 @@ sha256sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgbase
-
-	# Apply patches
-	patch -p1 -i $srcdir/gdc_phobos_path.patch
-	patch -p1 -i $srcdir/gdc_artificial_decl.patch
-	patch -p1 -i $srcdir/gdc_thunk_weak_ref.patch
+	cd $pkgbase-$pkgver
 
 	# Hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
 	sed '/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/' -i {libiberty,gcc}/configure
@@ -88,7 +84,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgbase
+	cd $pkgbase-$pkgver
 
 	# Default configure options
 	config_opts=(
@@ -101,7 +97,7 @@ build() {
 		'--localstatedir=/var'
 		'--enable-silent-rules'
 		'--enable-shared'
-		'--disable-static'
+		'--enable-static'
 		'--disable-werror'
 		'--disable-multilib'
 		'--disable-multiarch'
@@ -127,6 +123,7 @@ build() {
 		'--enable-host-shared'
 		'--enable-linux-futex'
 		'--enable-tls'
+		'--disable-libada'
 		'--disable-libssp'
 		'--enable-libmpx'
 		'--enable-libquadmath'
@@ -168,7 +165,7 @@ build() {
 		'--with-isl'
 		#'--without-isl'
 
-	# 'mpc' related options
+	# 'libmpc' related options
 		'--with-mpc'
 		#'--without-mpc'
 
@@ -201,7 +198,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgbase
+	cd $pkgbase-$pkgver
 
 	# Run internal checks
 	make -k check
@@ -232,10 +229,11 @@ package_gcc() {
 	replaces=('gcc-multilib')
 
 	# Change directory to source directory
-	cd $pkgbase
+	cd $pkgbase-$pkgver
 
 	# Install files
 	make DESTDIR=$pkgdir install
+	make DESTDIR=$pkgdir install-fixincludes
 
 	# Install the libstdc++ man pages
 	make DESTDIR=$pkgdir -C $CHOST/libstdc++-v3/doc doc-install-man
