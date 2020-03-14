@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('isl')
-pkgver=0.21
+pkgver=0.22.1
 pkgrel=1
 pkgdesc='Library for manipulating sets and relations of integer points bounded by linear constraints'
 url='http://isl.gforge.inria.fr/'
@@ -43,7 +43,7 @@ conflicts=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("http://isl.gforge.inria.fr/isl-$pkgver.tar.gz")
-sha256sums=('6d670e6b90ef220c80f79e538aa512e9eda77214058d668c77931143dc9374a2')
+sha256sums=('f9663ced2c1e6d6737da7255d64d5faee61a4f763538b39c8f50da953fdc0b99')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
