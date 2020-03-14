@@ -23,6 +23,7 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'glibc'
+	'libncursesw.so'
 	'ncurses'
 )
 
@@ -113,8 +114,12 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-install-examples'
 		'--enable-multibyte'
+
+	# 'ncurses' related options
 		'--with-curses'
+		#'--without-curses'
 	)
 
 	# Run package configuration script
