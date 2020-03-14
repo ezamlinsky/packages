@@ -15,16 +15,21 @@ pkgname=('zlib' 'minizip')
 pkgver=1.2.11
 pkgrel=4
 epoch=1
-url='http://www.zlib.net/'
+url='https://www.zlib.net/'
 license=('custom')
 arch=('x86_64')
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('staticlibs')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://zlib.net/zlib-$pkgver.tar.gz"
-	"http://zlib.net/zlib-$pkgver.tar.gz.asc"
+	"https://zlib.net/zlib-$pkgver.tar.gz"
+	"https://zlib.net/zlib-$pkgver.tar.gz.asc"
 )
 md5sums=(
 	'1c9f62f0778697a09d36121ead88e08e'
