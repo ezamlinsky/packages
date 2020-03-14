@@ -40,8 +40,8 @@ replaces=('less')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://www.greenwoodsoftware.com/less/less-$pkgver.tar.gz"
-	"less-$pkgver.tar.gz::http://www.greenwoodsoftware.com/less/less-$pkgver.sig"
+	"http://www.greenwoodsoftware.com/$pkgname/$pkgname-$pkgver.tar.gz"
+	"$pkgname-$pkgver.tar.gz::http://www.greenwoodsoftware.com/$pkgname/$pkgname-$pkgver.sig"
 )
 md5sums=(
 	'4ad4408b06d7a6626a055cb453f36819'
@@ -83,6 +83,7 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--with-secure'
+		'--with-editor=mcedit'
 
 	# 'pcre' related options
 		'--with-regex=pcre'
