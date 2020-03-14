@@ -27,102 +27,11 @@ makedepends=(
 )
 
 #==============================================================================#
-#        Package relations                                                     #
-#==============================================================================#
-provides=(
-	'bigreqsproto'
-	'compositeproto'
-	'damageproto'
-	'dmxproto'
-	'dri2proto'
-	'dri3proto'
-	'fixesproto'
-	'fontsproto'
-	'glproto'
-	'inputproto'
-	'kbproto'
-	'presentproto'
-	'printproto'
-	'randrproto'
-	'recordproto'
-	'renderproto'
-	'resourceproto'
-	'scrnsaverproto'
-	'videoproto'
-	'xcmiscproto'
-	'xextproto'
-	'xf86dgaproto'
-	'xf86driproto'
-	'xf86miscproto'
-	'xf86vidmodeproto'
-	'xineramaproto'
-	'xproto'
-)
-conflicts=(
-	'bigreqsproto'
-	'compositeproto'
-	'damageproto'
-	'dmxproto'
-	'dri2proto'
-	'dri3proto'
-	'fixesproto'
-	'fontsproto'
-	'glproto'
-	'inputproto'
-	'kbproto'
-	'presentproto'
-	'printproto'
-	'randrproto'
-	'recordproto'
-	'renderproto'
-	'resourceproto'
-	'scrnsaverproto'
-	'videoproto'
-	'xcmiscproto'
-	'xextproto'
-	'xf86dgaproto'
-	'xf86driproto'
-	'xf86miscproto'
-	'xf86vidmodeproto'
-	'xineramaproto'
-	'xproto'
-)
-replaces=(
-	'bigreqsproto'
-	'compositeproto'
-	'damageproto'
-	'dmxproto'
-	'dri2proto'
-	'dri3proto'
-	'fixesproto'
-	'fontsproto'
-	'glproto'
-	'inputproto'
-	'kbproto'
-	'presentproto'
-	'printproto'
-	'randrproto'
-	'recordproto'
-	'renderproto'
-	'resourceproto'
-	'scrnsaverproto'
-	'videoproto'
-	'xcmiscproto'
-	'xextproto'
-	'xf86dgaproto'
-	'xf86driproto'
-	'xf86miscproto'
-	'xf86vidmodeproto'
-	'xineramaproto'
-	'xproto'
-)
-
-#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://xorg.freedesktop.org/archive/individual/proto/xorgproto-$pkgver.tar.bz2"
-	"https://xorg.freedesktop.org/archive/individual/proto/xorgproto-$pkgver.tar.bz2.sig"
+	"https://xorg.freedesktop.org/archive/individual/proto/$pkgname-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/archive/individual/proto/$pkgname-$pkgver.tar.bz2.sig"
 )
 sha512sums=(
 	'cbfdf6bb3d58d4d4e7788c9ed779402352715e9899f65594fbc527b3178f1dc5e03cebc8ba5a863b3c196a1a0f2026c2d0438207ca19f81f3c8b7da0c0667904'
