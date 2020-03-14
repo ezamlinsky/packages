@@ -22,6 +22,7 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	#'db'
 	'gcc-libs'
 	'glibc'
 	'gpm'
@@ -38,6 +39,7 @@ provides=(
 	'libncursesw.so'
 	'libpanelw.so'
 )
+replaces=('alacritty-terminfo')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
@@ -76,21 +78,39 @@ build() {
 		'--enable-pc-files'
 		'--enable-sp-funcs'
 		'--enable-const'
+		'--enable-sigwinch'
+		'--enable-ext-funcs'
 		'--enable-ext-colors'
 		'--enable-ext-putwin'
-		'--enable-sigwinch'
 		'--enable-ext-mouse'
 		'--enable-tcap-names'
+		'--enable-db-install'
+		'--enable-opaque-curses'
+		'--enable-opaque-form'
+		'--enable-opaque-menu'
+		'--enable-opaque-panel'
 		'--with-normal'
 		'--with-shared'
 		'--without-debug'
 		'--without-develop'
+		'--without-profile'
 		'--without-ada'
+		'--with-manpages'
+		'--with-progs'
+		'--with-tack'
+		'--with-tests'
+		'--with-pcre2'
 		'--with-pkg-config'
 		'--with-pkg-config-libdir=/usr/lib/pkgconfig'
 		'--with-manpage-format=normal'
 
+	# 'db' related options
+		#'--with-hashed-db'
+		'--without-hashed-db'
+
 	# 'gcc-libs' related options
+		'--with-cxx'
+		#'--without-cxx'
 		'--with-cxx-binding'
 		#'--without-cxx-binding'
 		'--with-cxx-shared'
