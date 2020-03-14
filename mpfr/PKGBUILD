@@ -14,7 +14,7 @@ pkgname='mpfr'
 pkgver=4.0.2
 pkgrel=2
 pkgdesc='Multiple-precision floating-point library'
-url='http://www.mpfr.org/'
+url='https://www.mpfr.org/'
 license=('LGPL')
 arch=('x86_64')
 
@@ -30,8 +30,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://www.mpfr.org/mpfr-$pkgver/mpfr-$pkgver.tar.xz"
-	"http://www.mpfr.org/mpfr-$pkgver/mpfr-$pkgver.tar.xz.asc"
+	"http://www.mpfr.org/$pkgname-$pkgver/$pkgname-$pkgver.tar.xz"
+	"http://www.mpfr.org/$pkgname-$pkgver/$pkgname-$pkgver.tar.xz.asc"
 )
 sha256sums=(
 	'1d3be708604eae0e42d578ba93b390c2a145f17743a744d8f3f8c2ad5855a38a'
@@ -73,6 +73,8 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-assert'
+		'--disable-logging'
+		'--disable-warnings'
 		'--enable-thread-safe'
 		'--enable-shared-cache'
 		'--enable-decimal-float'
