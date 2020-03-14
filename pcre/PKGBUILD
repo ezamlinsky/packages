@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('pcre')
-pkgver=8.43
-pkgrel=2
+pkgver=8.44
+pkgrel=1
 pkgdesc='A library that implements Perl 5-style regular expressions'
-url='http://www.pcre.org/'
+url='https://www.pcre.org/'
 license=('BSD')
 arch=('x86_64')
 
@@ -35,11 +35,11 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.pcre.org/pub/pcre/pcre-$pkgver.tar.bz2"
-	"https://ftp.pcre.org/pub/pcre/pcre-$pkgver.tar.bz2.sig"
+	"https://ftp.pcre.org/pub/$pkgname/$pkgname-$pkgver.tar.bz2"
+	"https://ftp.pcre.org/pub/$pkgname/$pkgname-$pkgver.tar.bz2.sig"
 )
-md5sums=(
-	'636222e79e392c3d95dcc545f24f98c4'
+sha512sums=(
+	'f26d850aab5228799e58ac8c2306fb313889332c39e29b118ef1de57677c5c90f970d68d3f475cabc64f8b982a77f04eca990ff1057f3ccf5e19bd137997c4ac'
 	'SKIP'
 )
 
@@ -78,11 +78,14 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-static'
+		'--enable-pcre8'
 		'--enable-pcre16'
 		'--enable-pcre32'
+		'--enable-cpp'
 		'--enable-utf'
 		'--enable-jit'
 		'--enable-pcregrep-jit'
+		'--enable-newline-is-lf'
 		'--enable-unicode-properties'
 
 	# 'bzip2' related options
