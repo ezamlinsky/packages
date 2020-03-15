@@ -25,7 +25,7 @@ depends=(
 	'glibc'
 	'libxau'
 	'libxdmcp'
-	'xcb-proto>=1.12'
+	'xcb-proto'
 )
 makedepends=(
 	'libxslt'
@@ -80,7 +80,6 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--disable-static'
 		'--disable-devel-docs'
 		'--enable-composite'
 		'--enable-damage'
@@ -109,6 +108,8 @@ build() {
 		'--enable-xtest'
 		'--enable-xv'
 		'--enable-xvmc'
+		'--without-doxygen'
+		'--without-serverside-support'
 	)
 
 	# Run package configuration script
