@@ -23,13 +23,10 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'glibc'
-	'kbproto'
 	'libxcb'
-	'xproto'
+	'xorgproto'
 )
 makedepends=(
-	'inputproto'
-	'xextproto'
 	'xorg-util-macros'
 	'xtrans'
 )
@@ -80,6 +77,15 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-specs'
+		'--enable-xthreads'
+		'--enable-composecache'
+		'--enable-xcms'
+		'--enable-xlocale'
+		'--enable-xkb'
+		'--enable-xlocaledir'
+		'--enable-loadable-i18n'
+		'--enable-loadable-xcursor'
 		'--disable-xf86bigfont'
 		'--disable-ipv6'
 		'--disable-tcp-transport'
