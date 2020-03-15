@@ -24,9 +24,8 @@ arch=('x86_64')
 depends=(
 	'glibc'
 	'libx11>=1.3.4'
-	'renderproto'
 )
-makedepends=('pkgconfig')
+makedepends=('xorgproto')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
