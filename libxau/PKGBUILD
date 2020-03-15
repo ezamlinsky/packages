@@ -23,7 +23,7 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'glibc'
-	'xproto'
+	'xorgproto'
 )
 makedepends=('pkgconfig')
 
@@ -73,6 +73,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-xthreads'
 	)
 
 	# Run package configuration script
