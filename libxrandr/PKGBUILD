@@ -26,9 +26,11 @@ depends=(
 	'libx11'
 	'libxext'
 	'libxrender'
-	'randrproto'
 )
-makedepends=('xorg-util-macros')
+makedepends=(
+	'xorg-util-macros'
+	'xorgproto'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
