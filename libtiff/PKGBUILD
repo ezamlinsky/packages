@@ -42,8 +42,8 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://download.osgeo.org/libtiff/tiff-${pkgver}.tar.gz"
-	"https://download.osgeo.org/libtiff/tiff-${pkgver}.tar.gz.sig"
+	"https://download.osgeo.org/$pkgname/tiff-$pkgver.tar.gz"
+	"https://download.osgeo.org/$pkgname/tiff-$pkgver.tar.gz.sig"
 )
 sha256sums=(
 	'5d29f32517dadb6dbcd1255ea5bbc93a2b54b94fbf83653b4d65c7d6775b8634'
@@ -84,6 +84,13 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-ccitt'
+		'--enable-packbits'
+		'--enable-lzw'
+		'--enable-thunder'
+		'--enable-next'
+		'--enable-logluv'
+		'--enable-mdi'
 
 	# 'gcc-libs' related options
 		'--enable-cxx'
