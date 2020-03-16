@@ -32,8 +32,8 @@ makedepends=(
 #==============================================================================#
 _basever=${pkgver%.*}
 source=(
-	"https://www.kernel.org/pub/linux/utils/util-linux/v$_basever/util-linux-$_basever.tar.xz"
-	"https://www.kernel.org/pub/linux/utils/util-linux/v$_basever/util-linux-$_basever.tar.sign"
+	"https://www.kernel.org/pub/linux/utils/$pkgbase/v$_basever/$pkgbase-$_basever.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/$pkgbase/v$_basever/$pkgbase-$_basever.tar.sign"
 	'pam-login'
 	'pam-common'
 	'pam-runuser'
@@ -95,15 +95,70 @@ build() {
 		'--disable-static'
 		'--disable-gtk-doc'
 		'--disable-assert'
-		'--enable-tunelp'
-		'--enable-line'
-		'--enable-vipw'
-		'--enable-newgrp'
-		'--enable-chfn-chsh'
-		'--enable-pg'
-		'--enable-write'
-		'--enable-raw'
-		'--enable-mesg'
+		--enable-agetty
+		--enable-bfs
+		--enable-cal
+		--enable-chfn-chsh
+		--enable-chmem
+		--enable-cramfs
+		--enable-eject
+		--enable-fallocate
+		--enable-fdformat
+		--enable-fdisks
+		--enable-fsck
+		--enable-hardlink
+		--enable-hwclock
+		--enable-ipcrm
+		--enable-ipcs
+		--enable-kill
+		--enable-last
+		--enable-libblkid
+		--enable-libfdisk
+		--enable-libmount
+		--enable-libsmartcols
+		--enable-libuuid
+		--enable-line
+		--enable-logger
+		--enable-login
+		--enable-losetup
+		--enable-lslogins
+		--enable-lsmem
+		--enable-mesg
+		--enable-minix
+		--enable-more
+		--enable-mount
+		--enable-mountpoint
+		--enable-newgrp
+		--enable-nologin
+		--enable-nsenter
+		--enable-partx
+		--enable-pg
+		--enable-pivot_root
+		--enable-raw
+		--enable-rename
+		--enable-rfkill
+		--enable-runuser
+		--enable-schedutils
+		--enable-setpriv
+		--enable-setterm
+		--enable-su
+		--enable-sulogin
+		--enable-switch_root
+		--enable-tunelp
+		--enable-ul
+		--enable-unshare
+		--enable-utmpdump
+		--enable-uuidd
+		--enable-vipw
+		--enable-wall
+		--enable-wdctl
+		--enable-wipefs
+		--enable-write
+		--enable-zramctl
+		--enable-symvers
+		--enable-tls
+		--enable-widechar
+		--enable-colors-default
 		'--enable-usrdir-path'
 		'--enable-login-stat-mail'
 		'--enable-sulogin-emergency-mount'
@@ -115,6 +170,10 @@ build() {
 	# 'audit' related options
 		#'--with-audit=yes'
 		'--with-audit=no'
+
+	# 'cryptsetup' related options
+		'--with-cryptsetup'
+		#'--without-cryptsetup'
 
 	# 'libcap-ng' related options
 		'--with-cap-ng=yes'
@@ -205,7 +264,7 @@ package_util-linux() {
 		#'python2'
 		'pcre2'
 		'readline'
-		#'shadow'
+		'shadow'
 		#'slang'
 		'systemd-libs'
 		'zlib'
@@ -278,7 +337,10 @@ package_util-linux() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_libutil-linux() {
 	pkgdesc='Util-linux runtime libraries'
-	depends=('glibc')
+	depends=(
+		'cryptsetup'
+		'glibc'
+	)
 	provides=(
 		'libblkid.so'
 		'libfdisk.so'
