@@ -31,8 +31,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://downloads.sourceforge.net/sourceforge/libpng/libpng-$pkgver.tar.xz"
-	"https://downloads.sourceforge.net/sourceforge/libpng-apng/libpng-$pkgver-apng.patch.gz"
+	"https://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://downloads.sourceforge.net/sourceforge/$pkgname-apng/$pkgname-$pkgver-apng.patch.gz"
 )
 sha256sums=(
 	'505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca'
@@ -73,6 +73,10 @@ build() {
 		'--disable-static'
 		'--enable-hardware-optimizations'
 		'--enable-intel-sse'
+		'--enable-unversioned-links'
+		'--enable-unversioned-libpng-pc'
+		'--enable-unversioned-libpng-config'
+		'--with-binconfigs'
 	)
 
 	# Run package configuration script
