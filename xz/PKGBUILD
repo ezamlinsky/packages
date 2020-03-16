@@ -14,7 +14,7 @@ pkgname=('xz')
 pkgver=5.2.4
 pkgrel=3
 pkgdesc='Library and command line tools for XZ and LZMA compressed files'
-url='http://tukaani.org/xz/'
+url='https://tukaani.org/xz/'
 license=('GPL' 'LGPL' 'custom')
 arch=('x86_64')
 
@@ -32,8 +32,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://tukaani.org/xz/xz-${pkgver}.tar.gz"
-	"http://tukaani.org/xz/xz-${pkgver}.tar.gz.sig"
+	"https://tukaani.org/xz/xz-${pkgver}.tar.gz"
+	"https://tukaani.org/xz/xz-${pkgver}.tar.gz.sig"
 )
 md5sums=(
 	'5ace3264bdd00c65eeec2891346f65e6'
@@ -74,10 +74,18 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--disable-doc'
 		'--disable-debug'
+		'--disable-doc'
+		'--enable-xz'
+		'--enable-xzdec'
+		'--enable-lzmadec'
+		'--enable-lzmainfo'
+		'--enable-lzma-links'
+		'--enable-scripts'
 		'--enable-assembler'
 		'--enable-threads=yes'
+		'--enable-sandbox=no'
+		'--enable-unaligned-access'
 		'--enable-symbol-versions'
 	)
 
