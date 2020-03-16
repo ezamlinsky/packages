@@ -23,9 +23,9 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'glibc'
-	'inputproto'
 	'libx11'
 	'libxext'
+	'xorgproto'
 )
 makedepends=(
 	'automake'
