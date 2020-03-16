@@ -37,7 +37,7 @@ provides=('libgif.so')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://downloads.sourceforge.net/project/giflib/giflib-$pkgver.tar.gz"
+	"https://downloads.sourceforge.net/project/$pkgname/$pkgname-$pkgver.tar.gz"
 	'giflib-5.1.9-fix-missing-quantize-API-symbols.patch'
 	'giflib-5.1.9-make-flags.patch'
 )
