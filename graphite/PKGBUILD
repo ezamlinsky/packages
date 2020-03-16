@@ -29,6 +29,7 @@ depends=(
 makedepends=(
 	'asciidoc'
 	'cmake'
+	'doxygen'
 	'freetype2'
 	'graphviz'
 	'python'
@@ -59,6 +60,7 @@ build() {
 		'-DGRAPHITE2_VM_TYPE=auto'
 		'-DBUILD_SHARED_LIBS=ON'
 		'-DGRAPHITE2_COMPARE_RENDERER=OFF'
+		'-DGRAPHITE2_VM_TYPE=auto'
 	)
 
 	# Create build directory
