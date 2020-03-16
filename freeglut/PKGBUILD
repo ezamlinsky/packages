@@ -26,7 +26,6 @@ depends=(
 	'libgl'
 	'libx11'
 	'libxi'
-	'libxkbcommon'
 	'libxrandr'
 	'libxxf86vm'
 	#'wayland'
@@ -47,7 +46,7 @@ replaces=('glut')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://downloads.sourceforge.net/freeglut/freeglut-${pkgver}.tar.gz")
+source=("https://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.gz")
 sha512sums=('aced4bbcd36269ce6f4ee1982e0f9e3fffbf18c94f785d3215ac9f4809b992e166c7ada496ed6174e13d77c0f7ef3ca4c57d8a282e96cbbe6ff086339ade3b08')
 
 #==============================================================================#
@@ -103,11 +102,9 @@ package() {
 	# Install license file
 	install -Dm644 ../COPYING $pkgdir/usr/share/licenses/freeglut/LICENSE
 
-	# Change directory to target directory
-	cd $pkgdir
-
 	# Set symbolic link to glut.pc
-	ln -s usr/lib/pkgconfig/glut.pc freeglut.pc
+	cd $pkgdir/usr/lib/pkgconfig
+	ln -s glut.pc freeglut.pc
 }
 
 ################################################################################
