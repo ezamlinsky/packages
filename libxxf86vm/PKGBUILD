@@ -25,9 +25,11 @@ depends=(
 	'glibc'
 	'libx11'
 	'libxext'
-	'xf86vidmodeproto'
 )
-makedepends=('xorg-util-macros')
+makedepends=(
+	'xorg-util-macros'
+	'xorgproto'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
