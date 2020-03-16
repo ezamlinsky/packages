@@ -12,21 +12,42 @@
 #==============================================================================#
 pkgbase='elfutils'
 pkgname=('elfutils' 'libelf')
-pkgver=0.177
+pkgver=0.178
 pkgrel=2
 url='https://sourceware.org/elfutils/'
 license=('LGPL3' 'GPL' 'GPL3')
 arch=('x86_64')
 
 #==============================================================================#
+#       Package dependencies                                                   #
+#==============================================================================#
+makedepends=(
+	'bzip2'
+	'curl'
+	'gcc-libs'
+	'glibc'
+	'libarchive'
+	'libmicrohttpd'
+	'sh'
+	'sqlite'
+	'xz'
+	'zlib'
+)
+
+#==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('staticlibs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"ftp://sourceware.org/pub/elfutils/$pkgver/elfutils-$pkgver.tar.bz2"
-	"ftp://sourceware.org/pub/elfutils/$pkgver/elfutils-$pkgver.tar.bz2.sig"
+	"ftp://sourceware.org/pub/$pkgbase/$pkgver/$pkgbase-$pkgver.tar.bz2"
+	"ftp://sourceware.org/pub/$pkgbase/$pkgver/$pkgbase-$pkgver.tar.bz2.sig"
 )
 sha1sums=(
-	'922161f84baaae845382338098071544b98ca92d'
+	'5f52d04105a89e50caf69cea40629c323c1eccd9'
 	'SKIP'
 )
 
@@ -61,15 +82,21 @@ build() {
 		'--libexecdir=/usr/lib'
 		'--sysconfdir=/etc'
 		'--localstatedir=/var'
+		'--program-prefix=eu-'
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
 		'--enable-thread-safety'
 		'--enable-deterministic-archives'
+		'--enable-symbol-versioning'
 
 	# 'bzip2' related options
 		'--with-bzlib'
 		#'--without-bzlib'
+
+	# 'curl && ibarchive && libmicrohttpd && sqlite' related options
+		#'--enable-debuginfod'
+		'--disable-debuginfod'
 
 	# 'xz' related options
 		'--with-lzma'
@@ -121,7 +148,10 @@ package_elfutils() {
 		"libelf=$pkgver-$pkgrel"
 		'gcc-libs'
 		'glibc'
+		#'libarchive'
+		#'libmicrohttpd'
 		'sh'
+		#'sqlite'
 	)
 
 	# Change directory to source directory
@@ -145,6 +175,7 @@ package_libelf() {
 	pkgdesc='Libraries to handle ELF object files and DWARF debugging information'
 	depends=(
 		'bzip2'
+		#'curl'
 		'glibc'
 		'xz'
 		'zlib'
