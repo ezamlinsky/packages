@@ -14,7 +14,7 @@ pkgname=('gdbm')
 pkgver=1.18.1
 pkgrel=3
 pkgdesc='GNU database library'
-url='http://www.gnu.org/software/gdbm/gdbm.html'
+url='https://www.gnu.org/software/gdbm/gdbm.html'
 license=('GPL3')
 arch=('x86_64')
 
@@ -31,8 +31,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/gnu/gdbm/gdbm-$pkgver.tar.gz"
-	"https://ftp.gnu.org/gnu/gdbm/gdbm-$pkgver.tar.gz.sig"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz.sig"
 )
 md5sums=(
 	'988dc82182121c7570e0cb8b4fcd5415'
