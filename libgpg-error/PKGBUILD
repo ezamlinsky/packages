@@ -31,8 +31,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-$pkgver.tar.bz2"
-	"ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-$pkgver.tar.bz2.sig"
+	"ftp://ftp.gnupg.org/gcrypt/$pkgname/$pkgname-$pkgver.tar.bz2"
+	"ftp://ftp.gnupg.org/gcrypt/$pkgname/$pkgname-$pkgver.tar.bz2.sig"
 )
 sha1sums=(
 	'6dff83371e0c03fe9ba468cc23d528a8c247785a'
@@ -72,6 +72,7 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-doc'
+		'--enable-tests'
 		'--enable-languages'
 		'--enable-threads=posix'
 
