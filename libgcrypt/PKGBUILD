@@ -14,7 +14,7 @@ pkgname='libgcrypt'
 pkgver=1.8.5
 pkgrel=2
 pkgdesc='General purpose cryptographic library based on the code from GnuPG'
-url='http://www.gnupg.org'
+url='https://www.gnupg.org'
 license=('LGPL')
 arch=('x86_64')
 
@@ -32,8 +32,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$pkgver.tar.bz2"
-	"https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$pkgver.tar.bz2.sig"
+	"https://gnupg.org/ftp/gcrypt/$pkgname/$pkgname-$pkgver.tar.bz2"
+	"https://gnupg.org/ftp/gcrypt/$pkgname/$pkgname-$pkgver.tar.bz2.sig"
 )
 sha1sums=(
 	'2d8781e92f88706707a1e76fb628b499ad538a30'
@@ -75,10 +75,17 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-doc'
-		'--enable-m-guard'
+		'--enable-asm'
 		'--enable-optimization'
 		'--enable-noexecstack'
-		'--disable-padlock-support'
+		'--enable-aesni-support'
+		'--enable-pclmul-support'
+		'--enable-sse41-support'
+		'--enable-drng-support'
+		'--enable-avx-support'
+		'--enable-avx2-support'
+		'--enable-jent-support'
+		'--enable-dev-random'
 
 	# 'libcap' related options
 		'--with-capabilities'
