@@ -77,7 +77,17 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-old-symbols'
+		'--enable-mixer'
+		'--enable-pcm'
+		'--enable-rawmidi'
+		'--enable-hwdep'
+		'--enable-seq'
+		'--enable-ucm'
+		'--enable-topology'
+		'--enable-old-symbols'
+		'--enable-thread-safety'
 		'--without-debug'
+		'--without-wordexp'
 		'--with-versioned'
 		'--with-libdl'
 		'--with-pthread'
@@ -86,12 +96,11 @@ build() {
 		'--with-ctl-plugins=all'
 
 	# 'python2' related options
-		#'--enable-python2'
-		#'--with-pythonincludes=-I/usr/include/python2.7'
-		#'--with-pythonlibs=-lpthread -lm -ldl -lpython2.7'
-		#'--enable-mixer-pymods'
+		#'--enable-python'
 		'--disable-python'
-		'--with-pythonlibs='
+		#'--enable-python2'
+		'--disable-python2'
+		#'--enable-mixer-pymods'
 	)
 
 	# Change compile flags
