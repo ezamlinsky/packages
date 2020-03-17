@@ -30,7 +30,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://xorg.freedesktop.org/releases/individual/lib/pixman-$pkgver.tar.bz2")
+source=("https://xorg.freedesktop.org/releases/individual/lib/$pkgname-$pkgver.tar.bz2")
 sha1sums=('87e1abc91ac4e5dfcc275f744f1d0ec3277ee7cd')
 
 #==============================================================================#
