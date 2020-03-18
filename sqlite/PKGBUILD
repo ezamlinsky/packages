@@ -33,8 +33,8 @@ makedepends=(
 #==============================================================================#
 _srcver=3310100
 source=(
-	"https://www.sqlite.org/2020/sqlite-src-$_srcver.zip"
-	"https://www.sqlite.org/2020/sqlite-doc-$_srcver.zip"
+	"https://www.sqlite.org/2020/$pkgbase-src-$_srcver.zip"
+	"https://www.sqlite.org/2020/$pkgbase-doc-$_srcver.zip"
 	'license.txt'
 )
 sha1sums=(
@@ -77,8 +77,8 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--disable-amalgamation'
 		'--disable-debug'
+		'--disable-amalgamation'
 		'--enable-memsys3'
 		'--enable-memsys5'
 		'--enable-fts3'
@@ -90,6 +90,8 @@ build() {
 		'--enable-rtree'
 		'--enable-session'
 		'--enable-releasemode'
+		'--enable-threadsafe'
+		'--enable-load-extension'
 		'--enable-tempstore=yes'
 
 	# 'libedit' related options
@@ -144,6 +146,7 @@ package_sqlite() {
 		'readline'
 		'zlib'
 	)
+
 	provides=("sqlite3=$pkgver")
 	replaces=('sqlite3')
 
@@ -162,6 +165,11 @@ package_sqlite() {
 	# Install license file
 	install -Dm644 $srcdir/license.txt $pkgdir/usr/share/licenses/sqlite/license.txt
 
+	# Set links to *.so file
+	cd $pkgdir/usr/lib/
+	ln -s libsqlite3-$pkgver.so.0 libsqlite3.so.0
+	ln -s libsqlite3-$pkgver.so.0.8.6 libsqlite3.so.0.8.6
+
 	# Change directory to target directory
 	cd $pkgdir
 
@@ -175,7 +183,10 @@ package_sqlite() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_sqlite-tcl() {
 	pkgdesc='Sqlite Tcl Extension Architecture (TEA)'
-	depends=('glibc' 'sqlite')
+	depends=(
+		'glibc'
+		'sqlite'
+	)
 	provides=("sqlite3-tcl=$pkgver")
 	replaces=('sqlite3-tcl')
 
