@@ -14,7 +14,7 @@ pkgname=('db')
 pkgver=5.3.28
 pkgrel=5
 pkgdesc='The Berkeley DB embedded database system'
-url='http://www.oracle.com/technology/software/products/berkeley-db/index.html'
+url='https://www.oracle.com/technology/software/products/berkeley-db/index.html'
 license=('custom')
 arch=('x86_64')
 
@@ -31,7 +31,7 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://download.oracle.com/berkeley-db/db-$pkgver.tar.gz"
+	"https://download.oracle.com/berkeley-db/$pkgname-$pkgver.tar.gz"
 	'atomic.patch'
 )
 sha1sums=(
@@ -48,7 +48,7 @@ prepare() {
 	cd $pkgname-$pkgver
 
 	# Apply patches
-	patch -p0 -i ../atomic.patch
+	patch -p0 -i $srcdir/atomic.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -79,10 +79,28 @@ build() {
 		'--disable-debug'
 		'--disable-diagnostic'
 		'--disable-test'
-		'--enable-compat185'
-		'--enable-dbm'
+		'--enable-hash'
+		'--enable-heap'
+		'--enable-queue'
+		'--enable-replication'
+		'--enable-verify'
+		'--enable-partition'
+		'--enable-compression'
+		'--enable-statistics'
+		'--enable-mutexsupport'
+		'--enable-atomicsupport'
+		'--enable-log_checksum'
 		'--enable-sql'
+		'--disable-sql_compat'
 		'--enable-sql_codegen'
+		'--disable-java'
+		'--disable-jdbc'
+		'--disable-tcl'
+		'--disable-mingw'
+		'--disable-dump185'
+		'--enable-compat185'
+		'--enable-amalgamation'
+		'--enable-dbm'
 		'--enable-localization'
 		'--enable-stripped_messages'
 		'--with-cryptography=yes'
