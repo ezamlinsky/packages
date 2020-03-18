@@ -38,7 +38,7 @@ provides=('libass.so')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://github.com/libass/libass/releases/download/$pkgver/libass-$pkgver.tar.xz")
+source=("https://github.com/$pkgname/$pkgname/releases/download/$pkgver/$pkgname-$pkgver.tar.xz")
 sha256sums=('881f2382af48aead75b7a0e02e65d88c5ebd369fe46bc77d9270a94aa8fd38a2')
 
 #==============================================================================#
@@ -61,8 +61,11 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-test'
+		'--disable-profile'
 		'--disable-require-system-font-provider'
 		'--enable-asm'
+		'--disable-large-tiles'
 
 	# 'fontconfig' related options
 		'--enable-fontconfig'
