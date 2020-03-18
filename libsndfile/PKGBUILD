@@ -15,7 +15,7 @@ pkgver=1.0.28
 pkgrel=3
 pkgdesc='A C library for reading and writing files containing sampled sound'
 url='http://www.mega-nerd.com/libsndfile'
-license=('LGPL')
+license=('LGPL2.1')
 arch=('x86_64')
 
 #==============================================================================#
@@ -32,10 +32,21 @@ depends=(
 checkdepends=('python2')
 
 #==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=('libsndfile.so')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://www.mega-nerd.com/libsndfile/files/libsndfile-$pkgver.tar.gz")
-sha256sums=('1ff33929f042fa333aed1e8923aa628c3ee9e1eb85512686c55092d1e5a9dfa9')
+source=(
+	"http://www.mega-nerd.com/$pkgname/files/$pkgname-$pkgver.tar.gz"
+	"http://www.mega-nerd.com/$pkgname/files/$pkgname-$pkgver.tar.gz.asc"
+)
+sha512sums=(
+	'890731a6b8173f714155ce05eaf6d991b31632c8ab207fbae860968861a107552df26fcf85602df2e7f65502c7256c1b41735e1122485a3a07ddb580aa83b57f'
+	'SKIP'
+)
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -71,6 +82,9 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-octave'
+		'--enable-full-suite'
+		'--enable-cpu-clip'
 		'--enable-external-libs'
 		'--enable-stack-smash-protection'
 
