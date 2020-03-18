@@ -80,9 +80,9 @@ build() {
 	# Default configure options
 	config_opts=(
 		'-Dman-pages=true'
-		'-Dudev=true'
+		'-Dudev=false'
 		'-Dvalgrind=false'
-		'-Dcairo-tests=false'
+		'-Dcairo-tests=true'
 		'-Dinstall-test-programs=false'
 		'-Dlibkms=true'
 		'-Dintel=true'
@@ -90,13 +90,13 @@ build() {
 		'-Damdgpu=true'
 		'-Dnouveau=true'
 		'-Dvmwgfx=true'
-		'-Domap=false'
-		'-Dexynos=false'
-		'-Dfreedreno=false'
-		'-Dtegra=false'
-		'-Dvc4=false'
-		'-Detnaviv=false'
-		'-Dfreedreno-kgsl=false'
+		'-Domap=true'
+		'-Dexynos=true'
+		'-Dtegra=true'
+		'-Dvc4=true'
+		'-Detnaviv=true'
+		'-Dfreedreno=true'
+		'-Dfreedreno-kgsl=true'
 	)
 
 	# Run package configuration script
