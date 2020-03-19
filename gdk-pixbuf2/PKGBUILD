@@ -54,7 +54,7 @@ source=(
 )
 sha256sums=(
 	'SKIP'
-	'963afcfacde9fd36031d93c8aa4c94a669ab1dbe9ba0d2cf17599b7d358e54c2'
+	'9fb71d95e6a212779eb0f88dde5a3cee0df7f4d9183f8f9ce286f8cdc14428f0'
 )
 
 #==============================================================================#
@@ -67,9 +67,9 @@ build() {
 
 	# Default configure options
 	config_opts=(
-		'-Dbuiltin_loaders=all'
 		'-Dgio_sniffing=true'
 		'-Dinstalled_tests=false'
+		'-Drelocatable=false'
 		'-Dman=true'
 		'-Ddocs=false'
 		'-Dgir=false'
