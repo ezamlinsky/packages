@@ -35,6 +35,11 @@ makedepends=(
 )
 
 #==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('emptydirs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='23cc709db8fab94f11fa48772bff396b20aea8b0'
@@ -75,24 +80,30 @@ build() {
 		'--bindir=/usr/bin'
 		'--sbindir=/usr/bin'
 		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib'
+		'--libexecdir=/usr/lib/dbus-1.0'
 		'--sysconfdir=/etc'
 		'--localstatedir=/var'
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
 		'--enable-debug=no'
+		'--disable-developer'
 		'--disable-verbose-mode'
 		'--disable-asserts'
 		'--disable-launchd'
 		'--disable-checks'
 		'--disable-tests'
+		'--disable-embedded-tests'
+		'--disable-modular-tests'
+		'--disable-installed-tests'
 		'--enable-inotify'
 		'--enable-epoll'
 		'--enable-stats'
 		'--enable-xml-docs'
 		'--enable-doxygen-docs'
+		'--enable-x11-autolaunch'
 		'--with-dbus-user=dbus'
+		'--with-test-user=nobody'
 		'--with-system-pid-file=/run/dbus/pid'
 		'--with-system-socket=/run/dbus/system_bus_socket'
 		'--with-console-auth-dir=/run/console/'
@@ -108,7 +119,6 @@ build() {
 	# 'libselinux' related options
 		#'--enable-selinux'
 		'--disable-selinux'
-
 
 	# 'libsystemd' related options
 		'--enable-systemd'
@@ -188,8 +198,8 @@ package_dbus() {
 	# Remove old configuration files
 	rm -f $pkgdir/etc/dbus-1/{system.conf,session.conf}
 
-	# Remove directory '/var/run'
-	rm -r $pkgdir/var/run
+	# Remove non required directories
+	rm -r $pkgdir/{etc,var}
 
 	# Split 'dbus-docs' package
 	mkdir -p $srcdir/dbus-docs/usr/share/doc
