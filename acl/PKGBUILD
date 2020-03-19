@@ -14,7 +14,7 @@ pkgname=('acl')
 pkgver=2.2.53
 pkgrel=2
 pkgdesc='Access control list utilities, libraries and headers'
-url='http://savannah.nongnu.org/projects/acl'
+url='https://savannah.nongnu.org/projects/acl'
 license=('LGPL')
 arch=('x86_64')
 
