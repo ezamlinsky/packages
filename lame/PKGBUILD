@@ -30,7 +30,7 @@ makedepends=('nasm')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://downloads.sourceforge.net/lame/lame-$pkgver.tar.gz")
+source=("https://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.gz")
 sha256sums=('ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e')
 
 #==============================================================================#
@@ -68,8 +68,15 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-gtktest'
+		'--disable-mp3x'
 		'--enable-nasm'
+		'--enable-decoder'
+		'--enable-frontend'
 		'--enable-dynamic-frontends'
+		'--enable-analyzer-hooks'
+		'--enable-mp3rtp'
+		'--enable-debug=no'
+		'--enable-expopt=full'
 		'--with-fileio=lame'
 	)
 
