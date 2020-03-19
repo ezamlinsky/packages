@@ -29,7 +29,6 @@ depends=(
 	'gdk-pixbuf2'
 	'glib2'
 	'glibc'
-	'libcroco'
 	'libxml2'
 	'pango'
 )
@@ -41,6 +40,7 @@ makedepends=(
 	'rust'
 	'vala'
 )
+checkdepends=('ttf-dejavu')
 
 #==============================================================================#
 #        Package relations                                                     #
@@ -52,7 +52,7 @@ provides=("librsvg-${pkgver%%.*}.so")
 #==============================================================================#
 _commit='cc3b2fb0672052721e761ca9dd1c8ab6821cbdf9'
 source=(
-	"git+https://gitlab.gnome.org/GNOME/librsvg.git#commit=$_commit"
+	"git+https://gitlab.gnome.org/GNOME/${pkgname}.git#commit=$_commit"
 	'lto.diff'
 )
 sha256sums=(
