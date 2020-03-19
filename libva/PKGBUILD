@@ -92,6 +92,9 @@ build() {
 		'-Dwith_wayland=no'
 	)
 
+	# Change compile flags
+	export CFLAGS+=' -DENABLE_VA_MESSAGING'
+
 	# Run package configuration script
 	arch-meson build "${config_opts[@]}"
 
@@ -112,6 +115,13 @@ package() {
 
 	# Install license file
 	install -Dm644 COPYING $pkgdir/usr/share/licenses/libva/LICENSE
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Install 'libva.conf' config file
+	mkdir -p etc
+	echo 'LIBVA_MESSAGING_LEVEL=1' > etc/libva.conf
 }
 
 ################################################################################
