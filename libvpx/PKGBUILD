@@ -21,7 +21,10 @@ arch=('x86_64')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=('glibc')
+depends=(
+	'gcc-libs'
+	'glibc'
+)
 makedepends=(
 	'git'
 	'nasm'
@@ -56,8 +59,9 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-debug'
-		'--disable-examples'
 		'--disable-docs'
+		'--enable-libs'
+		'--enable-tools'
 		'--enable-pic'
 		'--enable-multithread'
 		'--enable-runtime-cpu-detect'
@@ -70,8 +74,24 @@ build() {
 		'--enable-vp9-temporal-denoising'
 		'--enable-vp9-highbitdepth'
 		'--enable-multi-res-encoding'
+		'--enable-spatial-resampling'
 		'--enable-webm-io'
 		'--enable-libyuv'
+		'--enable-install-bins'
+		'--enable-install-libs'
+		'--disable-install-docs'
+		'--disable-install-srcs'
+		'--disable-codec-srcs'
+		'--disable-debug-libs'
+		'--disable-unit-tests'
+		'--disable-internal-stats'
+		'--disable-decode-perf-tests'
+		'--disable-encode-perf-tests'
+		'--disable-realtime-only'
+		'--disable-onthefly-bitpacking'
+		'--disable-postproc-visualizer'
+		'--disable-error-concealment'
+		'--disable-coefficient-range-checking'
 	)
 
 	# Change compile flags
@@ -99,7 +119,7 @@ package() {
 	cd $pkgname
 
 	# Install files
-	make DESTDIR=$pkgdir install
+	make DIST_DIR=$pkgdir/usr install
 
 	# Install license file
 	install -Dm644 LICENSE $pkgdir/usr/share/licenses/libvpx/LICENSE
