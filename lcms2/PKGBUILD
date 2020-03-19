@@ -31,7 +31,7 @@ depends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://downloads.sourceforge.net/sourceforge/lcms/lcms2-$pkgver.tar.gz")
+source=("https://downloads.sourceforge.net/sourceforge/lcms/$pkgname-$pkgver.tar.gz")
 sha256sums=('48c6fdf98396fa245ed86e622028caf49b96fa22f3e5734f853f806fbc8e7d20')
 
 #==============================================================================#
@@ -68,6 +68,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--with-threads'
 
 	# 'libjpeg' related options
 		'--with-jpeg'
