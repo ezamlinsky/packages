@@ -22,11 +22,14 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'compositeproto'
 	'glibc'
 	'libx11'
+	'libxfixes'
 )
-makedepends=('xorg-util-macros')
+makedepends=(
+	'xorg-util-macros'
+	'xorgproto'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
