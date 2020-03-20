@@ -22,11 +22,14 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
-	'damageproto'
 	'glibc'
 	'libx11'
+	'libxfixes'
 )
-makedepends=('pkgconfig')
+makedepends=(
+	'pkgconfig'
+	'xorgproto'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
