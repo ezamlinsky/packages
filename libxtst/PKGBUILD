@@ -23,12 +23,13 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'glibc'
-	'inputproto'
 	'libx11'
 	'libxext'
-	'recordproto'
 )
-makedepends=('xorg-util-macros')
+makedepends=(
+	'xorg-util-macros'
+	'xorgproto'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
