@@ -11,8 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('openssl')
-pkgoname=('openssl')
-pkgver=1.1.1.d
+pkgver=1.1.1.e
 pkgrel=2
 pkgdesc='The Open Source toolkit for Secure Sockets Layer and Transport Layer Security'
 url='https://www.openssl.org'
@@ -26,7 +25,6 @@ depends=(
 	'glibc'
 	'perl'
 	#'lksctp-tools'
-	'zlib'
 )
 optdepends=('ca-certificates')
 
@@ -41,18 +39,19 @@ replaces=('openssl')
 #       Package miscellaneous options                                          #
 #==============================================================================#
 backup=('etc/ssl/openssl.cnf')
+options=('emptydirs')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_ver=1.1.1d
+_ver=1.1.1e
 source=(
-	"https://www.openssl.org/source/$pkgoname-$_ver.tar.gz"
-	"https://www.openssl.org/source/$pkgoname-$_ver.tar.gz.asc"
+	"https://www.openssl.org/source/$pkgname-$_ver.tar.gz"
+	"https://www.openssl.org/source/$pkgname-$_ver.tar.gz.asc"
 	'ca-dir.patch'
 )
 sha256sums=(
-	'1e3a91bc1f9dfce01af26026f856e064eab4c8ee0a8f457b5ae30b40b8b711f2'
+	'694f61ac11cb51c9bf73f54e771ff6022b0327a43bbdfa1b2f19de1662a6dcbe'
 	'SKIP'
 	'0938c8d68110768db4f350a7ec641070686904f2fe7ba630ac94399d7dc8cc5e'
 )
@@ -63,7 +62,7 @@ sha256sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgoname-$_ver
+	cd $pkgname-$_ver
 
 	# Apply patches
 	patch -p0 -i $srcdir/ca-dir.patch
@@ -75,7 +74,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgoname-$_ver
+	cd $pkgname-$_ver
 
 	# Default configure options
 	config_opts=(
@@ -94,8 +93,9 @@ build() {
 		'no-sctp'
 
 	# 'zlib' related options
-		'zlib-dynamic'
+		'zlib'
 		#'no-zlib'
+		'zlib-dynamic'
 	)
 
 	# Run package configuration script
@@ -111,7 +111,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgoname-$_ver
+	cd $pkgname-$_ver
 
 	# The test fails due to missing write permissions in /etc/ssl
 	# Revert this patch for make test
@@ -130,7 +130,7 @@ check() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgoname-$_ver
+	cd $pkgname-$_ver
 
 	# Install files
 	make DESTDIR=$pkgdir MANSUFFIX=ssl install
