@@ -156,7 +156,7 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.cpan.org/src/5.0/perl-$pkgver.tar.xz"
+	"https://www.cpan.org/src/5.0/$pkgname-$pkgver.tar.xz"
 	'perlbin.sh'
 	'perlbin.csh'
 	'perlbin.fish'
@@ -253,7 +253,8 @@ package() {
 	install -Dm644 $srcdir/detect-old-perl-modules.hook $pkgdir/usr/share/libalpm/hooks/detect-old-perl-modules.hook
 
 	# Install 'site_perl' and 'vendor_perl' script directories
-	mkdir -p $pkgdir/usr/bin/{site_perl,vendor_perl}
+	mkdir -p $pkgdir/usr/bin/site_perl
+	mkdir -p $pkgdir/usr/bin/vendor_perl
 
 	# Set no mail address since bug reports should go to the bug tracker
 	sed	-e '/^man1ext=/ s/1perl/1p/' \
