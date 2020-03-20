@@ -25,9 +25,11 @@ depends=(
 	'glibc'
 	'libx11'
 	'libxext'
-	'xineramaproto'
 )
-makedepends=('xorg-util-macros')
+makedepends=(
+	'xorg-util-macros'
+	'xorgproto'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
