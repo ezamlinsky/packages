@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='systemd'
 pkgname=('systemd' 'systemd-libs' 'systemd-resolvconf' 'systemd-sysvcompat')
-pkgver=245
-pkgrel=1
+pkgver=245.2
+pkgrel=2
 url='https://www.github.com/systemd/systemd'
 arch=('x86_64')
 
@@ -80,7 +80,7 @@ options=('emptydirs')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='68fef5d635424a60224cce610d30a9041124c204'
+_commit='7d7a511c7cc0d159b86bacd181b6932556308b82'
 source=(
 	"git+https://github.com/systemd/systemd-stable#tag=${_commit}?signed"
 	"git+https://github.com/systemd/systemd#tag=v${pkgver%.*}?signed"
@@ -138,7 +138,7 @@ prepare() {
 	git remote add -f upstream ../systemd
 
 	# Apply all backports
-	backports=()
+	backports=('eec394f10bbfcc3d2fc8504ad8ff5be44231abd5')
 	for backport_commit in "${backports[@]}"; do
 		git log --oneline -1 "${backport_commit}"
 		git cherry-pick -n "${backport_commit}"
@@ -186,6 +186,9 @@ build() {
 		-Dversion-tag="${pkgver}-${pkgrel}-arch"
 		-Dntp-servers="${_timeservers[*]}"
 		-Ddns-servers="${_nameservers[*]}"
+		'-Dtests=false'
+		'-Dslow-tests=false'
+		'-Dinstall-tests=false'
 		'-Dima=false'
 		'-Defi=true'
 		'-Dbinfmt=true'
@@ -203,12 +206,19 @@ build() {
 		'-Dmachined=true'
 		'-Dnetworkd=true'
 		'-Dresolve=true'
+		'-Drepart=true'
+		'-Dpstore=true'
+		'-Duserdb=true'
+		'-Dhomed=true'
 		'-Dtimedated=true'
 		'-Dtimesyncd=true'
 		'-Dbacklight=true'
 		'-Dutmp=true'
 		'-Drandomseed=true'
 		'-Dsysusers=true'
+		'-Dgshadow=true'
+		'-Dadm-group=true'
+		'-Dwheel-group=true'
 		'-Dnss-myhostname=true'
 		'-Dnss-mymachines=true'
 		'-Dnss-resolve=true'
@@ -218,6 +228,7 @@ build() {
 		'-Ddefault-hierarchy=hybrid'
 		'-Ddefault-net-naming-scheme=latest'
 		'-Ddefault-kill-user-processes=false'
+		'-Dmemory-accounting-default=true'
 		'-Dfallback-hostname=archlinux'
 		'-Ddefault-locale=C'
 		'-Drpmmacrosdir=no'
@@ -226,13 +237,18 @@ build() {
 		'-Dhtml=false'
 		'-Dman=true'
 		'-Dtpm=true'
-		'-Dtpm-pcrindex=8'
 		'-Dsplit-usr=false'
 		'-Dsplit-bin=false'
 		'-Dlink-udev-shared=true'
 		'-Dlink-systemctl-shared=true'
+		'-Dlink-timesyncd-shared=true'
+		'-Dlink-networkd-shared=true'
 		'-Dstatic-libsystemd=false'
 		'-Dstatic-libudev=false'
+		'-Dcreate-log-dirs=true'
+		'-Dcompat-gateway-hostname=true'
+		'-Dstatus-unit-format-default=name'
+		'-Dok-color=blue'
 
 	# 'acl' related options
 		'-Dacl=true'
@@ -303,6 +319,7 @@ build() {
 	# 'libidn2' related options
 		#'-Dlibidn2=true'
 		'-Dlibidn2=false'
+		#'-Didn=true'
 
 	# 'libiptc' related options
 		#'-Dlibiptc=true'
@@ -315,6 +332,10 @@ build() {
 	# 'libmicrohttpd & curl' related options
 		#'-Dremote=true'
 		'-Dremote=false'
+
+	# 'libpwquality' related option
+		#'-Dpwquality=true'
+		'-Dpwquality=false'
 
 	# 'libseccomp' related options
 		'-Dseccomp=true'
@@ -331,6 +352,8 @@ build() {
 	# 'libutil-linux' related options
 		'-Dblkid=true'
 		#'-Dblkid=false'
+		'-Dfdisk=true'
+		#'-Dfdisk=false'
 
 	# 'libxkbcommon' related options
 		'-Dxkbcommon=true'
@@ -344,6 +367,10 @@ build() {
 		'-Dopenssl=true'
 		#'-Dopenssl=false'
 		#'-Ddns-over-tls=openssl'
+
+	# 'p11-kit' related options
+		'-Dp11kit=true'
+		#'-Dp11kit=false'
 
 	# 'pam' related options
 		'-Dpam=true'
@@ -435,6 +462,7 @@ package_systemd() {
 		#'libidn2'
 		#'libiptc'
 		#'libmicrohttpd'
+		#'libpwquality'
 		'libseccomp'
 		#'libselinux'
 		#'libsmack'
