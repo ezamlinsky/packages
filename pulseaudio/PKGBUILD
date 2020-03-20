@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='pulseaudio'
 pkgname=('pulseaudio' 'libpulse' 'pulseaudio-zeroconf' 'pulseaudio-lirc' 'pulseaudio-jack' 'pulseaudio-bluetooth' 'pulseaudio-equalizer')
-pkgver=13.0.0
-pkgrel=2
+pkgver=13.0
+pkgrel=3
 url="https://www.freedesktop.org/wiki/Software/PulseAudio/"
 license=('GPL')
 arch=('x86_64')
@@ -30,7 +30,6 @@ makedepends=(
 	'check'
 	'dbus'
 	'fftw'
-	'gconf'
 	'git'
 	'gtk3'
 	'intltool'
@@ -43,13 +42,16 @@ makedepends=(
 	'libtool'
 	'libxtst'
 	'lirc'
+	'meson'
 	'openssl'
 	'orc'
+	'rtkit'
 	'sbc'
 	'speexdsp'
 	'systemd'
 	'tdb'
 	'webrtc-audio-processing'
+	'xmltoman'
 )
 
 #==============================================================================#
@@ -57,7 +59,7 @@ makedepends=(
 #==============================================================================#
 _commit='200618b32f0964a479d69c9b6e5073e6931c370a'
 source=(
-	"git+https://gitlab.freedesktop.org/pulseaudio/pulseaudio.git#commit=$_commit"
+	"git+https://gitlab.freedesktop.org/$pkgbase/$pkgbase.git#commit=$_commit"
 	'0001-meson-Define-TUNNEL_SINK-for-module-tunnel-sink.patch'
 )
 sha256sums=(
@@ -75,11 +77,6 @@ prepare() {
 
 	# Apply patches
 	patch -p1 -i $srcdir/0001-meson-Define-TUNNEL_SINK-for-module-tunnel-sink.patch
-
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
 }
 
 #==============================================================================#
@@ -92,146 +89,120 @@ build() {
 
 	# Default configure options
 	config_opts=(
-		'--prefix=/usr'
-		'--bindir=/usr/bin'
-		'--sbindir=/usr/bin'
-		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib'
-		'--sysconfdir=/etc'
-		'--localstatedir=/var'
-		'--enable-silent-rules'
-		'--enable-shared'
-		'--disable-static'
-		'--disable-static-bins'				# Statically link executables.
-		'--enable-manpages'
-		'--enable-memfd'					# Disable Linux memfd shared memory
-		'--enable-schemas-compile'			# Disable regeneration of gschemas.compiled on install
-		'--enable-gsettings'				# Disable optional GSettings support
-		'--enable-gtk3'
-		'--disable-ipv6'
-		'--disable-hal-compat'
-		'--disable-oss-output'
-		'--disable-oss-wrapper'
-		'--disable-bluez4'
-		'--disable-esound'
-		'--disable-per-user-esound-socket'	# Use global esound socket directory /tmp/.esd/socket.
-		'--disable-legacy-database-entry-format'
-		'--disable-tests'
-		'--disable-default-build-tests'
-		'--with-pulsedsp-location=/usr/lib/pulseaudio'
+		'-Dman=true'
+		'-Dtests=false'
+		'-Dgsettings=enabled'
+		'-Dgtk=enabled'
+		'-Dipv6=true'
+		'-Dadrian-aec=true'
+		'-Dlegacy-database-entry-format=false'
+		'-Drunning-from-build-tree=false'
+		'-Dsystem_user=pulse'
+		'-Dsystem_group=pulse'
+		'-Daccess_group=pulse-access'
+		'-Dpulsedsp-location=/usr/lib/pulseaudio'
+		'-Dudevrulesdir=/usr/lib/udev/rules.d'
 
 	# 'alsa-lib' related options
-		'--enable-alsa'
-		#'--disable-alsa'
+		'-Dalsa=enabled'
+		#'-Dalsa=disabled'
 
 	# 'avahi' related options
-		'--enable-avahi'
-		#'--disable-avahi'
+		'-Davahi=enabled'
+		#'-Davahi=disabled'
 
 	# 'dbus' related options
-		'--enable-dbus'
-		#'--disable-dbus'
+		'-Ddbus=enabled'
+		#'-Ddbus=disabled'
 
 	# 'fftw' related options
-		'--with-fftw'
-		#'--without-fftw'
-
-	# 'gconf' related options
-		#'--enable-gconf'
-		'--disable-gconf'
+		'-Dfftw=enabled'
+		#'-Dfftw=disabled'
 
 	# 'gdbm' related options
-		'--with-database=gdbm'
+		'-Ddatabase=gdbm'
 
 	# 'glib2' related options
-		'--enable-glib2'
-		#'--disable-glib2'
+		'-Dglib=enabled'
+		#'-Dglib=disabled'
 
 	# 'jack2' related options
-		'--enable-jack'
-		#'--disable-jack'
+		'-Djack=enabled'
+		#'-Djack=disabled'
 
 	# 'libasyncns' related options
-		#'--enable-asyncns'
-		'--disable-asyncns'
-
-	# 'libcap' related options
-		'--with-caps'
-		#'--without-caps'
+		#'-Dasyncns=enabled'
+		'-Dasyncns=disabled'
 
 	# 'libsamplerate' related options
-		#'--enable-samplerate'
-		'--disable-samplerate'
+		#'-Dsamplerate=enabled'
+		'-Dsamplerate=disabled'
 
 	# 'libsm & libxtst & libxcb & libice & libx11' related options
-		'--enable-x11'
-		#'--disable-x11'
+		'-Dx11=enabled'
+		#'-Dx11=disabled'
 
 	# 'libsoxr' related options
-		#'--with-soxr'
-		'--without-soxr'
+		#'-Dsoxr=enabled'
+		'-Dsoxr=disabled'
 
 	# 'libsystemd' related options
-		'--enable-udev'
-		#'--disable-udev'
-		'--enable-systemd-daemon'
-		#'--disable-systemd-daemon'
-		'--enable-systemd-login'
-		#'--disable-systemd-login'
-		'--enable-systemd-journal'
-		#'--disable-systemd-journal'
-		'--with-udev-rules-dir=/usr/lib/udev/rules.d'
-
-	# 'libwrap' related options
-		#'--enable-tcpwrap'
-		'--disable-tcpwrap'
+		'-Dsystemd=enabled'
+		#'-Dsystemd=disabled'
+		'-Dudev=enabled'
+		#'-Dudev=disabled'
+		#'-Dhal-compat=true'
+		'-Dhal-compat=false'
 
 	# 'lirc' related options
-		'--enable-lirc'
-		#'--disable-lirc'
+		'-Dlirc=enabled'
+		#'-Dlirc=dusabled'
 
 	# 'openssl' related options
-		'--enable-openssl'
-		#'--disable-openssl'
+		'-Dopenssl=enabled'
+		#'-Dopenssl=disabled'
 
 	# 'orc' related options
-		#'--enable-orc'
-		'--disable-orc'
+		#'-Dorc=enabled'
+		'-Dorc=disabled'
 
 	# 'sbc' related options
-		'--enable-bluez5'
-		#'--disable-bluez5'
-		'--enable-bluez5-ofono-headset'
-		#'--disable-bluez5-ofono-headset'
-		'--enable-bluez5-native-headset'
-		#'--disable-bluez5-native-headset'
+		'-Dbluez5=true'
+		#'-Dbluez5=false'
+		'-Dbluez5-ofono-headset=true'
+		#'-Dbluez5-ofono-headset=false'
+		'-Dbluez5-native-headset=true'
+		#'-Dbluez5-native-headset=false'
 
 	# 'speexdsp' related options
-		#'--with-speex'
-		'--without-speex'
+		#'-Dspeex=enabled'
+		'-Dspeex=disabled'
 
 	# 'tdb' related options
-		#'--with-database=tdb'
+		#'-Ddatabase=tdb'
 
 	# 'webrtc-audio-processing' related options
-		#'--enable-webrtc-aec'
-		'--disable-webrtc-aec'
+		#'-Dwebrtc-aec=enabled'
+		'-Dwebrtc-aec=disabled'
 	)
 
-	# Change compile flags
-	export CFLAGS+=' -fno-lto'
-	export CXXFLAGS="${CFLAGS}"
-
 	# Run package configuration script
-	./configure "${config_opts[@]}"
-
-	# Set correct LDFLAGS to build a shared archive
-	if [ -f libtool ]; then
-		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
-	fi
+	arch-meson build "${config_opts[@]}"
 
 	# Build package
-	make
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run internal tests
+	ninja -C build test
 }
 
 #==============================================================================#
@@ -246,6 +217,7 @@ package_pulseaudio() {
 	depends=(
 		"libpulse=$pkgver-$pkgrel"
 		'alsa-lib'
+		'bash'
 		'dbus'
 		'gdbm'
 		'glib2'
@@ -267,9 +239,7 @@ package_pulseaudio() {
 		#'tdb'
 		#'webrtc-audio-processing'
 	)
-	optdepends=(
-		'pulseaudio-alsa: ALSA configuration (recommended)'
-	)
+	optdepends=('pulseaudio-alsa: ALSA configuration (recommended)')
 	replaces=('pulseaudio-xen<=9.0')
 	backup=(
 		'etc/pulse/daemon.conf'
@@ -282,7 +252,7 @@ package_pulseaudio() {
 	cd $pkgbase
 
 	# Install files
-	make DESTDIR=$pkgdir install
+	DESTDIR=$pkgdir ninja -C build install
 
 	# Change directory to package directory
 	cd $pkgdir
@@ -299,31 +269,34 @@ package_pulseaudio() {
 	# Disable cork-request module
 	sed -e 's|/usr/bin/pactl load-module module-x11-cork-request|#&|' -i usr/bin/start-pulseaudio-x11
 
+	# Required by qpaeq
+	sed -e '/Load several protocols/aload-module module-dbus-protocol' -i etc/pulse/default.pa
+
 	# Split libpulse
 	mkdir -p $srcdir/libpulse/{etc/pulse,usr/{bin,lib/pulseaudio,share/man/man{1,5}}}
 	mv etc/pulse/client.conf $srcdir/libpulse/etc/pulse || true
-	mv usr/bin/pa{cat,ctl,mon,play,rec,record} $srcdir/libpulse/usr/bin || true
+	mv usr/bin/pa{cat,ctl,dsp,mon,play,rec,record} $srcdir/libpulse/usr/bin || true
 	mv usr/lib/libpulse{,-simple,-mainloop-glib}.so* $srcdir/libpulse/usr/lib || true
 	mv usr/lib/{cmake,pkgconfig} $srcdir/libpulse/usr/lib || true
-	mv usr/lib/pulseaudio/libpulsecommon-*.so $srcdir/libpulse/usr/lib/pulseaudio || true
+	mv usr/lib/pulseaudio/libpulse{dsp,common-*}.so $srcdir/libpulse/usr/lib/pulseaudio || true
 	mv usr/include $srcdir/libpulse/usr || true
 	mv usr/share/man/man1/pa{cat,ctl,dsp,mon,play,rec,record}.1 $srcdir/libpulse/usr/share/man/man1 || true
 	mv usr/share/man/man5/pulse-client.conf.5 $srcdir/libpulse/usr/share/man/man5 || true
 	mv usr/share/vala $srcdir/libpulse/usr/share || true
 
 	# Split modules
-	mkdir -p $srcdir/{zeroconf,lirc,jack,bluetooth,equalizer}/usr/lib/pulse-${pkgver%.*}/modules \
+	mkdir -p $srcdir/{zeroconf,lirc,jack,bluetooth,equalizer}/usr/lib/pulse-$pkgver/modules \
 	$srcdir/{gconf/usr/lib/pulse,equalizer/usr/bin}
-	mv usr/lib/pulse-${pkgver%.*}/modules/{libavahi-wrap,module-{zeroconf-{publish,discover},raop-discover}}.so \
-	$srcdir/zeroconf/usr/lib/pulse-${pkgver%.*}/modules || true
-	mv usr/lib/pulse-${pkgver%.*}/modules/module-lirc.so \
-	$srcdir/lirc/usr/lib/pulse-${pkgver%.*}/modules || true
-	mv usr/lib/pulse-${pkgver%.*}/modules/module-jack{-sink,-source,dbus-detect}.so \
-	$srcdir/jack/usr/lib/pulse-${pkgver%.*}/modules || true
-	mv usr/lib/pulse-${pkgver%.*}/modules/{libbluez5-util,module-{bluetooth-{discover,policy},bluez5-{discover,device}}}.so \
-	$srcdir/bluetooth/usr/lib/pulse-${pkgver%.*}/modules || true
-	mv usr/lib/pulse-${pkgver%.*}/modules/module-equalizer-sink.so \
-	$srcdir/equalizer/usr/lib/pulse-${pkgver%.*}/modules || true
+	mv usr/lib/pulse-$pkgver/modules/{libavahi-wrap,module-{zeroconf-{publish,discover},raop-discover}}.so \
+	$srcdir/zeroconf/usr/lib/pulse-$pkgver/modules || true
+	mv usr/lib/pulse-$pkgver/modules/module-lirc.so \
+	$srcdir/lirc/usr/lib/pulse-$pkgver/modules || true
+	mv usr/lib/pulse-$pkgver/modules/module-jack{-sink,-source,dbus-detect}.so \
+	$srcdir/jack/usr/lib/pulse-$pkgver/modules || true
+	mv usr/lib/pulse-$pkgver/modules/{libbluez5-util,module-{bluetooth-{discover,policy},bluez5-{discover,device}}}.so \
+	$srcdir/bluetooth/usr/lib/pulse-$pkgver/modules || true
+	mv usr/lib/pulse-$pkgver/modules/module-equalizer-sink.so \
+	$srcdir/equalizer/usr/lib/pulse-$pkgver/modules || true
 	mv usr/bin/qpaeq \
 	$srcdir/equalizer/usr/bin || true
 }
