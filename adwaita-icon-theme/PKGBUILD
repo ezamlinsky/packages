@@ -36,7 +36,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='a7a71ea4f2b61e6ce00e4b0681169df92fdb14a1'
-source=("git+https://gitlab.gnome.org/GNOME/adwaita-icon-theme.git#commit=$_commit")
+source=("git+https://gitlab.gnome.org/GNOME/${pkgname}.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
