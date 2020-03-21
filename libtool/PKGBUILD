@@ -11,10 +11,10 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('libtool')
-pkgver=2.4.6+42+gb88cebd5
-pkgrel=10
+pkgver=2.4.7
+pkgrel=11
 pkgdesc='A generic library support script'
-url='http://www.gnu.org/software/libtool'
+url='https://www.gnu.org/software/libtool'
 license=('GPL')
 arch=('x86_64')
 groups=('base-devel')
@@ -28,7 +28,7 @@ depends=(
 	'tar'
 )
 makedepends=(
-	"gcc>=8.3.0"
+	"gcc>=9.3.0"
 	'git'
 	'help2man'
 )
@@ -55,14 +55,16 @@ replaces=(
 #==============================================================================#
 _commit='b88cebd510add4420dd8f5367e3cc6e6e1f267cd'
 source=(
-	"git+https://git.savannah.gnu.org/git/libtool.git#commit=$_commit"
+	"git+https://git.savannah.gnu.org/git/${pkgname}.git#commit=$_commit"
 	'git+https://git.savannah.gnu.org/git/gnulib.git'
 	'gnulib-bootstrap::git+https://github.com/gnulib-modules/bootstrap.git'
+	'no_hostname.patch'
 )
 sha256sums=(
 	'SKIP'
 	'SKIP'
 	'SKIP'
+	'693aabb24a6e7ce21fe0b5d14394e19edcb8476663b5afa4463f9fa0df24d946'
 )
 
 #==============================================================================#
@@ -72,6 +74,9 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname
+
+	# Apply patches
+	patch -p1 -i $srcdir/no_hostname.patch
 
 	# Update submodule
 	git submodule init
