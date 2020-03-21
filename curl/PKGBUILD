@@ -11,8 +11,8 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('curl')
-pkgver=7.69.0
-pkgrel=3
+pkgver=7.69.1
+pkgrel=1
 pkgdesc='An URL retrieval utility and library'
 url='https://curl.haxx.se'
 license=('MIT')
@@ -24,6 +24,7 @@ arch=('x86_64')
 depends=(
 	#'axtls'
 	'bash'
+	#'bearssl'
 	'brotli'
 	#'c-ares'
 	'ca-certificates'
@@ -34,16 +35,20 @@ depends=(
 	#'libldap'
 	#'libmetalink'
 	'libnghttp2'
+	#'libnghttp3'
 	#'libpsl'
 	#'librtmp.so'
 	#'libssh'
 	'libssh2'
 	#'mbedtls'
+	#'mesalink'
 	#'nettle'
+	#'ngtcp2'
 	#'nspr'
 	#'nss'
 	'openssl'
 	#'polarssl'
+	#'quiche'
 	#'wolfssl'
 	'zlib'
 )
@@ -52,8 +57,6 @@ depends=(
 #        Package relations                                                     #
 #==============================================================================#
 provides=('libcurl.so')
-conflicts=('curl')
-replaces=('curl')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
@@ -61,14 +64,10 @@ replaces=('curl')
 source=(
 	"https://curl.haxx.se/download/$pkgname-$pkgver.tar.gz"
 	"https://curl.haxx.se/download/$pkgname-$pkgver.tar.gz.asc"
-	'0001-Revert-pause-force-drain-the-transfer-on-unpause.patch'
-	'0001-pause-force-a-connection-re-check-after-unpausing.patch'
 )
 sha512sums=(
-	'0ecd9e6e55cb19400fafdcd723c72667903ec760652e60fe0b884a672e1ac5d8667c8837422145a9af995ffe36d31a2685296f272ebddf1f5f1a7b12baf0fbad'
+	'c0bc5e52fd3f52e095f61cf2724de57f2698317dd19ca8c331575f3998d08b067adefcb57dc5274747276a5556df89465fe13976774af885804fa81ca417887f'
 	'SKIP'
-	'6aaafcb580f88c715a294ea7b53877a405a4f6c4a338d830380a5c97a324268a287c893ee6fd24c3b69dc0566275336ec74c3816f2202e12d39840360d6784f0'
-	'bc384dcfef4f6ca8d52171b97d5979c5b043e70d756836f87449ea0108d9615521408fa71c330c4b627738978eacd24de80a0e93438532a8f48a4d049e83334e'
 )
 
 #==============================================================================#
@@ -78,10 +77,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
-
-	# Apply patches
-	patch -p1 -i $srcdir/0001-Revert-pause-force-drain-the-transfer-on-unpause.patch
-	patch -p1 -i $srcdir/0001-pause-force-a-connection-re-check-after-unpausing.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -111,8 +106,11 @@ build() {
 		'--disable-static'
 		'--enable-optimize'
 		'--enable-symbol-hiding'
+		'--disable-werror'
 		'--disable-debug'
 		'--disable-curldebug'
+		'--disable-manual'
+		'--disable-esni'
 		'--enable-http'
 		'--enable-ftp'
 		'--enable-file'
@@ -125,9 +123,13 @@ build() {
 		'--enable-smb'
 		'--enable-smtp'
 		'--enable-gopher'
-		'--disable-manual'
-		'--enable-libcurl-option'
+		'--enable-cookies'
+		'--enable-http-auth'
+		'--enable-doh'
+		'--enable-mime'
 		'--enable-ipv6'
+		'--enable-alt-svc'
+		'--enable-libcurl-option'
 		'--enable-versioned-symbols'
 		'--enable-threaded-resolver'
 		'--enable-pthreads'
@@ -136,12 +138,22 @@ build() {
 		'--enable-crypto-auth'
 		'--enable-ntlm-wb'
 		'--enable-unix-sockets'
-		'--enable-cookies'
-		'--enable-alt-svc'
+		'--enable-sspi'
+		'--enable-dateparse'
+		'--enable-netrc'
+		'--enable-progress-meter'
+		'--enable-dnsshuffle'
+		'--enable-rt'
+		'--with-ca-fallback'
+		'--with-default-ssl-backend=openssl'
 
 	# 'axtls' related options
 		#'--with-axtls'
 		'--without-axtls'
+
+	# 'bearssl' related options
+		#'--with-bearssl'
+		'--without-bearssl'
 
 	# 'brotli' related options
 		'--with-brotli'
@@ -185,6 +197,10 @@ build() {
 		'--with-nghttp2'
 		#'--without-nghttp2'
 
+	# 'libnghttp3' related options
+		#'--with-nghttp3'
+		'--without-nghttp3'
+
 	# 'libpsl' related options
 		#'--with-libpsl'
 		'--without-libpsl'
@@ -207,9 +223,17 @@ build() {
 		#'--with-mbedtls'
 		'--without-mbedtls'
 
+	# 'mesalink' related options
+		#'--with-mesalink'
+		'--without-mesalink'
+
 	# 'nettle' related options
 		#'--enable-tls-srp'
 		'--disable-tls-srp'
+
+	# 'ngtcp2' related options
+		#'--with-ngtcp2'
+		'--without-ngtcp2'
 
 	# 'nss & nspr' related options
 		#'--with-nss'
@@ -224,6 +248,10 @@ build() {
 	# 'polarssl' related options
 		#'--with-polarssl'
 		'--without-polarssl'
+
+	# 'quiche' related options
+		'--with-quiche'
+		#'--without-quiche'
 
 	# 'wolfssl' related options
 		#'--with-wolfssl'
