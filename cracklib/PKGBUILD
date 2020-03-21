@@ -22,6 +22,7 @@ arch=('x86_64')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'bash'
 	'glibc'
 	#'python'
 	#'python2'
@@ -31,7 +32,7 @@ depends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://github.com/cracklib/cracklib/releases/download/v$pkgver/cracklib-$pkgver.tar.gz")
+source=("https://github.com/$pkgname/$pkgname/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz")
 md5sums=('48a0c8810ec4780b99c0a4f9931c21c6')
 
 #==============================================================================#
