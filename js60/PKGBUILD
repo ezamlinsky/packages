@@ -42,13 +42,11 @@ source=(
 	"https://archive.mozilla.org/pub/firefox/releases/${pkgver}esr/source/firefox-${pkgver}esr.source.tar.xz"
 	"https://archive.mozilla.org/pub/firefox/releases/${pkgver}esr/source/firefox-${pkgver}esr.source.tar.xz.asc"
 	'bug1415202.patch'
-	'mozjs60-fix-soname.patch'
 )
 sha256sums=(
 	'9f453c8cc5669e46e38f977764d49a36295bf0d023619d9aac782e6bb3e8c53f'
 	'SKIP'
 	'0b410aa6ebd0236cd3ea524340c2da2235973a42cd0eaa90f7f394cd5bcbab95'
-	'c792837930defe27355941080e9b80ec1d45003c097e4707860acc13d43bc519'
 )
 
 #==============================================================================#
@@ -61,7 +59,6 @@ prepare() {
 
 	# Apply patches
 	patch -Np1 -i $srcdir/bug1415202.patch
-	patch -Np1 -i $srcdir/mozjs60-fix-soname.patch
 }
 
 #==============================================================================#
@@ -81,16 +78,20 @@ build() {
 		'--disable-rust-debug'
 		'--disable-jemalloc'
 		'--disable-tests'
+		'--enable-project'
 		'--enable-release'
 		'--enable-optimize'
 		'--enable-hardening'
 		'--enable-linker=gold'
+		'--enable-gold'
 		'--enable-pie'
 		'--enable-strip'
 		'--enable-js-shell'
 		'--enable-shared-js'
 		'--enable-export-js'
 		'--enable-posix-nspr-emulation'
+		'--enable-pipeline-operator'
+		'--enable-more-deterministic'
 		'--with-pthreads'
 		'--with-intl-api'
 
