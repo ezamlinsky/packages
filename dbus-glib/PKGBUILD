@@ -36,8 +36,8 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-$pkgver.tar.gz"
-	"https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-$pkgver.tar.gz.asc"
+	"https://dbus.freedesktop.org/releases/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://dbus.freedesktop.org/releases/$pkgname/$pkgname-$pkgver.tar.gz.asc"
 )
 sha256sums=(
 	'7ce4760cf66c69148f6bd6c92feaabb8812dee30846b24cd0f7395c436d7e825'
