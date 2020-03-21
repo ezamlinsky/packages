@@ -71,11 +71,15 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-werror'
 		'--disable-debug'
 		'--disable-curldebug'
 		'--enable-optimize=-O3'
 		'--enable-libgcc'
+		'--enable-tests'
 		'--enable-nonblocking'
+		'--enable-symbol-hiding'
+		'--disable-expose-statics'
 		'--with-random'
 	)
 
