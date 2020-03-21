@@ -98,7 +98,7 @@ package_ca-certificates-utils() {
 	mkdir -p $pkgdir/{etc,usr/share}/$pkgbase/trust-source/{anchors,blacklist}
 
 	# Create directories used by update-ca-trust (aka "trust extract-compat")
-	mkdir -p $pkgdir/etc/{ssl/certs/java,$pkgbase/extracted}
+	mkdir -p $pkgdir/etc/{ssl/certs/{edk2,java},$pkgbase/extracted}
 
 	# Compatibility link for OpenSSL using /etc/ssl as CAdir
 	# Used in preference to the individual links in /etc/ssl/certs
