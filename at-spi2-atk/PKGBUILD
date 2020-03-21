@@ -37,7 +37,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='eac8e935128753f8204ecc3904e6e3e7b231e3ea'
-source=("git+https://gitlab.gnome.org/GNOME/at-spi2-atk.git#commit=$_commit")
+source=("git+https://gitlab.gnome.org/GNOME/${pkgname}.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
