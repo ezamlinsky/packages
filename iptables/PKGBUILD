@@ -61,8 +61,8 @@ backup=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.netfilter.org/projects/iptables/files/iptables-$pkgver.tar.bz2"
-	"https://www.netfilter.org/projects/iptables/files/iptables-$pkgver.tar.bz2.sig"
+	"https://www.netfilter.org/projects/$pkgname/files/$pkgname-$pkgver.tar.bz2"
+	"https://www.netfilter.org/projects/$pkgname/files/$pkgname-$pkgver.tar.bz2.sig"
 	'empty.rules'
 	'simple_firewall.rules'
 	'empty-filter.rules'
@@ -132,11 +132,12 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-ipv4'
+		'--enable-ipv6'
 		'--enable-devel'
 		'--enable-libipq'
 		'--enable-bpf-compiler'
 		'--enable-nfsynproxy'
-		'--with-xtlibdir=/usr/lib/iptables'
 
 	# 'libmnl && libnftnl' related options
 		'--enable-nftables'
