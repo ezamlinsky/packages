@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('gnupg')
-pkgver=2.2.19
+pkgver=2.2.20
 pkgrel=1
 pkgdesc='Complete and free implementation of the OpenPGP standard'
 url='https://www.gnupg.org/'
@@ -79,7 +79,7 @@ source=(
 	'self-sigs-only.patch'
 )
 sha256sums=(
-	'242554c0e06f3a83c420b052f750b65ead711cc3fddddb5e7274fcdbb4e9dec0'
+	'04a7c9d48b74c399168ee8270e548588ddbe52218c337703d7f06373d326ca30'
 	'SKIP'
 	'0130c43321c16f53ab2290833007212f8a26b1b73bd4edc2b2b1c9db2b2d0218'
 )
@@ -120,10 +120,49 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-werror'
+		'--disable-npth-debug'
+		'--disable-all-tests'
+		'--enable-optimization'
+		'--enable-exec'
+		'--enable-photo-viewers'
+		'--enable-dirmngr-auto-start'
+		'--enable-regex'
 		'--enable-doc'
-		'--enable-symcryptrun'
 		'--enable-gpg-is-gpg2'
+		'--enable-gpg'
+		'--enable-gpgsm'
+		'--enable-scdaemon'
+		'--enable-g13'
+		'--enable-dirmngr'
+		'--enable-symcryptrun'
+		'--enable-gpgtar'
+		'--enable-wks-tools'
+		'--enable-libdns'
+		'--enable-trust-models'
+		'--enable-tofu'
+		'--enable-gpg-rsa'
+		'--enable-gpg-ecdh'
+		'--enable-gpg-ecdsa'
+		'--enable-gpg-eddsa'
+		'--enable-gpg-idea'
+		'--enable-gpg-cast5'
+		'--enable-gpg-blowfish'
+		'--enable-gpg-aes128'
+		'--enable-gpg-aes192'
+		'--enable-gpg-aes256'
+		'--enable-gpg-twofish'
+		'--enable-gpg-camellia128'
+		'--enable-gpg-camellia192'
+		'--enable-gpg-camellia256'
+		'--enable-gpg-md5'
+		'--enable-gpg-rmd160'
+		'--enable-gpg-sha224'
+		'--enable-gpg-sha384'
+		'--enable-gpg-sha512'
 		'--with-capabilities'
+		'--with-tar'
+		'--with-regex'
 
 	# 'bzip2' related options
 		'--enable-bzip2'
@@ -144,6 +183,8 @@ build() {
 	# 'libusb' related options
 		'--enable-card-support'
 		#'--disable-card-support'
+		'--enable-ccid-driver'
+		#'--disable-ccid-driver'
 
 	# 'ntbtls' related options
 		#'--enable-ntbtls'
