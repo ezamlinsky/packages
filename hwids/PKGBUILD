@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('hwids')
-pkgver=20200204
+pkgver=20200306
 pkgrel=1
 pkgdesc='Hardware identification databases'
 url='https://github.com/gentoo/hwids'
@@ -26,7 +26,7 @@ makedepends=('git')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("git://github.com/gentoo/hwids.git#tag=$pkgname-$pkgver")
+source=("git://github.com/gentoo/$pkgname.git#tag=$pkgname-$pkgver")
 md5sums=('SKIP')
 
 #==============================================================================#
