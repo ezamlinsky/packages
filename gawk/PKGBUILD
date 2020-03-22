@@ -14,10 +14,10 @@ pkgname=('gawk')
 pkgver=5.0.1
 pkgrel=2
 pkgdesc='GNU version of awk'
-url='http://www.gnu.org/software/gawk/'
+url='https://www.gnu.org/software/gawk/'
 license=('GPL')
 arch=('x86_64')
-groups=('base' 'base-devel')
+groups=('base-devel')
 
 #==============================================================================#
 #       Package dependencies                                                   #
@@ -28,7 +28,6 @@ depends=(
 	#'libsigsegv'
 	'mpfr'
 	'readline'
-	'sh'
 )
 
 #==============================================================================#
@@ -40,8 +39,8 @@ provides=('awk')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/pub/gnu/gawk/gawk-$pkgver.tar.gz"
-	"https://ftp.gnu.org/pub/gnu/gawk/gawk-$pkgver.tar.gz.sig"
+	"https://ftp.gnu.org/pub/gnu/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://ftp.gnu.org/pub/gnu/$pkgname/$pkgname-$pkgver.tar.gz.sig"
 )
 md5sums=(
 	'c5441c73cc451764055ee65e9a4292bb'
@@ -83,6 +82,7 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-extensions'
+		'--disable-versioned-extension-dir'
 
 	# 'libsigsegv' related options
 		#'--with-libsigsegv'
