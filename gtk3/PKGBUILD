@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='gtk3'
 pkgname=('gtk3' 'gtk-update-icon-cache')
-pkgver=3.24.14
+pkgver=3.24.15
 pkgrel=1
 epoch=1
 url='https://www.gtk.org/'
@@ -71,6 +71,7 @@ build() {
 		'-Dinstalled_tests=false'
 		'-Dbroadway_backend=false'
 		'-Dprint_backends=file'
+		'-Dbuiltin_immodules=no'
 
 	# 'colord' related options
 		#'-Dcolord=yes'
@@ -106,6 +107,7 @@ build() {
 	# Build package
 	ninja -C build
 }
+
 #==============================================================================#
 #       Package installation sequence                                          #
 #==============================================================================#
@@ -188,6 +190,7 @@ package_gtk3() {
 package_gtk-update-icon-cache() {
 	pkgdesc='GTK+ icon cache updater'
 	depends=(
+		'bash'
 		'gdk-pixbuf2'
 		'glib2'
 		'glibc'
