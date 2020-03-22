@@ -52,6 +52,16 @@ makedepends=(
 optdepends=(
 	'adwaita-icon-theme: Default icon theme'
 	'gnome-themes-standard: Default widget theme'
+	'python2: gtk-builder-convert'
+)
+
+#==============================================================================#
+#        Package relations                                                     #
+#==============================================================================#
+provides=(
+	'libgailutil.so'
+	'libgdk-x11-2.0.so'
+	'libgtk-x11-2.0.so'
 )
 
 #==============================================================================#
@@ -119,12 +129,20 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-shm'
 		'--enable-man'
 		'--disable-gtk-doc'
+		'--disable-glibtest'
+		'--disable-test-print-backend'
 		'--disable-papi'
 		'--enable-xkb'
-		'--enable-introspection=no'
+		'--enable-rebuilds'
+		'--enable-visibility'
+		'--enable-modules'
 		'--enable-debug=no'
+		'--enable-introspection=no'
+		'--enable-explicit-deps=yes'
+		'--with-gdktarget=x11'
 		'--with-x'
 
 	# 'libcups' related options
