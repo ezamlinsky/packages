@@ -12,9 +12,9 @@
 #==============================================================================#
 pkgbase='gdb'
 pkgname=('gdb' 'gdb-common')
-pkgver=8.3.1
-pkgrel=3
-url='http://www.gnu.org/software/gdb/'
+pkgver=9.1
+pkgrel=2
+url='https://www.gnu.org/software/gdb/'
 license=('GPL3')
 arch=('x86_64')
 
@@ -34,11 +34,11 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/gnu/gdb/gdb-$pkgver.tar.xz"
-	"https://ftp.gnu.org/gnu/gdb/gdb-$pkgver.tar.xz.sig"
+	"https://ftp.gnu.org/gnu/gdb/$pkgname-$pkgver.tar.xz"
+	"https://ftp.gnu.org/gnu/gdb/$pkgname-$pkgver.tar.xz.sig"
 )
 sha1sums=(
-	'd403ba208945bbf04f8130ea4853730cdf0c8fc7'
+	'a50e13e1eecea468ea28c4a23d8c5a84f4db25be'
 	'SKIP'
 )
 
@@ -52,6 +52,9 @@ prepare() {
 
 	# Hack! - libiberty configure tests for header files using "$CPP $CPPFLAGS"
 	sed '/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/' -i libiberty/configure
+
+	# Link with system 'libctf' library
+	sed	-e 's|../libctf/.libs/libctf.a|/usr/lib/libctf.so|g' -i gdb/Makefile.in
 
 	# Link with system 'libbfd' library
 	sed	-e 's|$(BFD_DIR)/libbfd.a|/usr/lib/libbfd.so|g' -i gdb/Makefile.in
@@ -86,8 +89,9 @@ build() {
 		'--enable-gold=yes'
 		'--enable-decimal-float=yes'
 		'--enable-compressed-debug-sections=all'
-		'--enable-64-bit-archive'
+		'--enable-liboffloadmic=host'
 		'--enable-threads=posix'
+		'--enable-64-bit-archive'
 		'--enable-plugins'
 		'--enable-lto'
 		'--enable-secureplt'
@@ -96,11 +100,17 @@ build() {
 		'--enable-tui'
 		'--enable-multibyte'
 		'--enable-host-shared'
+		'--enable-vtable-verify'
+		'--enable-libquadmath'
+		'--enable-libquadmath-support'
 		'--with-mmap'
 		'--with-pic'
+		'--with-mpc'
+		'--with-gmp'
 		'--with-system-gdbinit=/etc/gdb/gdbinit'
 		'--with-bugurl=https://bugs.archlinux.org'
 		'--without-included-regex'
+		'--without-static-standard-libraries'
 
 	# 'babeltrace' related options
 		#'--with-babeltrace'
@@ -147,8 +157,11 @@ build() {
 		#'--without-system-zlib'
 	)
 
+	# Change directory to build directory
+	mkdir -p build && cd build
+
 	# Run package configuration script
-	./configure "${config_opts[@]}"
+	../configure "${config_opts[@]}"
 
 	# Build package
 	make
@@ -184,7 +197,7 @@ package_gdb() {
 	backup=('etc/gdb/gdbinit')
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-$pkgver/build
 
 	# Install files
 	make DESTDIR=$pkgdir install
@@ -197,9 +210,9 @@ package_gdb() {
 	touch etc/gdb/gdbinit
 
 	# Resolve conflicts with binutils
-	rm -f $pkgdir/usr/include/{ansidecl,diagnostics,bfd,bfd_stdint,bfdlink,dis-asm,plugin-api,symcat}.h
+	rm -f $pkgdir/usr/include/{ansidecl,bfd,bfdlink,dis-asm,plugin-api,symcat,ctf,ctf-api,bfd_stdint,diagnostics}.h
 	rm -f $pkgdir/usr/share/info/bfd.info
-	rm -f $pkgdir/usr/lib/{libbfd,libopcodes}*
+	rm -f $pkgdir/usr/lib/{libbfd,libopcodes,libctf,libctf-nobfd}{.a,*.so*}
 
 	# Split 'gdb-common' package
 	mkdir -p $srcdir/gdb-common/usr/share
