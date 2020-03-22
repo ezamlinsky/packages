@@ -28,10 +28,10 @@ depends=(
 	#'guile'
 	#'libidn'
 	#'libidn2'
+	'libp11-kit'
 	'libtasn1'
 	'libunistring'
 	'nettle'
-	'p11-kit'
 	#'trousers'
 	#'unbound'
 )
@@ -41,8 +41,8 @@ checkdepends=('net-tools')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/$pkgname-$pkgver.tar.xz"
-	"https://www.gnupg.org/ftp/gcrypt/gnutls/v3.6/$pkgname-$pkgver.tar.xz.sig"
+	"https://www.gnupg.org/ftp/gcrypt/$pkgname/v3.6/$pkgname-$pkgver.tar.xz"
+	"https://www.gnupg.org/ftp/gcrypt/$pkgname/v3.6/$pkgname-$pkgver.tar.xz.sig"
 )
 sha256sums=(
 	'bfacf16e342949ffd977a9232556092c47164bd26e166736cf3459a870506c4b'
@@ -83,14 +83,35 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--enable-manpages'
 		'--disable-tests'
+		'--enable-manpages'
 		'--disable-doc'
 		'--disable-gtk-doc'
+		'--enable-sha1-support'
+		'--enable-ssl2-support'
+		'--enable-ssl3-support'
+		'--enable-alpn-support'
+		'--enable-dtls-srtp-support'
+		'--enable-heartbeat-support'
+		'--enable-srp-authentication'
+		'--enable-psk-authentication'
+		'--enable-anon-authentication'
+		'--enable-dhe'
+		'--enable-ecdhe'
+		'--enable-gost'
+		'--enable-ocsp'
+		'--disable-cryptodev'
+		'--enable-cxx'
+		'--enable-tools'
+		'--enable-hardware-acceleration'
+		'--enable-padlock'
+		'--enable-fips140-mode'
+		'--enable-non-suiteb-curves'
 		'--enable-openssl-compatibility'
 		'--enable-local-libopts'
 		'--enable-libopts-install'
 		'--enable-threads=posix'
+		'--with-libregex'
 		'--with-default-trust-store-pkcs11=pkcs11:model=p11-kit-trust;manufacturer=PKCS%2311%20Kit'
 
 	# 'guile' related options
@@ -109,7 +130,7 @@ build() {
 		'--without-included-unistring'
 		#'--with-included-unistring'
 
-	# 'p11-kit' related options
+	# 'libp11-kit' related options
 		'--with-p11-kit'
 		#'--without-p11-kit'
 
