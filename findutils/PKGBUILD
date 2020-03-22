@@ -17,7 +17,7 @@ pkgdesc='GNU utilities to locate files'
 url='https://www.gnu.org/software/findutils'
 license=('GPL3')
 arch=('x86_64')
-groups=('base' 'base-devel')
+groups=('base-devel')
 
 #==============================================================================#
 #       Package dependencies                                                   #
@@ -32,8 +32,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"ftp://ftp.gnu.org/pub/gnu/findutils/findutils-$pkgver.tar.xz"
-	"ftp://ftp.gnu.org/pub/gnu/findutils/findutils-$pkgver.tar.xz.sig"
+	"ftp://ftp.gnu.org/pub/gnu/$pkgname/$pkgname-$pkgver.tar.xz"
+	"ftp://ftp.gnu.org/pub/gnu/$pkgname/$pkgname-$pkgver.tar.xz.sig"
 )
 sha1sums=(
 	'bd2fae4add80334173e03272aeed5635d4a0fa03'
@@ -83,6 +83,7 @@ build() {
 		'--enable-leaf-optimisation'
 		'--enable-d_type-optimization'
 		'--without-included-regex'
+		'--with-fts'
 
 	# 'libselinux' related options
 		#'--with-selinux'
