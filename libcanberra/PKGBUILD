@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='libcanberra'
 pkgname=('libcanberra' 'libcanberra-pulse' 'libcanberra-gstreamer')
-pkgver=0.30+2+gc0620e4
+pkgver=0.30
 pkgrel=2
 url='http://0pointer.de/lennart/projects/libcanberra'
 license=('LGPL')
@@ -45,9 +45,9 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='c0620e432650e81062c1967cc669829dbd29b310'  # master
+_commit='c0620e432650e81062c1967cc669829dbd29b310'
 source=(
-	"git+http://git.0pointer.net/clone/libcanberra.git#commit=$_commit"
+	"git+http://git.0pointer.net/clone/${pkgbase}.git#commit=$_commit"
 	'libcanberra.xinit'
 )
 sha256sums=(
@@ -68,7 +68,8 @@ prepare() {
 	sed -e 's|freedesktop/stereo|default/stereo|g' -i src/test-canberra.c
 
 	# Fix systemd service files
-	sed -e '/#/d' -e '/ConditionPathExists=/d' \
+	sed -e '/#/d' \
+		-e '/ConditionPathExists=/d' \
 		-i src/canberra-system-bootup.service.in \
 		-i src/canberra-system-shutdown.service.in \
 		-i src/canberra-system-shutdown-reboot.service.in
