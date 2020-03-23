@@ -29,8 +29,7 @@ depends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_pkgver=20191231-3.1
-source=("https://thrysoee.dk/editline/libedit-$_pkgver.tar.gz")
+source=("https://thrysoee.dk/editline/$pkgname-${pkgver/_/-}.tar.gz")
 sha256sums=('dbb82cb7e116a5f8025d35ef5b4f7d4a3cdd0a3909a146a39112095a2d229071')
 
 #==============================================================================#
@@ -39,7 +38,7 @@ sha256sums=('dbb82cb7e116a5f8025d35ef5b4f7d4a3cdd0a3909a146a39112095a2d229071')
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname-$_pkgver
+	cd $pkgname-${pkgver/_/-}
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -53,7 +52,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$_pkgver
+	cd $pkgname-${pkgver/_/-}
 
 	# Default configure options
 	config_opts=(
@@ -88,7 +87,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$_pkgver
+	cd $pkgname-${pkgver/_/-}
 
 	# Install files
 	make DESTDIR=$pkgdir install
