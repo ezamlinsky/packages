@@ -23,16 +23,17 @@ arch=('x86_64')
 #==============================================================================#
 depends=('glibc')
 makedepends=(
-	'git'
-	'meson'
 	'doxygen'
+	'git'
+	'mesa-libgl'
+	'meson'
 )
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='09edbe01d901c0f01e866aa08455c6d9ee6fd0ac'
-source=("git+https://github.com/anholt/libepoxy#commit=$_commit")
+source=("git+https://github.com/anholt/${pkgname}#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
