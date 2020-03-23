@@ -31,8 +31,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.gnupg.org/ftp/gcrypt/libksba/libksba-$pkgver.tar.bz2"
-	"https://www.gnupg.org/ftp/gcrypt/libksba/libksba-$pkgver.tar.bz2.sig"
+	"https://www.gnupg.org/ftp/gcrypt/$pkgname/$pkgname-$pkgver.tar.bz2"
+	"https://www.gnupg.org/ftp/gcrypt/$pkgname/$pkgname-$pkgver.tar.bz2.sig"
 )
 sha1sums=(
 	'a98385734a0c3f5b713198e8d6e6e4aeb0b76fde'
@@ -73,6 +73,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-optimization'
 	)
 
 	# Run package configuration script
