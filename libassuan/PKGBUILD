@@ -14,7 +14,7 @@ pkgname=('libassuan')
 pkgver=2.5.3
 pkgrel=2
 pkgdesc='IPC library used by some GnuPG related software'
-url='http://www.gnupg.org/related_software/libassuan/'
+url='https://www.gnupg.org/related_software/libassuan/'
 license=('GPL')
 arch=('x86_64')
 
@@ -31,8 +31,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://gnupg.org/ftp/gcrypt/libassuan/libassuan-$pkgver.tar.bz2"
-	"https://gnupg.org/ftp/gcrypt/libassuan/libassuan-$pkgver.tar.bz2.sig"
+	"https://gnupg.org/ftp/gcrypt/$pkgname/$pkgname-$pkgver.tar.bz2"
+	"https://gnupg.org/ftp/gcrypt/$pkgname/$pkgname-$pkgver.tar.bz2.sig"
 )
 sha256sums=(
 	'91bcb0403866b4e7c4bc1cc52ed4c364a9b5414b3994f718c70303f7f765e702'
