@@ -26,7 +26,7 @@ depends=('glibc')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/stevegrubb/libcap-ng/archive/v${pkgver}.tar.gz")
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/stevegrubb/$pkgname/archive/v${pkgver}.tar.gz")
 sha512sums=('371dc1c1f6e2999ef4b4173e12338e9a794e9f48bd5ce8fb4d0c05884cff277ecf24f51e4b300487f9b5f52d93de7eeb1542ebb49c82226d06dd44fa76092367')
 
 #==============================================================================#
@@ -62,7 +62,6 @@ build() {
 		'--localstatedir=/var'
 		'--enable-silent-rules'
 		'--enable-shared'
-		'--disable-static'
 		'--disable-static'
 		'--without-debug'
 		'--without-python'
