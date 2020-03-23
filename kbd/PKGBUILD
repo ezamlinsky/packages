@@ -42,7 +42,7 @@ replaces=('vlock')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"git+https://git.kernel.org/pub/scm/linux/kernel/git/legion/kbd.git#tag=v$pkgver"
+	"git+https://git.kernel.org/pub/scm/linux/kernel/git/legion/$pkgname.git#tag=v$pkgver"
 	'fix-euro2.patch'
 	'kbd-fix-loadkmap-compat.patch'
 )
@@ -99,8 +99,10 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--enable-optional-progs'
 		'--disable-tests'
+		'--enable-vlock'
+		'--enable-libkeymap'
+		'--enable-optional-progs'
 	)
 
 	# Run package configuration script
