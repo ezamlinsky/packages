@@ -21,13 +21,11 @@ arch=('x86_64')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=(
-	'glibc'
-	'xproto'
-)
+depends=('glibc')
 makedepends=(
-	'xtrans>=1.2.5'
 	'xorg-util-macros'
+	'xorgproto'
+	'xtrans>=1.2.5'
 )
 
 #==============================================================================#
@@ -76,6 +74,8 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-docs'
+		'--enable-specs'
 		'--enable-unix-transport'
 		'--disable-tcp-transport'
 		'--disable-ipv6'
