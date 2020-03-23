@@ -54,8 +54,8 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-$pkgver.tar.xz"
-	"https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-$pkgver.tar.sign"
+	"https://www.kernel.org/pub/linux/utils/kernel/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/kernel/$pkgname/$pkgname-$pkgver.tar.sign"
 	'depmod-search.conf'
 	'depmod.hook'
 	'depmod.script'
@@ -103,6 +103,8 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-debug'
+		'--disable-experimental'
+		'--enable-test-modules'
 		'--enable-tools'
 		'--enable-logging'
 		'--enable-manpages'
