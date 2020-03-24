@@ -14,7 +14,7 @@ pkgname=('libxfce4util')
 pkgver=4.14.0
 pkgrel=1
 pkgdesc='Basic utility non-GUI functions for Xfce'
-url='http://www.xfce.org/'
+url='https://www.xfce.org/'
 license=('GPL2')
 arch=('x86_64')
 
@@ -35,7 +35,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://archive.xfce.org/src/xfce/libxfce4util/${pkgver%.*}/libxfce4util-$pkgver.tar.bz2")
+source=("https://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('32ad79b7992ec3fd863e8ff2f03eebda8740363ef9d7d910a35963ac1c1a6324')
 
 #==============================================================================#
@@ -72,11 +72,13 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--disable-debug'
 		'--disable-gtk-doc'
-		'--enable-introspection=no'
-		'--enable-vala=no'
+		'--disable-debug'
 		'--enable-debug=no'
+		'--enable-vala=no'
+		'--enable-introspection=no'
+		'--enable-visibility'
+		'--enable-linker-opts'
 	)
 
 	# Run package configuration script
