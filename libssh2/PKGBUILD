@@ -38,8 +38,8 @@ provides=('libssh2.so')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.libssh2.org/download/libssh2-$pkgver.tar.gz"
-	"https://www.libssh2.org/download/libssh2-$pkgver.tar.gz.asc"
+	"https://www.libssh2.org/download/$pkgname-$pkgver.tar.gz"
+	"https://www.libssh2.org/download/$pkgname-$pkgver.tar.gz.asc"
 )
 md5sums=(
 	'1beefafe8963982adc84b408b2959927'
@@ -80,7 +80,9 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-werror'
 		'--disable-debug'
+		'--enable-gex-new'
 		'--enable-hidden-symbols'
 		'--disable-examples-build'
 
