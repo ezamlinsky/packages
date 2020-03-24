@@ -36,8 +36,8 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://www.tcpdump.org/release/libpcap-$pkgver.tar.gz"
-	"http://www.tcpdump.org/release/libpcap-$pkgver.tar.gz.sig"
+	"https://www.tcpdump.org/release/$pkgname-$pkgver.tar.gz"
+	"https://www.tcpdump.org/release/$pkgname-$pkgver.tar.gz.sig"
 	'mgmt.h'
 )
 sha256sums=(
@@ -80,11 +80,15 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-yydebug'
+		'--disable-optimizer-dbg'
 		'--enable-usb'
 		'--enable-ipv6'
 		'--enable-netmap'
 		'--enable-rdma'
+		'--enable-protochain'
 		'--enable-packet-ring'
+		'--enable-remote'
 
 	# 'bluez-libs' related options
 		'--enable-bluetooth'
