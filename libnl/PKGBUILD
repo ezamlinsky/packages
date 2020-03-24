@@ -35,8 +35,8 @@ backup=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/thom311/libnl/releases/download/libnl${pkgver//./_}/libnl-$pkgver.tar.gz"
-	"https://github.com/thom311/libnl/releases/download/libnl${pkgver//./_}/libnl-$pkgver.tar.gz.sig"
+	"https://github.com/thom311/$pkgname/releases/download/${pkgname}${pkgver//./_}/$pkgname-$pkgver.tar.gz"
+	"https://github.com/thom311/$pkgname/releases/download/${pkgname}${pkgver//./_}/$pkgname-$pkgver.tar.gz.sig"
 )
 sha256sums=(
 	'352133ec9545da76f77e70ccb48c9d7e5324d67f6474744647a7ed382b5e05fa'
