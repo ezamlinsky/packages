@@ -14,7 +14,7 @@ pkgname=('libxfce4ui')
 pkgver=4.14.1
 pkgrel=2
 pkgdesc='Commonly used Xfce widgets among Xfce applications'
-url='http://www.xfce.org/'
+url='https://www.xfce.org/'
 license=('GPL2')
 arch=('x86_64')
 
@@ -25,6 +25,7 @@ depends=(
 	'atk'
 	'cairo'
 	'gdk-pixbuf2'
+	'glade'
 	'glib2'
 	'glibc'
 	'gtk2'
@@ -48,7 +49,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://archive.xfce.org/src/xfce/libxfce4ui/${pkgver%.*}/libxfce4ui-$pkgver.tar.bz2")
+source=("http://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('c449075eaeae4d1138d22eeed3d2ad7032b87fb8878eada9b770325bed87f2da')
 
 #==============================================================================#
@@ -90,8 +91,13 @@ build() {
 		'--disable-gtk-doc'
 		'--disable-debug'
 		'--enable-debug=no'
+		'--enable-visibility'
 		'--with-x'
 		'--with-vendor-info=Arch_Linux'
+
+	# 'glade' related options
+		'--enable-gladeui'
+		#'--disable-gladeui'
 
 	# 'gtk2' related options
 		'--enable-gtk2'
