@@ -27,10 +27,7 @@ depends=(
 	'libxext'
 )
 makedepends=(
-	'compositeproto'
-	'damageproto'
-	'resourceproto'
-	'scrnsaverproto'
+	'xorgproto'
 	'xorg-util-macros'
 )
 
