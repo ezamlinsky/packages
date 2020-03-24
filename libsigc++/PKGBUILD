@@ -32,7 +32,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='06fabac512bf81164d5b01f877927cb39e9db864'  # tags/2.10.2^0
+_commit='06fabac512bf81164d5b01f877927cb39e9db864'
 source=("git+https://github.com/libsigcplusplus/libsigcplusplus#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -72,7 +72,9 @@ build() {
 		'--disable-static'
 		'--disable-deprecated-api'
 		'--enable-documentation'
+		'--enable-warnings=min'
 		'--enable-benchmark=no'
+		'--with-boost=yes'
 	)
 
 	# Run package configuration script
