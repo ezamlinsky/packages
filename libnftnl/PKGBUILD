@@ -23,7 +23,6 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'glibc'
-	#'jansson'
 	'libmnl'
 )
 
@@ -31,8 +30,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://netfilter.org/projects/libnftnl/files/libnftnl-$pkgver.tar.bz2"
-	"http://netfilter.org/projects/libnftnl/files/libnftnl-$pkgver.tar.bz2.sig"
+	"http://netfilter.org/projects/$pkgname/files/$pkgname-$pkgver.tar.bz2"
+	"http://netfilter.org/projects/$pkgname/files/$pkgname-$pkgver.tar.bz2.sig"
 	'01-flowtable.patch::https://git.netfilter.org/libnftnl/patch/?id=b2388765e0c4405442faa13845419f6a35d0134c'
 )
 sha1sums=(
@@ -79,10 +78,6 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-
-	# 'jansson' related options
-		#'--with-json-parsing'
-		'--without-json-parsing'
 	)
 
 	# Run package configuration script
