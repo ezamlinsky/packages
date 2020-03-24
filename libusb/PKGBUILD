@@ -43,7 +43,7 @@ replaces=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://github.com/libusb/libusb/releases/download/v$pkgver/libusb-$pkgver.tar.bz2")
+source=("https://github.com/$pkgname/$pkgname/releases/download/v$pkgver/$pkgname-$pkgver.tar.bz2")
 md5sums=('1e29700f6a134766d32b36b8d1d61a95')
 
 #==============================================================================#
@@ -81,6 +81,8 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-log'
+		'--disable-debug-log'
+		'--disable-system-log'
 		'--disable-examples-build'
 		'--disable-tests-build'
 		'--enable-timerfd'
