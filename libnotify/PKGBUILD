@@ -46,7 +46,7 @@ provides=('libnotify.so')
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='98a4bf483a69c6436311bcb9834d9d93235c96b7'
-source=("git+https://gitlab.gnome.org/GNOME/libnotify.git#commit=$_commit")
+source=("git+https://gitlab.gnome.org/GNOME/${pkgname}.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -59,9 +59,11 @@ build() {
 
 	# Default configure options
 	config_opts=(
-		'-Dintrospection=disabled'
-		'-Ddocbook_docs=disabled'
+		'-Dtests=false'
+		'-Dman=true'
 		'-Dgtk_doc=true'
+		'-Ddocbook_docs=disabled'
+		'-Dintrospection=disabled'
 	)
 
 	# Run package configuration script
