@@ -27,8 +27,8 @@ depends=('glibc')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/gnu/libtasn1/libtasn1-$pkgver.tar.gz"
-	"https://ftp.gnu.org/gnu/libtasn1/libtasn1-$pkgver.tar.gz.sig"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz.sig"
 )
 sha256sums=(
 	'0e0fb0903839117cb6e3b56e68222771bebf22ad7fc2295a0ed7d576e8d4329d'
