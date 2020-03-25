@@ -27,8 +27,8 @@ install="archlinux-keyring.install"
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://sources.archlinux.org/other/archlinux-keyring/archlinux-keyring-$pkgver.tar.gz"
-	"https://sources.archlinux.org/other/archlinux-keyring/archlinux-keyring-$pkgver.tar.gz.sig"
+	"https://sources.archlinux.org/other/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://sources.archlinux.org/other/$pkgname/$pkgname-$pkgver.tar.gz.sig"
 )
 sha256sums=(
 	'ecd1dbae1cb4886bf68ccbcff2194ba5626787b112f10e71d84a502fd45f7b0f'
