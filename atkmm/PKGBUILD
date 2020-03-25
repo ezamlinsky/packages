@@ -14,7 +14,7 @@ pkgbase='atkmm'
 pkgname=('atkmm' 'atkmm-docs')
 pkgver=2.28.0
 pkgrel=1
-url='http://www.gtkmm.org/'
+url='https://www.gtkmm.org/'
 license=('LGPL')
 arch=('x86_64')
 
@@ -31,8 +31,8 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='e1f4d5394a7982cc3c82ca63676a2928cd8819c1'  # tags/2.28.0^0
-source=("git+https://gitlab.gnome.org/GNOME/atkmm.git#commit=$_commit")
+_commit='e1f4d5394a7982cc3c82ca63676a2928cd8819c1'
+source=("git+https://gitlab.gnome.org/GNOME/$pkgbase.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -70,6 +70,8 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-maintainer-mode'
+		'--enable-documentation'
+		'--enable-deprecated-api'
 	)
 
 	# Run package configuration script
@@ -121,7 +123,7 @@ package_atkmm() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_atkmm-docs() {
 	pkgdesc='C++ bindings for ATK (documentation)'
-	depends=()
+	depends=('atkmm')
 	options=('docs')
 
 	# Copy files
