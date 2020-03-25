@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('git')
-pkgver=2.25.1
+pkgver=2.26.0
 pkgrel=1
 pkgdesc='The fast distributed version control system'
 url='https://git-scm.com/'
@@ -75,15 +75,17 @@ install='git.install'
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.kernel.org/pub/software/scm/git/git-$pkgver.tar.xz"
-	"https://www.kernel.org/pub/software/scm/git/git-$pkgver.tar.sign"
+	"https://www.kernel.org/pub/software/scm/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/software/scm/$pkgname/$pkgname-$pkgver.tar.sign"
+	'0001-git-p4-python.patch'
 	'git-daemon@.service'
 	'git-daemon.socket'
 	'git-sysusers.conf'
 )
 sha256sums=(
-	'222796cc6e3bf2f9fd765f8f097daa3c3999bb7865ac88a8c974d98182e29f26'
+	'9ece0dcb07a5e0d7366a92b613b201cca11ae368ab7687041364b3e756e495d6'
 	'SKIP'
+	'0d19345aaeaeb374f8bfc30b823e8f53cb128c56b68c6504bbdd8766c03d1df9'
 	'14c0b67cfe116b430645c19d8c4759419657e6809dfa28f438c33a005245ad91'
 	'ac4c90d62c44926e6d30d18d97767efc901076d4e0283ed812a349aece72f203'
 	'7630e8245526ad80f703fac9900a1328588c503ce32b37b9f8811674fcda4a45'
@@ -96,6 +98,9 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname-$pkgver
+
+	# Apply patches
+	patch -p1 -i $srcdir/0001-git-p4-python.patch
 
 	# Generate configure script
 	make configure
@@ -122,6 +127,8 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-pthreads'
+		'--with-pager=less'
+		'--with-editor=mcedit'
 
 	# 'curl' related options
 		'--with-curl'
@@ -221,6 +228,10 @@ package() {
 	mkdir -p $pkgdir/usr/share/bash-completion/completions/
 	install -m 0644 ./contrib/completion/git-completion.bash $pkgdir/usr/share/bash-completion/completions/git
 
+	# Create fancy git prompt
+	mkdir -p $pkgdir/usr/share/git/
+	install -m 0644 ./contrib/completion/git-prompt.sh $pkgdir/usr/share/git/git-prompt.sh
+
 	# Install subtree feature
 	make -C contrib/subtree DESTDIR=$pkgdir install install-man
 
@@ -248,8 +259,15 @@ package() {
 	# Install sysusers file which define special user 'git' to run git-daemon
 	install -Dm644 $srcdir/git-sysusers.conf $pkgdir/usr/lib/sysusers.d/git.conf
 
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Move perl modules to correct place
+	mkdir -p usr/share/perl5/vendor_perl
+	mv usr/share/perl5/Git* usr/share/perl5/vendor_perl
+
 	# Remove 'Git' directory from the FS root
-	rm -fr $pkgdir/Git
+	rm -fr Git
 }
 
 ################################################################################
