@@ -26,6 +26,7 @@ makedepends=(
 	'gcc-libs'
 	'glibc'
 	'icu'
+	#'openmpi'
 	#'python'
 	#'python-numpy'
 	'python2'
@@ -38,7 +39,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://dl.bintray.com/boostorg/release/${pkgver}/source/boost_${pkgver//./_}.tar.bz2")
+source=("https://dl.bintray.com/boostorg/release/${pkgver}/source/${pkgbase}_${pkgver//./_}.tar.bz2")
 sha256sums=('59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722')
 
 #==============================================================================#
@@ -82,8 +83,8 @@ build() {
 		'debug-symbols=off'
 		'variant=release'
 		'threading=multi'
-		'link=shared'
-		'runtime-link=shared,static'
+		'link=shared,static'
+		'runtime-link=shared'
 		'--stagedir=release'
 		'--layout=system'
 		'--build-dir=build'
@@ -107,6 +108,10 @@ build() {
 package_boost() {
 	pkgdesc='Free peer-reviewed portable C++ source libraries - development headers'
 	depends=("boost-libs=$pkgver")
+	optdepends=(
+		'python: for python bindings'
+		'python2: for python2 bindings'
+	)
 
 	# Change directory to source directory
 	cd ${pkgbase}_${pkgver//./_}
