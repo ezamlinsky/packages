@@ -46,16 +46,18 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/lm-sensors/lm-sensors/archive/V${pkgver//./-}.tar.gz"
+	"https://github.com/${pkgname//_/-}/${pkgname//_/-}/archive/V${pkgver//./-}.tar.gz"
 	'healthd'
 	'healthd.conf'
 	'healthd.service'
+	'sensord.conf'
 )
 sha256sums=(
 	'0591f9fa0339f0d15e75326d0365871c2d4e2ed8aa1ff759b3a55d3734b7d197'
 	'0ac9afb2a9155dd74ab393756ed552cd542dde1081149beb2ab4ec7ff55b8f4a'
 	'5d17a366b175cf9cb4bb0115c030d4b8d91231546f713784a74935b6e533da9f'
 	'2638cd363e60f8d36bcac468f414a6ba29a1b5599f40fc651ca953858c8429d7'
+	'23bebef4c250f8c0aaba2c75fd3d2c8ee9473cc91a342161a9f5b3a34ddfa9e5'
 )
 
 #==============================================================================#
@@ -107,6 +109,7 @@ package() {
 
 	# Install config files
 	install -Dm644 $srcdir/healthd.conf $pkgdir/etc/healthd.conf
+	install -Dm644 $srcdir/sensord.conf $pkgdir/etc/conf.d/sensord
 
 	# Install systemd *.service files
 	install -Dm644 $srcdir/healthd.service $pkgdir/usr/lib/systemd/system/healthd.service
