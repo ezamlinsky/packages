@@ -29,8 +29,8 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='e9ef515b7b8db5b4f024ddfefe5dfc03f2b8ccea'  # tags/v1.12.2^0
-source=("git+https://anongit.freedesktop.org/git/cairomm#commit=$_commit")
+_commit='e9ef515b7b8db5b4f024ddfefe5dfc03f2b8ccea'
+source=("git+https://anongit.freedesktop.org/git/${pkgbase}#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -68,6 +68,9 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-maintainer-mode'
+		'--enable-documentation'
+		'--enable-api-exceptions'
+		'--disable-tests'
 	)
 
 	# Run package configuration script
@@ -117,7 +120,7 @@ package_cairomm() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_cairomm-docs() {
 	pkgdesc='C++ bindings for Cairo (documentation)'
-	depends=()
+	depends=('cairomm')
 	options=('docs')
 
 	# Copy files
