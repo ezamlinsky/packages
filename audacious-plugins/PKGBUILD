@@ -14,7 +14,7 @@ pkgname=('audacious-plugins')
 pkgver=3.10.1
 pkgrel=4
 pkgdesc='Plugins for Audacious'
-url='http://audacious-media-player.org/'
+url='https://audacious-media-player.org/'
 license=('BSD' 'GPL')
 arch=('x86_64')
 
@@ -60,6 +60,7 @@ depends=(
 	#'mpg123'
 	#'neon'
 	'pango'
+	'pulseaudio'
 	#'sdl'
 	#'sdl2'
 	#'sndio'
@@ -71,7 +72,7 @@ makedepends=('python')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://distfiles.audacious-media-player.org/audacious-plugins-$pkgver.tar.bz2")
+source=("https://distfiles.audacious-media-player.org/audacious-plugins-$pkgver.tar.bz2")
 sha256sums=('eec3177631f99729bf0e94223b627406cc648c70e6646e35613c7b55040a2642')
 
 #==============================================================================#
@@ -240,7 +241,7 @@ build() {
 
 	# 'sdl' related options
 		#'--enable-sdlout'
-		#'--with-libsdl=1'
+		#'--with-libsdl=2'
 		'--disable-sdlout'
 
 	# 'sndio' related options
