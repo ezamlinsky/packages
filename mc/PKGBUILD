@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('mc')
 pkgver=4.8.24
-pkgrel=1
+pkgrel=2
 pkgdesc='A file manager that emulates Norton Commander'
 url='https://midnight-commander.org/'
 license=('GPL')
@@ -23,6 +23,7 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	#'aspell'
+	'bash'
 	'e2fsprogs'
 	'glib2'
 	'glibc'
@@ -30,6 +31,7 @@ depends=(
 	'libssh2'
 	'ncurses'
 	'pcre'
+	'perl'
 	#'slang'
 )
 makedepends=(
@@ -74,11 +76,13 @@ backup=(
 #==============================================================================#
 source=(
 	"http://ftp.midnight-commander.org/$pkgname-$pkgver.tar.xz"
-	"mc-mksh-subshell-v2.patch"
+	'mc-mksh-subshell-v2.patch'
+	'mc-python3.patch'
 )
 sha256sums=(
 	'859f1cc070450bf6eb4d319ffcb6a5ac29deb0ac0d81559fb2e71242b1176d46'
 	'5147afa3f9dfc00d8b7b36bbb144bcdb78d86301a0f8196686262a9eee41fb96'
+	'10ab8b8c03770f8fe51f0bdbf0d66a44313bf2eed687cf769397909c07d8e8d5'
 )
 
 #==============================================================================#
@@ -91,6 +95,7 @@ prepare() {
 
 	# Apply patches
 	patch -p1 -i $srcdir/mc-mksh-subshell-v2.patch
+	patch -p1 -i $srcdir/mc-python3.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -119,7 +124,6 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--disable-static'
 		'--enable-mclib'
 		'--enable-charset'
 		'--enable-background'
@@ -136,6 +140,7 @@ build() {
 		'--disable-doxygen-html'
 		'--disable-doxygen-ps'
 		'--disable-doxygen-pdf'
+		'--enable-vfs'
 		'--enable-vfs-cpio'
 		'--enable-vfs-extfs'
 		'--enable-vfs-fish'
@@ -149,6 +154,8 @@ build() {
 		'--with-internal-edit'
 		'--with-diff-viewer'
 		'--with-mmap'
+		'--with-x'
+		'--without-glib-static'
 
 	# 'aspell' related options
 		#'--enable-aspell'
@@ -192,9 +199,6 @@ build() {
 	if [ -f libtool ]; then
 		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
 	fi
-
-	# Set path to Python interpreter
-	export PYTHON_PATH=/usr/bin/python2
 
 	# Build package
 	make
