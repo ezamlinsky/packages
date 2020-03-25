@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('binutils')
 pkgver=2.34
-pkgrel=1
+pkgrel=2
 pkgdesc='A set of programs to assemble and manipulate binary and object files'
 url='https://www.gnu.org/software/binutils/'
 license=('GPL')
@@ -23,6 +23,7 @@ groups=('base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'elfutils'
 	'gcc-libs'
 	'glibc'
 	'zlib'
@@ -40,11 +41,16 @@ conflicts=('binutils-multilib')
 replaces=('binutils-multilib')
 
 #==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('staticlibs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/gnu/binutils/binutils-$pkgver.tar.xz"
-	"https://ftp.gnu.org/gnu/binutils/binutils-$pkgver.tar.xz.sig"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.xz.sig"
 )
 md5sums=(
 	'664ec3a2df7805ed3464639aaae332d6'
@@ -82,7 +88,7 @@ build() {
 		'--localstatedir=/var'
 		'--enable-silent-rules'
 		'--enable-shared'
-		'--disable-static'
+		'--enable-static'
 		'--disable-werror'
 		'--disable-checking'
 		'--disable-multilib'
@@ -90,6 +96,7 @@ build() {
 		'--disable-vtable-verify'
 		'--enable-separate-code'
 		'--disable-default-strings-all'
+		'--enable-targets=x86_64-pep'
 		'--enable-default-hash-style=gnu'
 		'--enable-ld=yes'
 		'--enable-gold=yes'
@@ -105,12 +112,20 @@ build() {
 		'--enable-secureplt'
 		'--enable-libssp'
 		'--enable-libquadmath'
+		'--enable-libstdcxx'
+		'--enable-liboffloadmic=host'
 		'--enable-elf-stt-common'
 		'--enable-x86-relax-relocations'
 		'--enable-install-libbfd'
 		'--enable-initfini-array'
 		'--with-mmap'
 		'--with-pic'
+		'--with-isl'
+		'--with-mpc'
+		'--with-mpfr'
+		'--with-gmp'
+		'--without-debuginfod'
+		'--without-static-standard-libraries'
 		'--with-lib-path=/usr/lib:/usr/local/lib'
 		'--with-bugurl=https://bugs.archlinux.org'
 
@@ -123,7 +138,7 @@ build() {
 	./configure "${config_opts[@]}"
 
 	# Build package
-	make
+	make configure-host && make
 }
 
 #==============================================================================#
