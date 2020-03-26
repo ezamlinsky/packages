@@ -51,8 +51,8 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://plugins.geany.org/geany-plugins/geany-plugins-$pkgver.tar.bz2"
-	"https://plugins.geany.org/geany-plugins/geany-plugins-$pkgver.tar.bz2.sig"
+	"https://plugins.geany.org/$pkgname/$pkgname-$pkgver.tar.bz2"
+	"https://plugins.geany.org/$pkgname/$pkgname-$pkgver.tar.bz2.sig"
 )
 sha256sums=(
 	'ebe18dd699292174622e8cb8745b020ada8a5be3b604ab980af36e8518df7ce6'
@@ -91,6 +91,8 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-multiterm'
+		'--disable-devhelp'
 		'--enable-utilslib'
 		'--enable-peg-markdown'
 		'--enable-addons'
@@ -98,6 +100,7 @@ build() {
 		'--enable-automark'
 		'--enable-codenav'
 		'--enable-commander'
+		'--enable-debugger'
 		'--enable-defineformat'
 		'--enable-geanyctags'
 		'--enable-geanydoc'
