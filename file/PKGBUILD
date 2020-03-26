@@ -23,8 +23,10 @@ groups=('base-devel')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'bzip2'
 	'glibc'
 	'libseccomp'
+	'xz'
 	'zlib'
 )
 
@@ -70,9 +72,6 @@ build() {
 	# Change directory to source directory
 	cd $pkgname-$pkgver
 
-	# Fix linking libmagic (vfork needs libpthread)
-	CFLAGS+=" -pthread"
-
 	# Default configure options
 	config_opts=(
 		'--prefix=/usr'
@@ -90,14 +89,25 @@ build() {
 		'--enable-elf-core'
 		'--enable-fsect-man5'
 
+	# 'bzip2' related options
+		'--enable-bzlib'
+		#'--disable-bzlib'
+
 	# 'libseccomp' related options
 		'--enable-libseccomp'
 		#'--disable-libseccomp'
+
+	# 'xz' related options
+		'--enable-xzlib'
+		#'--disable-xzlib'
 
 	# 'zlib' related options
 		'--enable-zlib'
 		#'--disable-zlib'
 	)
+
+	# Change compile flags
+	export CFLAGS+=' -pthread'
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
