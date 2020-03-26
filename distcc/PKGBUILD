@@ -48,7 +48,7 @@ backup=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"git+https://github.com/distcc/distcc#tag=v$pkgver"
+	"git+https://github.com/$pkgname/${pkgname}#tag=v$pkgver"
 	'distccd.conf.d'
 	'distccd.service'
 )
@@ -91,6 +91,8 @@ build() {
 		'--localstatedir=/var'
 		'--enable-rfc2553'
 		'--disable-Werror'
+		'--with-libiberty'
+		'--without-gnome'
 
 	# 'avahi' related options
 		#'--with-avahi'
@@ -146,9 +148,10 @@ package() {
 	install -d $pkgdir/usr/lib/distcc/bin
 
 	# Substitute standard compilers by distcc
-	for compiler in cpp c89 c99 cc gcc c++ g++
+	for compiler in cpp c89 c99 cc gcc c++ g++ clang clang++ x86_64-pc-linux-gnu-g++ x86_64-pc-linux-gnu-gcc x86_64-pc-linux-gnu-gcc-9.2.0
 	do
 		ln -sf /usr/bin/distcc $pkgdir/usr/lib/distcc/bin/$compiler
+		ln -sf /usr/bin/distcc $pkgdir/usr/lib/distcc/$compiler
 	done
 
 	# If '/usr/share/distcc/distccmon-gnome' file exists
