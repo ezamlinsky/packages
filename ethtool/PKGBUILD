@@ -53,11 +53,6 @@ prepare() {
 #==============================================================================#
 #       Package building sequence                                              #
 #==============================================================================#
-#build() {
-#    cd $pkgname-$pkgver
-#    ./configure --prefix=/usr --mandir=/usr/share/man --sbindir=/usr/bin
-#    make
-#}
 build() {
 
 	# Change directory to source directory

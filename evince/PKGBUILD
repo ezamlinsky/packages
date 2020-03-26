@@ -79,7 +79,7 @@ provides=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='605711b172378fb55192b984455e0af8e00b3181'
-source=("git+https://gitlab.gnome.org/GNOME/evince.git#commit=$_commit")
+source=("git+https://gitlab.gnome.org/GNOME/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
