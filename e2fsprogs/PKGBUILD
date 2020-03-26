@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('e2fsprogs')
-pkgver=1.45.5
+pkgver=1.45.6
 pkgrel=1
 pkgdesc='Ext2/3/4 filesystem utilities'
 url='http://e2fsprogs.sourceforge.net'
@@ -43,12 +43,12 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${pkgver}/e2fsprogs-${pkgver}.tar.xz"
-	"https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${pkgver}/e2fsprogs-${pkgver}.tar.sign"
+	"https://www.kernel.org/pub/linux/kernel/people/tytso/$pkgname/v${pkgver}/$pkgname-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/linux/kernel/people/tytso/$pkgname/v${pkgver}/$pkgname-$pkgver.tar.sign"
 	'MIT-LICENSE'
 )
 sha256sums=(
-	'f9faccc0d90f73556e797dc7cc5979b582bd50d3f8609c0f2ad48c736d44aede'
+	'ffa7ae6954395abdc50d0f8605d8be84736465afc53b8938ef473fcf7ff44256'
 	'SKIP'
 	'cc45386c1d71f438ad648fd7971e49e3074ad9dbacf9dd3a5b4cb61fd294ecbb'
 )
@@ -90,14 +90,29 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-profile'
+		'--disable-backtrace'
+		'--disable-jbd-debug'
+		'--disable-blkid-debug'
+		'--disable-testio-debug'
 		'--enable-elf-shlibs'
-		'--disable-fsck'
 		'--disable-libuuid'
 		'--disable-libblkid'
-		'--enable-lto'
+		'--disable-uuidd'
+		'--disable-fsck'
 		'--enable-e2initrd-helper'
+		'--enable-tls'
+		'--enable-tdb'
+		'--enable-mmp'
+		'--enable-lto'
+		'--enable-debugfs'
+		'--enable-imager'
+		'--enable-resizer'
+		'--enable-defrag'
+		'--enable-bmap-stats'
 		'--enable-bmap-stats-ops'
 		'--enable-threads=posix'
+		'--with-root-prefix=""'
 
 	# 'fuse2' related options
 		#'--enable-fuse2fs'
@@ -134,6 +149,7 @@ package() {
 	install -Dm644 ../MIT-LICENSE $pkgdir/usr/share/licenses/e2fsprogs/MIT-LICENSE
 
 	# Create sample 'e2fsck.conf' config file
+	mkdir -p $pkgdir/etc
 	echo '[options]' >> $pkgdir/etc/e2fsck.conf
 	echo 'max_count_problems = 16' >> $pkgdir/etc/e2fsck.conf
 	echo 'log_dir = /var/log/e2fsck' >> $pkgdir/etc/e2fsck.conf
