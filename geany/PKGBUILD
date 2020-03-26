@@ -81,6 +81,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-binreloc'
 		'--enable-plugins'
 		'--enable-socket'
 		'--enable-vte'
