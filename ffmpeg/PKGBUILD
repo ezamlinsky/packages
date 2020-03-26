@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('ffmpeg')
 pkgver=4.2.2
-pkgrel=3
+pkgrel=4
 epoch=1
 pkgdesc='Complete solution to record, convert and stream audio and video'
 url='https://ffmpeg.org/'
@@ -24,11 +24,13 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'alsa-lib'
+	#'aribb24'
 	#'aom'
 	'bzip2'
 	'cairo'
 	#'celt'
 	#'chromaprint'
+	#'dav1d'
 	#'davs2'
 	#'decklink'
 	#'flite'
@@ -105,6 +107,7 @@ depends=(
 	'openjpeg2'
 	'openssl'
 	'opus'
+	#'pocketsphinx'
 	#'rockchip-mpp'
 	#'rubberband'
 	#'sdl2'
@@ -190,7 +193,36 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-debug'
+		'--assert-level=0'
+		'--enable-stripping'
+		'--enable-symver'
 		'--enable-optimizations'
+		'--enable-runtime-cpudetect'
+		'--enable-swscale-alpha'
+		'--disable-gray'
+		'--enable-autodetect'
+		'--enable-ffmpeg'
+		'--enable-ffplay'
+		'--enable-ffprobe'
+		'--enable-avdevice'
+		'--enable-avcodec'
+		'--enable-avformat'
+		'--enable-swresample'
+		'--enable-swscale'
+		'--enable-postproc'
+		'--enable-avfilter'
+		'--enable-pthreads'
+		'--enable-network'
+		'--enable-dct'
+		'--enable-dwt'
+		'--enable-lsp'
+		'--enable-lzo'
+		'--enable-mdct'
+		'--enable-rdft'
+		'--enable-fft'
+		'--enable-faan'
+		'--enable-error-resilience'
+		'--enable-pixelutils'
 		'--enable-gpl'
 		'--enable-version3'
 		'--enable-nonfree'
@@ -201,11 +233,37 @@ build() {
 		'--disable-htmlpages'
 		'--disable-podpages'
 		'--disable-txtpages'
+		'--enable-iconv'
 		'--enable-avisynth'
+		'--enable-asm'
+		'--enable-amd3dnow'
+		'--enable-amd3dnowext'
+		'--enable-mmx'
+		'--enable-mmxext'
+		'--enable-sse'
+		'--enable-sse2'
+		'--enable-sse3'
+		'--enable-ssse3'
+		'--enable-sse4'
+		'--enable-sse42'
+		'--enable-avx'
+		'--enable-xop'
+		'--enable-fma3'
+		'--enable-fma4'
+		'--enable-avx2'
+		'--enable-avx512'
+		'--enable-aesni'
+		'--enable-inline-asm'
+		'--enable-x86asm'
+		'--enable-fast-unaligned'
 
 	# 'alsa-lib' related options
 		'--enable-alsa'
 		#'--disable-alsa'
+
+	# 'aribb24' related options
+		#'--enable-libaribb24'
+		'--disable-libaribb24'
 
 	# 'bzip2' related options
 		'--enable-bzlib'
@@ -218,6 +276,10 @@ build() {
 	# 'chromaprint' related options
 		#'--enable-chromaprint'
 		'--disable-chromaprint'
+
+	# 'dav1d' related options
+		#'--enable-libdav1d'
+		'--disable-libdav1d'
 
 	# 'davs2' related options
 		#'--enable-libdavs2'
@@ -504,6 +566,10 @@ build() {
 	# 'opus' related options
 		'--enable-libopus'
 		#'--disable-libopus'
+
+	# 'pocketsphinx' related options
+		#'--enable-pocketsphinx'
+		'--disable-pocketsphinx'
 
 	# 'rockchip-mpp & libdrm' related options
 		#'--enable-rkmpp'
