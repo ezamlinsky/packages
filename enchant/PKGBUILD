@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('enchant')
-pkgver=2.2.7
+pkgver=2.2.8
 pkgrel=1
 pkgdesc='A wrapper library for generic spell checking'
 url='https://abiword.github.io/enchant/'
@@ -29,14 +29,15 @@ depends=(
 	#'hspell'
 	'hunspell'
 	#'libvoikko'
+	#'nuspell'
 )
 makedepends=('git')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("$pkgname-$pkgver.tar.gz::https://github.com/AbiWord/enchant/archive/v$pkgver.tar.gz")
-sha512sums=('8876596bfa7cf36470fab97d44c3acbb074e5bbe9d59a6cbcf654c3a472a6c2ff5c6d4eb1f9c35e852e2c68863a56a3b39cdae031fab462bee47455b31eb4fb7')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/AbiWord/$pkgname/archive/v$pkgver.tar.gz")
+sha512sums=('8dbb584c54c46defec35b2ba54befbf22302a60e579d60df543dc68bd545b6ad7dec3050fc4027e26844fbaf56c28071e1e6573a93e65738591133ac6d3ff6dc')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -71,6 +72,7 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-valgrind-tests'
+		'--enable-relocatable'
 
 	# 'aspell' related options
 		#'--with-aspell'
@@ -87,6 +89,10 @@ build() {
 	# 'libvoikko' related options
 		#'--with-voikko'
 		'--without-voikko'
+
+	# 'nuspell' related options
+		#'--with-nuspell'
+		'--without-nuspell'
 	)
 
 	# Run package configuration script
