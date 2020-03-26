@@ -48,7 +48,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://download.gnome.org/sources/easytag/${pkgver:0:3}/easytag-$pkgver.tar.xz")
+source=("https://download.gnome.org/sources/$pkgname/${pkgver:0:3}/$pkgname-$pkgver.tar.xz")
 sha256sums=('fc51ee92a705e3c5979dff1655f7496effb68b98f1ada0547e8cbbc033b67dd5')
 
 #==============================================================================#
@@ -71,6 +71,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-tests'
 		'--disable-schemas-compile'
 		'--enable-man'
 
