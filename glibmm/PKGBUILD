@@ -12,9 +12,9 @@
 #==============================================================================#
 pkgbase='glibmm'
 pkgname=('glibmm' 'glibmm-docs')
-pkgver=2.62.0
+pkgver=2.64.2
 pkgrel=1
-url='http://www.gtkmm.org/'
+url='https://www.gtkmm.org/'
 license=('LGPL')
 arch=('x86_64')
 
@@ -24,30 +24,18 @@ arch=('x86_64')
 makedepends=(
 	'clang'
 	'git'
+	'meson'
 	'mm-common'
 	'perl-xml-parser'
 )
+checkdepends=('glib-networking')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='ceff460bbfbca3acf60e6d35cf01961ff988177c'
-source=("git+https://gitlab.gnome.org/GNOME/glibmm.git#commit=$_commit")
+_commit='e775940669cb6d93f37ddc2b4cd7da446dfa482c'
+source=("git+https://gitlab.gnome.org/GNOME/$pkgbase.git#commit=$_commit")
 sha256sums=('SKIP')
-
-#==============================================================================#
-#       Package preparation sequence                                           #
-#==============================================================================#
-prepare() {
-
-	# Change directory to source directory
-	cd $pkgbase
-
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
-}
 
 #==============================================================================#
 #       Package building sequence                                              #
@@ -59,29 +47,30 @@ build() {
 
 	# Default configure options
 	config_opts=(
-		'--prefix=/usr'
-		'--bindir=/usr/bin'
-		'--sbindir=/usr/bin'
-		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib'
-		'--sysconfdir=/etc'
-		'--localstatedir=/var'
-		'--enable-silent-rules'
-		'--enable-shared'
-		'--disable-static'
-		'--enable-maintainer-mode'
+		'-Dmaintainer-mode=true'
+		'-Dbuild-documentation=true'
+		'-Dbuild-examples=false'
+		'-Dbuild-deprecated-api=true'
+		'-Ddebug-refcounting=false'
 	)
 
 	# Run package configuration script
-	./configure "${config_opts[@]}"
-
-	# Set correct LDFLAGS to build a shared archive
-	if [ -f libtool ]; then
-		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
-	fi
+	arch-meson build "${config_opts[@]}"
 
 	# Build package
-	make
+	ninja -C build
+}
+
+#==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgbase
+
+	# Run internal tests
+	ninja -C build test
 }
 
 #==============================================================================#
@@ -91,6 +80,10 @@ build() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #       Glibmm                                                                #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#==============================================================================#
+#       Package installation sequence                                          #
+#==============================================================================#
 package_glibmm() {
 	pkgdesc='C++ bindings for GLib'
 	depends=(
@@ -105,7 +98,7 @@ package_glibmm() {
 	cd $pkgbase
 
 	# Install files
-	make DESTDIR=$pkgdir install
+	DESTDIR=$pkgdir ninja -C build install
 
 	# Change directory to target directory
 	cd $pkgdir
