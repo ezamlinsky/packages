@@ -30,7 +30,7 @@ depends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://downloads.sourceforge.net/glew/glew-$pkgver.tgz")
+source=("https://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tgz")
 sha1sums=('18eca05460d0b61709fc115e632b6fe320718b44')
 
 #==============================================================================#
