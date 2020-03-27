@@ -14,7 +14,7 @@ pkgname=('groff')
 pkgver=1.22.4
 pkgrel=3
 pkgdesc='GNU troff text-formatting system'
-url='http://www.gnu.org/software/groff/groff.html'
+url='https://www.gnu.org/software/groff/groff.html'
 license=('GPL')
 arch=('x86_64')
 groups=('base-devel')
@@ -45,14 +45,14 @@ optdepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"ftp://ftp.gnu.org/gnu/groff/groff-$pkgver.tar.gz"
-	"ftp://ftp.gnu.org/gnu/groff/groff-$pkgver.tar.gz.sig"
+	"ftp://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz"
+	"ftp://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz.sig"
 	'site.tmac'
 )
-md5sums=(
-	'08fb04335e2f5e73f23ea4c3adbf0c5f'
+sha256sums=(
+	'e78e7b4cb7dec310849004fa88847c44701e8d133b5d4c13057d876c1bad0293'
 	'SKIP'
-	'a1fedafd7863b37968d32ad9ae1d8c13'
+	'af59ecde597ce9f8189368a7739279a5f8a391139fe048ef6b4e493ed46e5f5f'
 )
 
 #==============================================================================#
@@ -89,7 +89,9 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--without-uchardet'
 		'--with-doc=no'
+		'--with-compatibility-wrappers=check'
 
 	# 'libx11' related options
 		'--with-x'
@@ -139,8 +141,8 @@ package() {
 
 	# FS33760 - TERMCAP variables not followed
 	# TODO: everyone is doing this - find out why upstream does not...
-	cat $srcdir/site.tmac >> $pkgdir/usr/share/groff/site-tmac/man.local
-	cat $srcdir/site.tmac >> $pkgdir/usr/share/groff/site-tmac/mdoc.local
+	cp $srcdir/site.tmac $pkgdir/usr/share/groff/site-tmac/man.local
+	cp $srcdir/site.tmac $pkgdir/usr/share/groff/site-tmac/mdoc.local
 }
 
 ################################################################################
