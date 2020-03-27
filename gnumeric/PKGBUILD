@@ -14,7 +14,7 @@ pkgname=('gnumeric')
 pkgver=1.12.46
 pkgrel=2
 pkgdesc='A GNOME Spreadsheet Program'
-url='http://www.gnome.org/projects/gnumeric/'
+url='https://www.gnome.org/projects/gnumeric/'
 license=('GPL')
 arch=('x86_64')
 
@@ -57,9 +57,9 @@ optdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='40f0abbc353028a9a06bbfcd530763d1e9f900de'  # tags/GNUMERIC_1_12_46^0
+_commit='40f0abbc353028a9a06bbfcd530763d1e9f900de'
 source=(
-	"git+https://gitlab.gnome.org/GNOME/gnumeric.git#commit=$_commit"
+	"git+https://gitlab.gnome.org/GNOME/$pkgname.git#commit=$_commit"
 	'revert-warnings.patch'
 )
 sha256sums=(
@@ -108,6 +108,7 @@ build() {
 		'--enable-component'
 		'--enable-gtk-doc'
 		'--enable-introspection=no'
+		'--with-paradox'
 
 	# 'gtk3' related options
 		'--with-gtk'
