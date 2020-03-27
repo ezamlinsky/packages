@@ -26,14 +26,16 @@ makedepends=(
 	'intltool'
 	'libnautilus-extension'
 	'librsvg'
+	'mhash'
 	'nemo'
+	'peony'
 	'thunar'
 )
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://github.com/tristanheaven/gtkhash/releases/download/v$pkgver/gtkhash-$pkgver.tar.xz")
+source=("https://github.com/tristanheaven/$pkgbase/releases/download/v$pkgver/$pkgbase-$pkgver.tar.xz")
 sha256sums=('bd870bac6e14babfb6268b617a42e4bcd776559dd80dd62ad9f7cc28b773b8b2')
 
 #==============================================================================#
@@ -72,8 +74,11 @@ build() {
 		'--disable-static'
 		'--disable-schemas-compile'
 		'--disable-debug'
-		'--enable-linux-crypto'
+		'--enable-gtkhash'
+		'--enable-appstream'
+		'--enable-internal-md6'
 		'--enable-glib-checksums'
+		'--enable-linux-crypto'
 
 	# 'caja' related options
 		'--enable-caja'
@@ -99,6 +104,10 @@ build() {
 		#'--enable-mbedtls'
 		'--disable-mbedtls'
 
+	# 'mhash' related options
+		#'--enable-mhash'
+		'--disable-mhash'
+
 	# 'nemo' related options
 		'--enable-nemo'
 		#'--disable-nemo'
@@ -111,9 +120,14 @@ build() {
 		'--enable-libcrypto'
 		#'--disable-libcrypto'
 
+	# 'peony' related options
+		#'--enable-peony'
+		'--disable-peony'
+
 	# 'thunar' related options
 		'--enable-thunar'
 		#'--disable-thunar'
+		'--with-thunarx=3'
 
 	# 'zlib' related options
 		'--enable-zlib'
@@ -149,8 +163,10 @@ package_gtkhash() {
 		#'libb2'
 		'libgcrypt'
 		#'mbedtls'
+		#'mhash'
 		'nettle'
 		'openssl'
+		#'peony'
 		'zlib'
 	)
 
@@ -198,6 +214,7 @@ package_gtkhash-nemo() {
 		'gtk3'
 		'gtkhash'
 		'libgcrypt'
+		#'mhash'
 		'nemo'
 		'nettle'
 		'openssl'
@@ -220,6 +237,7 @@ package_gtkhash-nautilus() {
 		'gtkhash'
 		'libgcrypt'
 		'libnautilus-extension'
+		#'mhash'
 		'nettle'
 		'openssl'
 		'zlib'
@@ -240,9 +258,9 @@ package_gtkhash-thunar() {
 		'gtk3'
 		'gtkhash'
 		'libgcrypt'
+		#'mhash'
 		'nettle'
 		'openssl'
-		'thunar'
 		'thunar'
 		'zlib'
 	)
@@ -263,6 +281,7 @@ package_gtkhash-caja() {
 		'gtk3'
 		'gtkhash'
 		'libgcrypt'
+		#'mhash'
 		'nettle'
 		'openssl'
 		'zlib'
