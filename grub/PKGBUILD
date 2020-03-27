@@ -24,7 +24,7 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'device-mapper'
-	#'freetype2'
+	'freetype2'
 	#'fuse2'
 	'glibc'
 	'sh'
@@ -83,12 +83,12 @@ install='grub.install'
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='136763a4cc9ca3a4f59d05b79eede2159d6f441e'
-_gnulib='9ce9be2ef0cb1180e35dfe9dfbbe90d774b374bd'
-_unifont='12.1.02'
+_commit='8a245d5c1800627af4cefa99162a89c7a46d8842'
+_gnulib='be584c56eb1311606e5ea1a36363b97bddb6eed3'
+_unifont='12.1.03'
 source=(
-	"git+https://git.savannah.gnu.org/git/grub.git#tag=grub-${pkgver}?signed"
-	"git+https://git.savannah.gnu.org/git/grub-extras.git#commit=$_commit"
+	"git+https://git.savannah.gnu.org/git/$pkgname.git#tag=$pkgname-${pkgver}?signed"
+	"git+https://git.savannah.gnu.org/git/$pkgname-extras.git#commit=$_commit"
 	"git+https://git.savannah.gnu.org/git/gnulib.git#commit=$_gnulib"
 	"https://ftp.gnu.org/gnu/unifont/unifont-$_unifont/unifont-$_unifont.bdf.gz"
 	"https://ftp.gnu.org/gnu/unifont/unifont-$_unifont/unifont-$_unifont.bdf.gz.sig"
@@ -100,7 +100,7 @@ sha256sums=(
 	'SKIP'
 	'SKIP'
 	'SKIP'
-	'04d652be1e28a6d464965c75c71ac84633085cd0960c2687466651c34c94bd89'
+	'6067bda8daa1f3c49d8876107992e19fc9ab905ad54c01c3131b9649977c3746'
 	'SKIP'
 	'171415ab075d1ac806f36c454feeb060f870416f24279b70104bba94bd6076d4'
 	'a5198267ceb04dceb6d2ea7800281a42b3f91fd02da55d2cc9ea20d47273ca29'
@@ -162,8 +162,12 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--disable-efiemu'
 		'--disable-werror'
+		'--disable-efiemu'
+		'--disable-mm-debug'
+		'--disable-grub-emu-sdl'
+		'--disable-grub-emu-pci'
+		'--disable-libzfs'
 		'--enable-threads=posix'
 		'--enable-cache-stats'
 		'--enable-boot-time'
@@ -178,10 +182,10 @@ build() {
 		#'--disable-device-mapper'
 
 	# 'freetype2' related options
-		#'--enable-grub-mkfont'
-		'--disable-grub-mkfont'
-		#'--enable-grub-themes'
-		'--disable-grub-themes'
+		'--enable-grub-mkfont'
+		#'--disable-grub-mkfont'
+		'--enable-grub-themes'
+		#'--disable-grub-themes'
 
 	# 'fuse2' related options
 		#'--enable-grub-mount'
