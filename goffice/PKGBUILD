@@ -46,8 +46,8 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='0da5282a9179cf63f8f0e6637f05aef595fec3e4'  # tags/GOFFICE_0_10_46^0
-source=("git+https://gitlab.gnome.org/GNOME/goffice.git#commit=$_commit")
+_commit='0da5282a9179cf63f8f0e6637f05aef595fec3e4'
+source=("git+https://gitlab.gnome.org/GNOME/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
