@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('gsettings-desktop-schemas')
-pkgver=3.35.91
+pkgver=3.36.0
 pkgrel=1
 pkgdesc='Shared GSettings schemas for the desktop'
 url='https://gitlab.gnome.org/GNOME/gsettings-desktop-schemas'
@@ -31,8 +31,8 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='c7427c9462213cfe5a528a8134d6809836ac841d'
-source=("git+https://gitlab.gnome.org/GNOME/gsettings-desktop-schemas.git#commit=$_commit")
+_commit='bfcbf5ec03f84b6cffa7d8c1361953797ccd0d1e'
+source=("git+https://gitlab.gnome.org/GNOME/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
