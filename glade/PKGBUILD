@@ -53,7 +53,7 @@ provides=('libgladeui-2.so')
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='1f0e1db7178c5038b2f61dc708b0939cb21d9254'
-source=("git+https://gitlab.gnome.org/GNOME/glade.git#commit=$_commit")
+source=("git+https://gitlab.gnome.org/GNOME/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
