@@ -14,7 +14,7 @@ pkgname=('glu')
 pkgver=9.0.1
 pkgrel=1
 pkgdesc='Mesa OpenGL Utility library'
-url='http://cgit.freedesktop.org/mesa/glu/'
+url='https://cgit.freedesktop.org/mesa/glu/'
 license=('LGPL')
 arch=('x86_64')
 
