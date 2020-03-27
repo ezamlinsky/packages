@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='gtk3'
 pkgname=('gtk3' 'gtk-update-icon-cache')
-pkgver=3.24.15
-pkgrel=1
+pkgver=3.24.17
+pkgrel=2
 epoch=1
 url='https://www.gtk.org/'
 license=('LGPL')
@@ -35,7 +35,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='429a6287e0ceae7b67e82d882652e86fa12f0ad4'
+_commit='4480c0ffc6858f8a324f841a318a6ed4b57dd629'
 source=(
 	"git+https://gitlab.gnome.org/GNOME/gtk.git#commit=$_commit"
 	'settings.ini'
