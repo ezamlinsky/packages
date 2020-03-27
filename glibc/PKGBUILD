@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('glibc')
 pkgver=2.31
-pkgrel=1
+pkgrel=2
 pkgdesc='GNU C Library'
 url='https://www.gnu.org/software/libc'
 license=('GPL' 'LGPL')
