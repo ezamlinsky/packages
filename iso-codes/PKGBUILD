@@ -29,8 +29,8 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='38edb926592954b87eb527124da0ec68d2a748f3'  # tags/iso-codes-4.4^0
-source=("git+https://salsa.debian.org/iso-codes-team/iso-codes/#commit=$_commit")
+_commit='38edb926592954b87eb527124da0ec68d2a748f3'
+source=("git+https://salsa.debian.org/$pkgname-team/$pkgname/#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
