@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='gvfs'
 pkgname=('gvfs' 'gvfs-afc' 'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb')
-pkgver=1.44.0
+pkgver=1.44.1
 pkgrel=1
 url='https://wiki.gnome.org/Projects/gvfs'
 license=('LGPL')
@@ -67,9 +67,9 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='530c1bead9ce249e3758bd2cc71cc437a76e139e'
+_commit='0071ed715da2c6ace52c4e772205c01eca209f25'
 source=(
-	"git+https://gitlab.gnome.org/GNOME/gvfs.git#commit=$_commit"
+	"git+https://gitlab.gnome.org/GNOME/$pkgbase.git#commit=$_commit"
 	'gvfsd.hook'
 )
 sha256sums=(
