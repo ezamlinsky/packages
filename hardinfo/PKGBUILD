@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('hardinfo')
-pkgver=0.5.1.816.g877ea2b
+pkgver=0.5.1.817
 pkgrel=1
 pkgdesc='A system information and benchmark tool'
 url='https://github.com/lpereira/hardinfo'
@@ -26,7 +26,7 @@ depends=(
 	'glib2'
 	'glibc'
 	'gtk2'
-	'gtk3'
+	#'gtk3'
 	'libsoup'
 	'libx11'
 	'pango'
@@ -40,7 +40,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='877ea2bc7777626c6fe77b6934a09261f1f1409e'
-source=("$pkgname::git+https://github.com/lpereira/hardinfo#commit=$_commit")
+source=("$pkgname::git+https://github.com/lpereira/${pkgname}#commit=$_commit")
 sha1sums=('SKIP')
 
 #==============================================================================#
