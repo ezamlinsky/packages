@@ -34,7 +34,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='72c50bb8629558e1f0df3d86c16e4290cc94fd5e'  # tags/3.24.2^0
+_commit='72c50bb8629558e1f0df3d86c16e4290cc94fd5e'
 source=("git+https://gitlab.gnome.org/GNOME/gtkmm.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -74,6 +74,7 @@ build() {
 		'--disable-static'
 		'--enable-documentation'
 		'--enable-maintainer-mode'
+		'--enable-deprecated-api'
 		'--enable-api-atkmm'
 		'--enable-x11-backend=yes'
 		'--enable-wayland-backend=no'
@@ -149,7 +150,7 @@ package_gtkmm3() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_gtkmm3-docs() {
 	pkgdesc='C++ bindings for gtk3 (documentation)'
-	depends=()
+	depends=('gtkmm3')
 	options=('docs')
 
 	# Copy files
