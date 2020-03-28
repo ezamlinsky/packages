@@ -17,7 +17,7 @@ pkgdesc='GNU compression utility'
 url='https://www.gnu.org/software/gzip/'
 license=('GPL3')
 arch=('x86_64')
-groups=('base' 'base-devel')
+groups=('base-devel')
 
 #==============================================================================#
 #       Package dependencies                                                   #
@@ -34,8 +34,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/pub/gnu/gzip/gzip-$pkgver.tar.xz"
-	"https://ftp.gnu.org/pub/gnu/gzip/gzip-$pkgver.tar.xz.sig"
+	"https://ftp.gnu.org/pub/gnu/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://ftp.gnu.org/pub/gnu/$pkgname/$pkgname-$pkgver.tar.xz.sig"
 )
 md5sums=(
 	'691b1221694c3394f1c537df4eee39d3'
