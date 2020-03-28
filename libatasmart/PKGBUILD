@@ -31,7 +31,7 @@ makedepends=('systemd')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://0pointer.de/public/libatasmart-$pkgver.tar.xz"
+	"http://0pointer.de/public/$pkgname-$pkgver.tar.xz"
 	'0001-Dont-test-undefined-bits.patch'
 	'0002-Drop-our-own-many-bad-sectors-heuristic.patch'
 )
