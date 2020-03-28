@@ -38,8 +38,6 @@ depends=(
 #        Package relations                                                     #
 #==============================================================================#
 provides=('iproute')
-conflicts=('iproute')
-replaces=('iproute')
 
 #==============================================================================#
 #       Package miscellaneous options                                          #
@@ -52,13 +50,14 @@ backup=(
 	'etc/iproute2/rt_scopes'
 	'etc/iproute2/rt_tables'
 )
+options=('emptydirs')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-$pkgver.tar.xz"
-	"https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-$pkgver.tar.sign"
+	"https://www.kernel.org/pub/linux/utils/net/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/net/$pkgname/$pkgname-$pkgver.tar.sign"
 	'0001-make-iproute2-fhs-compliant.patch'
 )
 sha256sums=(
@@ -77,6 +76,11 @@ prepare() {
 
 	# Apply patches
 	patch -Np1 -i $srcdir/0001-make-iproute2-fhs-compliant.patch
+
+	# Run autogen script if exists
+	if [ -x autogen.sh ]; then
+		NOCONFIGURE=1 ./autogen.sh
+	fi
 }
 
 #==============================================================================#
@@ -118,6 +122,10 @@ package() {
 
 	# Install files
 	make DESTDIR=$pkgdir SBINDIR=/usr/bin install
+
+	# Install 'libnetlink'
+	install -Dm0644 include/libnetlink.h $pkgdir/usr/include/libnetlink.h
+	install -Dm0644 lib/libnetlink.a $pkgdir/usr/lib/libnetlink.a
 }
 
 ################################################################################
