@@ -37,7 +37,7 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"git+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git#tag=v${pkgver}?signed"
+	"git+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/$pkgname.git#tag=v${pkgver}?signed"
 	'request-key.conf.patch'
 	'reproducible.patch'
 )
