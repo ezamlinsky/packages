@@ -58,7 +58,7 @@ install='iputils.install'
 #==============================================================================#
 _commit='13e0084'
 source=(
-	"git+https://github.com/iputils/iputils.git#commit=$_commit"
+	"git+https://github.com/$pkgname/$pkgname.git#commit=$_commit"
 	'fix-setuid-redeclared.patch'
 )
 sha1sums=(
