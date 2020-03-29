@@ -75,6 +75,8 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-specs'
+		'--enable-const'
+		'--enable-geo-tattler'
 		'--disable-unit-tests'
 		'--enable-xkb'
 		'--with-perl'
