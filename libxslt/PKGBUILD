@@ -35,10 +35,15 @@ checkdepends=(
 )
 
 #==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('emptydirs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='3653123f992db24cec417d12600f4c67388025e3'
-source=("git+https://gitlab.gnome.org/GNOME/libxslt.git#commit=$_commit")
+source=("git+https://gitlab.gnome.org/GNOME/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -77,6 +82,7 @@ build() {
 		'--disable-static'
 		'--without-debug'
 		'--without-debugger'
+		'--without-profiler'
 		'--with-plugins'
 
 	# 'libgcrypt' related options
