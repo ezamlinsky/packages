@@ -43,9 +43,9 @@ provides=('libpsl.so')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/rockdaboot/libpsl/releases/download/libpsl-$pkgver/libpsl-$pkgver.tar.gz"
-	'libpsl-gtk-doc-1.30-fix.patch::https://github.com/rockdaboot/libpsl/commit/87d1add318b5e5d09977f7f374e923577b6ff3be.patch'
-	'libpsl-0.21.0-build-fix.patch::https://github.com/rockdaboot/libpsl/commit/9347024221f4a9d63f9dcafcda13362a7c8d92fe.patch'
+	"https://github.com/rockdaboot/$pkgname/releases/download/$pkgname-$pkgver/libpsl-$pkgver.tar.gz"
+	"libpsl-gtk-doc-1.30-fix.patch::https://github.com/rockdaboot/$pkgname/commit/87d1add318b5e5d09977f7f374e923577b6ff3be.patch"
+	"libpsl-0.21.0-build-fix.patch::https://github.com/rockdaboot/$pkgname/commit/9347024221f4a9d63f9dcafcda13362a7c8d92fe.patch"
 )
 sha512sums=(
 	'165c4f0b0640a813d512bd916e1532e32e43c8c81a5efd048f3a5b07b1b3c9129b4c4b5008b8b11a7c1b3914caea17564321389cd350bf1d687d53a97f2afa4d'
@@ -93,6 +93,8 @@ build() {
 		'--disable-static'
 		'--disable-gtk-doc'
 		'--enable-man'
+		'--disable-ubsan'
+		'--disable-asan'
 		'--with-psl-file=/usr/share/publicsuffix/effective_tld_names.dat'
 		'--with-psl-testfile=/usr/share/publicsuffix/test_psl.txt'
 
