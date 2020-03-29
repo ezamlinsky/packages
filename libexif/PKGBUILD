@@ -26,7 +26,7 @@ depends=('glibc')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://downloads.sourceforge.net/sourceforge/libexif/libexif-$pkgver.tar.bz2")
+source=("https://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.bz2")
 sha256sums=('16cdaeb62eb3e6dfab2435f7d7bccd2f37438d21c5218ec4e58efa9157d4d41a')
 
 #==============================================================================#
@@ -64,6 +64,7 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-docs'
+		'--disable-internal-docs'
 	)
 
 	# Run package configuration script
