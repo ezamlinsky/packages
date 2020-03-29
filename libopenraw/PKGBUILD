@@ -37,8 +37,8 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://libopenraw.freedesktop.org/download/libopenraw-$pkgver.tar.bz2"
-	"https://libopenraw.freedesktop.org/download/libopenraw-$pkgver.tar.bz2.asc"
+	"https://libopenraw.freedesktop.org/download/$pkgname-$pkgver.tar.bz2"
+	"https://libopenraw.freedesktop.org/download/$pkgname-$pkgver.tar.bz2.asc"
 )
 sha256sums=(
 	'6405634f555849eb01cb028e2a63936e7b841151ea2a1571ac5b5b10431cfab9'
