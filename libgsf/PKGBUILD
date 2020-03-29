@@ -43,8 +43,8 @@ checkdepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='7f927f09a47eb674606295b776d8cccc4554859a'  # master
-source=("git+https://gitlab.gnome.org/GNOME/libgsf.git#commit=$_commit")
+_commit='7f927f09a47eb674606295b776d8cccc4554859a'
+source=("git+https://gitlab.gnome.org/GNOME/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -94,6 +94,10 @@ build() {
 	# 'gdk-pixbuf2' related options
 		'--with-gdk-pixbuf'
 		#'--without-gdk-pixbuf'
+
+	# 'zlib' related options
+		'--with-zlib'
+		#'--without-zlib'
 	)
 
 	# Run package configuration script
