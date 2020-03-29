@@ -35,9 +35,9 @@ optdepends=('python: to use event_rpcgen.py')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/libevent/libevent/releases/download/release-$pkgver-stable/libevent-$pkgver-stable.tar.gz"
-	"https://github.com/libevent/libevent/releases/download/release-$pkgver-stable/libevent-$pkgver-stable.tar.gz.asc"
-	'https://raw.githubusercontent.com/libevent/libevent/release-2.1.11-stable/cmake/Uninstall.cmake.in'
+	"https://github.com/libevent/$pkgname/releases/download/release-$pkgver-stable/$pkgname-$pkgver-stable.tar.gz"
+	"https://github.com/libevent/$pkgname/releases/download/release-$pkgver-stable/$pkgname-$pkgver-stable.tar.gz.asc"
+	"https://raw.githubusercontent.com/$pkgname/$pkgname/release-2.1.11-stable/cmake/Uninstall.cmake.in"
 	'0001-Warn-if-forked-from-the-event-loop-during-event_reinit.patch'
 )
 sha256sums=(
