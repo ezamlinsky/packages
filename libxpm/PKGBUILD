@@ -75,6 +75,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-stat-zfile'
 	)
 
 	# Run package configuration script
