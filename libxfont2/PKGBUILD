@@ -23,15 +23,14 @@ arch=('x86_64')
 #==============================================================================#
 depends=(
 	'bzip2'
-	'fontsproto'
 	'freetype2'
 	'glibc'
 	'libfontenc'
-	'xproto'
 	'zlib'
 )
 makedepends=(
 	'xorg-util-macros'
+	'xorgproto'
 	'xtrans'
 )
 
