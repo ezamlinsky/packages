@@ -42,8 +42,8 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='396955bd2ba2db34a42b3807b03155fcc11dfe50'  # tags/libxklavier-5.4^0
-source=("git+https://anongit.freedesktop.org/git/libxklavier#commit=$_commit")
+_commit='396955bd2ba2db34a42b3807b03155fcc11dfe50'
+source=("git+https://anongit.freedesktop.org/git/${pkgname}#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -86,7 +86,6 @@ build() {
 		'--enable-introspection=no'
 		'--enable-vala=no'
 		'--with-xkb-bin-base=/usr/bin'
-		'--with-xkb-base=/usr/share/X11/xkb'
 		'--with-xmodmap-base=/usr/share/X11/xkb'
 	)
 
