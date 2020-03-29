@@ -30,8 +30,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://files.libburnia-project.org/releases/libburn-$pkgver.tar.gz"
-	"http://files.libburnia-project.org/releases/libburn-$pkgver.tar.gz.sig"
+	"http://files.libburnia-project.org/releases/$pkgname-$pkgver.tar.gz"
+	"http://files.libburnia-project.org/releases/$pkgname-$pkgver.tar.gz.sig"
 )
 sha256sums=(
 	'7b32db1719d7f6516cce82a9d00dfddfb3581725db732ea87d41ea8ef0ce5227'
@@ -73,12 +73,17 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-debug'
+		'--disable-dvd-obs-64k'
+		'--disable-dvd-obs-pad'
+		'--disable-track-src-odirect'
 		'--enable-versioned-libs'
+		'--enable-libdir-pkgconfig'
+		'--enable-ldconfig-at-install'
 
 	# 'libcdio' related options
 		#'--enable-libcdio'
-		#'--enable-pkg-check-modules
 		'--disable-libcdio'
+		#'--enable-pkg-check-modules
 		'--disable-pkg-check-modules'
 	)
 
