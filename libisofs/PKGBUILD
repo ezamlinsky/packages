@@ -32,8 +32,8 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://files.libburnia-project.org/releases/libisofs-$pkgver.tar.gz"
-	"http://files.libburnia-project.org/releases/libisofs-$pkgver.tar.gz.sig"
+	"http://files.libburnia-project.org/releases/$pkgname-$pkgver.tar.gz"
+	"http://files.libburnia-project.org/releases/$pkgname-$pkgver.tar.gz.sig"
 )
 sha256sums=(
 	'ef5a139600b3e688357450e52381e40ec26a447d35eb8d21524598c7b1675500'
@@ -77,6 +77,8 @@ build() {
 		'--disable-debug'
 		'--enable-libjte'
 		'--enable-versioned-libs'
+		'--enable-libdir-pkgconfig'
+		'--enable-ldconfig-at-install'
 
 	# 'acl' related options
 		'--enable-libacl'
