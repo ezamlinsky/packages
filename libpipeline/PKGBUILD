@@ -27,8 +27,8 @@ depends=('glibc')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://download.savannah.gnu.org/releases/libpipeline/$pkgname-$pkgver.tar.gz"
-	"https://download.savannah.gnu.org/releases/libpipeline/$pkgname-$pkgver.tar.gz.asc"
+	"https://download.savannah.gnu.org/releases/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://download.savannah.gnu.org/releases/$pkgname/$pkgname-$pkgver.tar.gz.asc"
 )
 sha256sums=(
 	'fd59c649c1ae9d67604d1644f116ad4d297eaa66f838e3dfab96b41e85b059fb'
