@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('man-db')
 pkgver=2.9.1
-pkgrel=1
+pkgrel=2
 pkgdesc='A utility for reading man pages'
 url='https://www.nongnu.org/man-db/'
 license=('GPL' 'LGPL')
@@ -53,8 +53,8 @@ install='man-db.install'
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://savannah.nongnu.org/download/man-db/man-db-$pkgver.tar.xz"
-	"https://savannah.nongnu.org/download/man-db/man-db-$pkgver.tar.xz.asc"
+	"https://savannah.nongnu.org/download/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://savannah.nongnu.org/download/$pkgname/$pkgname-$pkgver.tar.xz.asc"
 	'snapdir.diff'
 	'convert-mans'
 )
@@ -74,7 +74,7 @@ prepare() {
 	cd $pkgname-$pkgver
 
 	# Apply patches
-	patch -Np0 -i ../snapdir.diff
+	patch -Np0 -i $srcdir/snapdir.diff
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -102,9 +102,11 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--enable-automatic-create'
 		'--disable-setuid'
 		'--disable-cats'
+		'--enable-manual'
+		'--enable-mb-groff'
+		'--enable-automatic-create'
 		'--enable-cache-owner=root'
 		'--enable-mandirs=GNU'
 		'--enable-threads=posix'
@@ -163,8 +165,8 @@ package() {
 	install -Dm755 $srcdir/convert-mans usr/bin/convert-mans
 
 	# Install man-db update timer
-	install -dm755 usr/lib/systemd/system/multi-user.target.wants
-	ln -s ../man-db.timer usr/lib/systemd/system/multi-user.target.wants/man-db.timer
+	install -dm755 usr/lib/systemd/system/timers.target.wants
+	ln -s ../man-db.timer usr/lib/systemd/system/timers.target.wants/man-db.timer
 }
 
 ################################################################################
