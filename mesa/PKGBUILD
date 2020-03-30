@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='mesa'
 pkgname=('mesa' 'libva-mesa-driver' 'mesa-vdpau'  'opencl-mesa' 'vulkan-intel' 'vulkan-mesa-layer' 'vulkan-radeon')
-pkgver=19.2.3
-pkgrel=2
+pkgver=20.0.4
+pkgrel=1
 url='https://www.mesa3d.org/'
 license=('custom')
 arch=('x86_64')
@@ -24,14 +24,11 @@ arch=('x86_64')
 makedepends=(
 	'bash'
 	'clang'
-	'dri2proto'
-	'dri3proto'
 	'elfutils'
 	'expat'
 	'gcc-libs'
 	'glib2'
 	'glibc'
-	'glproto'
 	'glslang'
 	'gtk3'
 	'libclc'
@@ -57,24 +54,25 @@ makedepends=(
 	'llvm'
 	'lm_sensors'
 	'meson'
-	'presentproto'
 	'python-mako'
 	'valgrind'
 	'wayland'
 	'wayland-protocols'
+	'xorgproto'
 	'zlib'
+	'zstd'
 )
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz"
-	"https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz.sig"
+	"https://mesa.freedesktop.org/archive/$pkgbase-$pkgver.tar.xz"
+	"https://mesa.freedesktop.org/archive/$pkgbase-$pkgver.tar.xz.sig"
 	'LICENSE'
 )
 sha512sums=(
-	'a64a6b508c28a61b9f5a50f639d0cdca2546caa2118c2478100e3535961d76bf3877357d4a7ddd7dc1d3dfc617883c8ee188915523b003aed8db03e0d5e1c007'
+	'17d8bc3b56779a8e5648d81da9ee97b66bcec015710801edce4e8055fbb314cd9ebc1d112e3035480ba844c7d9ae6b5b1f1eac0cc0817e69e9253a7748451a55'
 	'SKIP'
 	'f9f0d0ccf166fe6cb684478b6f1e1ab1f2850431c06aa041738563eb1808a004e52cdec823c103c9e180f03ffc083e95974d291353f0220fe52ae6d4897fecc7'
 )
@@ -89,6 +87,7 @@ build() {
 
 	# Default configure options
 	config_opts=(
+		'-Dvalgrind=false'
 		'-Dbuild-tests=false'
 		'-Dinstall-intel-gpu-tests=false'
 		'-Dxlib-lease=true'
@@ -99,25 +98,28 @@ build() {
 		'-Dgles2=true'
 		'-Dgbm=true'
 		'-Ddri3=true'
+		'-Dopencl-spirv=false'
 		'-Dshared-glapi=true'
+		'-Dshared-swr=true'
 		'-Dgallium-va=true'
 		'-Dgallium-xa=true'
 		'-Dgallium-nine=true'
+		'-Dgallium-extra-hud=true'
+		'-Dgallium-drivers=r300,r600,radeonsi,nouveau,svga,virgl,swrast,swr,iris'
 		'-Dosmesa=gallium'
 		'-Dosmesa-bits=8'
-		'-Dgallium-extra-hud=true'
 		'-Dshader-cache=true'
 		'-Dvulkan-overlay-layer=true'
+		'-Dvulkan-drivers=intel,amd'
 		'-Dglx-direct=true'
 		'-Dglx-read-only-text=false'
 		'-Dglx=dri'
-		'-Dvulkan-drivers=intel,amd'
+		'-Dprefer-iris=true'
 		'-Ddri-drivers=i915,i965,nouveau'
-		'-Dgallium-drivers=r300,r600,radeonsi,nouveau,svga,virgl,swrast,swr,iris'
 		'-Dswr-arches=avx,avx2'
 
 	# 'gtk3 && glib2 && libepoxy' related options
-		'-Dtools=intel-ui,xvmc'
+		'-Dtools=glsl,nir,intel,intel-ui,xvmc'
 
 	# 'libclc' related options
 		'-Dgallium-opencl=icd'
@@ -171,6 +173,10 @@ build() {
 
 	# 'wayland' related options
 		#'-Dplatforms=x11,wayland'
+
+	# 'zstd' related options
+		'-Dzstd=true'
+		#'-Dzstd=false'
 	)
 
 	# Run package configuration script
@@ -213,6 +219,7 @@ package_mesa() {
 		'lm_sensors'
 		#'wayland'
 		'zlib'
+		'zstd'
 	)
 	optdepends=(
 		'opengl-man-pages: for the OpenGL API man pages'
@@ -306,6 +313,7 @@ package_libva-mesa-driver() {
 		'libxshmfence'
 		'llvm-libs'
 		'zlib'
+		'zstd'
 	)
 
 	# Copy files
@@ -331,6 +339,7 @@ package_mesa-vdpau() {
 		'libxshmfence'
 		'llvm-libs'
 		'zlib'
+		'zstd'
 	)
 
 	# Copy files
@@ -354,6 +363,7 @@ package_opencl-mesa() {
 		'libelf'
 		'llvm-libs'
 		'zlib'
+		'zstd'
 	)
 	optdepends=('opencl-headers: headers necessary for OpenCL development')
 	provides=('opencl-driver')
@@ -369,7 +379,7 @@ package_opencl-mesa() {
 #       Vulkan-intel                                                           #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_vulkan-intel() {
-	pkgdesc='Vulkan mesa driver for Intel videocards'
+	pkgdesc='Intel Vulkan mesa driver'
 	depends=(
 		'expat'
 		'gcc-libs'
@@ -380,7 +390,9 @@ package_vulkan-intel() {
 		'libxshmfence'
 		#'wayland'
 		'zlib'
+		'zstd'
 	)
+	optdepends=('vulkan-mesa-layer: a vulkan layer to display information using an overlay')
 	provides=('vulkan-driver')
 
 	# Copy files
@@ -411,7 +423,7 @@ package_vulkan-mesa-layer() {
 #       Vulkan-radeon                                                          #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_vulkan-radeon() {
-	pkgdesc='Vulkan mesa driver for Radeon videocards'
+	pkgdesc='Radeon Vulkan mesa driver'
 	depends=(
 		'expat'
 		'gcc-libs'
@@ -424,7 +436,9 @@ package_vulkan-radeon() {
 		'llvm-libs'
 		#'wayland'
 		'zlib'
+		'zstd'
 	)
+	optdepends=('vulkan-mesa-layer: a vulkan layer to display information using an overlay')
 	provides=('vulkan-driver')
 
 	# Copy files
