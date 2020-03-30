@@ -39,7 +39,7 @@ depends=(
 #==============================================================================#
 source=(
 	"https://downloads.sourceforge.net/project/$pkgname/ng-spice-rework/$pkgver/$pkgname-$pkgver.tar.gz"
-	"http://ngspice.sourceforge.net/docs/ngspice-$pkgver-manual.pdf"
+	"http://ngspice.sourceforge.net/docs/$pkgname-$pkgver-manual.pdf"
 )
 sha1sums=(
 	'ab22e791cd254dfda2b32a262f212bd1d8c66fe7'
@@ -83,6 +83,8 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-debug'
+		'--disable-gprof'
+		'--enable-oldapps'
 		'--enable-openmp'
 		'--enable-predictor'
 		'--enable-newtrunc'
@@ -93,6 +95,9 @@ build() {
 		'--enable-ndev'
 		'--enable-nodelimiting'
 		'--enable-smoketest'
+		'--disable-sense2'
+		'--disable-nobypass'
+		'--disable-capbypass'
 		'--with-x'
 
 	# 'adms' related options
@@ -159,7 +164,7 @@ package() {
 	make DESTDIR=$pkgdir install
 
 	# Install documentation
-	install -Dm644 $srcdir/ngspice-$pkgver-manual.pdf \
+	install -Dm644 $srcdir/$pkgname-$pkgver-manual.pdf \
 	$pkgdir/usr/share/doc/ngspice/manual.pdf
 
 	# Install license file
