@@ -76,6 +76,10 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-case-insensitive-file-system'
+		'--enable-job-server'
+		'--enable-posix-spawn'
+		'--enable-load'
 
 	# 'guile' related options
 		#'--with-guile'
