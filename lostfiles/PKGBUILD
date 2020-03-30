@@ -26,7 +26,7 @@ depends=('bash')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("$pkgname-$pkgver.tar.xz::https://github.com/graysky2/lostfiles/archive/v$pkgver.tar.gz")
+source=("$pkgname-$pkgver.tar.xz::https://github.com/graysky2/$pkgname/archive/v$pkgver.tar.gz")
 sha256sums=('577a68a712f46bb75f31880519dcbb84b7be24598e8b2e0eb9037ff7dde3133b')
 
 #==============================================================================#
