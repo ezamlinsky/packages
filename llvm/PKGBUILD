@@ -13,7 +13,7 @@
 pkgbase='llvm'
 pkgname=('llvm' 'llvm-libs' 'llvm-ocaml')
 pkgver=9.0.1
-pkgrel=1
+pkgrel=2
 url='https://llvm.org/'
 license=('custom:Apache 2.0 with LLVM Exception')
 arch=('x86_64')
@@ -74,6 +74,7 @@ build() {
 		'-DLLVM_BUILD_TESTS=ON'
 		'-DLLVM_BUILD_LLVM_DYLIB=ON'
 		'-DLLVM_LINK_LLVM_DYLIB=ON'
+		'-DLLVM_APPEND_VC_REV=ON'
 		'-DLLVM_ENABLE_ASSERTIONS=OFF'
 		'-DLLVM_ENABLE_BACKTRACES=OFF'
 		'-DLLVM_ENABLE_THREADS=ON'
@@ -83,6 +84,8 @@ build() {
 		'-DLLVM_ENABLE_DOXYGEN=OFF'
 		'-DLLVM_ENABLE_SPHINX=ON'
 		'-DLLVM_INSTALL_UTILS=ON'
+		'-DLLVM_INSTALL_MODULEMAPS=OFF'
+		'-DLLVM_INSTALL_BINUTILS_SYMLINKS=OFF'
 		'-DLLVM_OPTIMIZED_TABLEGEN=ON'
 		'-DLLVM_BINUTILS_INCDIR=/usr/include'
 		'-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR'
