@@ -31,8 +31,8 @@ checkdepends=('valgrind')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/gnu/nettle/nettle-$pkgver.tar.gz"
-	"https://ftp.gnu.org/gnu/nettle/nettle-$pkgver.tar.gz.sig"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz.sig"
 )
 sha256sums=(
 	'75cca1998761b02e16f2db56da52992aef622bf55a3b45ec538bc2eedadc9419'
@@ -73,11 +73,13 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-fat'
 		'--disable-documentation'
 		'--enable-public-key'
 		'--enable-assembler'
 		'--enable-openssl'
 		'--enable-x86-aesni'
+		'--disable-x86-sha-ni'
 	)
 
 	# Run package configuration script
