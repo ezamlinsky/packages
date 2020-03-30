@@ -12,8 +12,8 @@
 #==============================================================================#
 pkgbase='lvm2'
 pkgname=('lvm2' 'device-mapper')
-pkgver=2.02.186
-pkgrel=5
+pkgver=2.02.187
+pkgrel=1
 url='https://sourceware.org/lvm2/'
 license=('GPL2' 'LGPL2.1')
 arch=('x86_64')
@@ -23,12 +23,15 @@ groups=('base')
 #       Package dependencies                                                   #
 #==============================================================================#
 makedepends=(
+	'bash'
 	'git'
-	#'libselinux'
-	#'python'
-	#'python2'
+	'libaio'
+	'libutil-linux'
+	'python'
+	'python2'
+	'readline'
 	'systemd'
-#	'thin-provisioning-tools'
+	'thin-provisioning-tools'
 )
 
 #==============================================================================#
@@ -40,7 +43,7 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"git://sourceware.org/git/lvm2.git#tag=v${pkgver//./_}?signed"
+	"git://sourceware.org/git/$pkgbase.git#tag=v${pkgver//./_}?signed"
 	'lvm2_install'
 	'lvm2_hook'
 	'sd-lvm2_install'
@@ -96,17 +99,45 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-static_link'
 		'--disable-debug'
-		'--enable-applib'
-		'--enable-cmdlib'
+		'--disable-profiling'
+		'--enable-ocf'
+		'--enable-devmapper'
 		'--enable-lvmetad'
 		'--enable-lvmpolld'
+		'--enable-use-lvmetad'
+		'--enable-use-lvmpolld'
+		'--enable-use-lvmlockd'
 		'--enable-dmfilemapd'
 		'--enable-dmeventd'
-		'--enable-devmapper'
 		'--enable-notify-dbus'
+		'--enable-applib'
+		'--enable-cmdlib'
+		'--enable-units-compat'
+		'--enable-fsadm'
+		'--enable-blkdeactivate'
+		'--enable-blkid_wiping'
+		'--enable-ioctl'
+		'--enable-o_direct'
+		'--enable-write_install'
 		'--enable-pkgconfig'
 		'--with-optimisation=-O3'
+		'--with-interface=ioctl'
+		'--with-device-uid=0'
+		'--with-device-gid=0'
+		'--with-device-mode=0600'
+		'--with-device-nodes-on=resume'
+		'--with-default-name-mangling=auto'
+		'--with-clvmd=none'
+		'--with-cluster=internal'
+		'--with-snapshots=internal'
+		'--with-mirrors=internal'
+		'--with-thin=internal'
+		'--with-cache=internal'
+		'--with-default-mirror-segtype=raid1'
+		'--with-default-raid10-segtype=raid10'
+		'--with-default-sparse-segtype=thin'
 		'--with-default-pid-dir=/run'
 		'--with-default-dm-run-dir=/run'
 		'--with-default-run-dir=/run/lvm'
@@ -131,10 +162,12 @@ build() {
 	# 'systemd-libs' related options
 		'--enable-udev_sync'
 		'--enable-udev_rules'
+		'--enable-udev-rule-exec-detection'
 		'--enable-udev-systemd-background-jobs'
 		'--with-systemdsystemunitdir=/usr/lib/systemd/system'
 	)
 
+	# Change compile flags
 	export CONFIG_SHELL=/bin/bash
 
 	# Run package configuration script
