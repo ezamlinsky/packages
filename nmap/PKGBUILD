@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('nmap')
 pkgver=7.80
-pkgrel=1
+pkgrel=2
 pkgdesc='Utility for network discovery and security auditing'
 url='https://nmap.org/'
 license=('GPL2')
@@ -34,20 +34,15 @@ depends=(
 	'sh'
 	#'zlib'
 )
-makedepends=('pygtk')
-optdepends=(
-	'pygtk: zenmap'
-	'sudo: privilege escalation for zenmap'
-	'xterm: privilege escalation for zenmap'
-	'kde-cli-tools: privilege escalation for zenmap'
-)
+makedepends=('python2')
+optdepends=('python2: various scripts')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://nmap.org/dist/nmap-$pkgver.tar.bz2"
-	"https://nmap.org/dist/sigs/nmap-$pkgver.tar.bz2.asc"
+	"https://nmap.org/dist/$pkgname-$pkgver.tar.bz2"
+	"https://nmap.org/dist/sigs/$pkgname-$pkgver.tar.bz2.asc"
 )
 sha256sums=(
 	'fcfa5a0e42099e12e4bf7a68ebe6fde05553383a682e816a7ec9256ab4773faa'
@@ -91,7 +86,8 @@ build() {
 		'--with-nping'
 		'--with-ncat'
 		'--with-nmap-update'
-		'--with-zenmap'
+		'--with-libnsock'
+		'--without-zenmap'
 
 	# 'libdnet' related options
 		#'--with-libdnet'
