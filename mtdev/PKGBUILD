@@ -26,7 +26,7 @@ depends=('glibc')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://bitmath.org/code/mtdev/mtdev-$pkgver.tar.bz2")
+source=("http://bitmath.org/code/$pkgname/$pkgname-$pkgver.tar.bz2")
 sha512sums=('859fb0803f330ecaae69f80713ff5a5235c0cb00de6d5ac2717ad82cea856a92b866f0c272ecfe743186abcf925f95585149ba4828b4c91555cfeb2f2a1c98f1')
 
 #==============================================================================#
