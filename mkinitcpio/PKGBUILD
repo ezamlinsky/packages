@@ -63,8 +63,8 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://sources.archlinux.org/other/mkinitcpio/mkinitcpio-$pkgver.tar.gz"
-	"https://sources.archlinux.org/other/mkinitcpio/mkinitcpio-$pkgver.tar.gz.sig"
+	"https://sources.archlinux.org/other/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://sources.archlinux.org/other/$pkgname/$pkgname-$pkgver.tar.gz.sig"
 	'0001-mkinitcpio-remove-preset-pacsave.patch'
 	'0002-mkinitcpio-fix-builtin.patch'
 )
