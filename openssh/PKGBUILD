@@ -27,6 +27,7 @@ depends=(
 	#'krb5'
 	#'ldns'
 	'libedit'
+	#'libfido2'
 	#'libselinux'
 	'openssl'
 	'pam'
@@ -52,11 +53,16 @@ backup=(
 install='install'
 
 #==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('emptydirs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-$pkgver.tar.gz"
-	"https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-$pkgver.tar.gz.asc"
+	"https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$pkgname-$pkgver.tar.gz"
+	"https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$pkgname-$pkgver.tar.gz.asc"
 	'sshdgenkeys.service'
 	'sshd.service'
 	'sshd.conf'
@@ -110,7 +116,20 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-strip'
+		'--enable-pkcs11'
+		'--enable-lastlog'
+		'--enable-utmp'
+		'--enable-utmpx'
+		'--enable-wtmp'
+		'--enable-wtmpx'
+		'--enable-libutil'
+		'--enable-pututline'
+		'--enable-pututxline'
+		'--enable-etc-default-login'
 		'--with-pie'
+		'--with-stackprotect'
+		'--with-hardening'
 		'--with-shadow'
 		'--with-md5-passwords'
 		'--with-mantype=man'
@@ -120,6 +139,8 @@ build() {
 		'--with-maildir=/var/spool/mail'
 		'--with-pid-dir=/run'
 		'--with-default-path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin'
+		'--without-ipaddr-display'
+		'--without-4in6'
 
 	# 'audit' related options
 		#'--with-audit'
@@ -137,6 +158,11 @@ build() {
 		'--with-libedit'
 		#'--without-libedit'
 
+	# 'libfido2' related options
+		#'--enable-security-key'
+		'--disable-security-key'
+		#'--with-security-key-builtin'
+
 	# 'libselinux' related options
 		#'--with-selinux'
 		'--without-selinux'
@@ -145,6 +171,7 @@ build() {
 		'--with-openssl'
 		#'--without-openssl'
 		'--with-ssl-engine'
+		'--with-openssl-header-check'
 
 	# 'pam' related options
 		'--with-pam'
