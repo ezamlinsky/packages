@@ -32,7 +32,7 @@ makedepends=('npm')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://registry.npmjs.org/$pkgname/-/$pkgname-$pkgver.tgz")
-noextract=("node-gyp-$pkgver.tgz")
+noextract=("$pkgname-$pkgver.tgz")
 sha512sums=('878036cc394eba379e69a4f1d3aaf8572fbc319d7aefd954fb06c22834b866dbd8d80dfb0c44a8dfba1e8c8c349ad991dfeaef370b6ce41e8aa6dd4aacd61d37')
 
 #==============================================================================#
@@ -41,7 +41,7 @@ sha512sums=('878036cc394eba379e69a4f1d3aaf8572fbc319d7aefd954fb06c22834b866dbd8d
 package() {
 
 	# Install files
-	npm install -g --user root --prefix $pkgdir/usr $srcdir/node-gyp-$pkgver.tgz
+	npm install -g --user root --prefix $pkgdir/usr $srcdir/$pkgname-$pkgver.tgz
 
 	# Fix wrong 'node_modules' directory permissions
 	chmod -R u=rwX,go=rX $pkgdir
