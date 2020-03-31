@@ -23,7 +23,7 @@ arch=('any')
 #==============================================================================#
 _commit='0fa1dfabd6e3746bb7463399e2813f60d3f1b256'
 source=(
-	"$pkgbase-$_commit.tar.gz::https://github.com/googlei18n/noto-fonts/archive/$_commit.tar.gz"
+	"$pkgbase-$_commit.tar.gz::https://github.com/googlei18n/$pkgbase/archive/$_commit.tar.gz"
 	'66-noto-sans.conf'
 	'66-noto-serif.conf'
 	'66-noto-mono.conf'
