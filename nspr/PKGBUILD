@@ -30,7 +30,7 @@ makedepends=('zip')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://ftp.mozilla.org/pub/mozilla.org/nspr/releases/v$pkgver/src/nspr-$pkgver.tar.gz")
+source=("https://ftp.mozilla.org/pub/mozilla.org/$pkgname/releases/v$pkgver/src/$pkgname-$pkgver.tar.gz")
 sha256sums=('0bc309be21f91da4474c56df90415101c7f0c7c7cab2943cd943cd7896985256')
 
 #==============================================================================#
@@ -64,16 +64,17 @@ build() {
 		'--libexecdir=/usr/lib'
 		'--sysconfdir=/etc'
 		'--localstatedir=/var'
+		'--disable-debug'
+		'--disable-debug-symbols'
 		'--enable-optimize'
 		'--enable-mdupdate'
+		'--disable-cplus'
 		'--enable-strip'
 		'--enable-ipv6'
 		'--enable-64bit'
 		'--disable-x32'
-		'--disable-debug'
-		'--disable-debug-symbols'
-		'--with-mozilla'
 		'--with-pthreads'
+		'--with-mozilla'
 	)
 
 	# Run package configuration script
