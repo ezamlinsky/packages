@@ -44,8 +44,8 @@ makedepends=(
 #       Package miscellaneous options                                          #
 #==============================================================================#
 backup=(
-	'etc/default/passwd'
 	'etc/environment'
+	'etc/default/passwd'
 	'etc/security/access.conf'
 	'etc/security/group.conf'
 	'etc/security/limits.conf'
@@ -102,6 +102,9 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-debug'
+		'--disable-pamlocking'
+		'--enable-pie'
+		'--enable-lckpwdf'
 		'--enable-read-both-confs'
 		'--with-randomdev=yes'
 
