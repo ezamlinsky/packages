@@ -21,10 +21,7 @@ arch=('x86_64')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=(
-	'glibc'
-	'perl'
-)
+depends=('glibc')
 
 #==============================================================================#
 #        Package relations                                                     #
@@ -34,9 +31,8 @@ provides=('libnuma.so')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://github.com/numactl/numactl/releases/download/v${pkgver}/$pkgname-$pkgver.tar.gz")
+source=("https://github.com/$pkgname/$pkgname/releases/download/v${pkgver}/$pkgname-$pkgver.tar.gz")
 sha512sums=('f7b747eb8f3ded9f3661cb0fc7b65b5ed490677f881f8fe6a000baf714747515853b4e5c8781b014241180bf16e9f0bfdf2c6f758725e34b4938696ba496b72a')
-
 
 #==============================================================================#
 #       Package preparation sequence                                           #
