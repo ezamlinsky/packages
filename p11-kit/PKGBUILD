@@ -10,9 +10,10 @@
 #==============================================================================#
 #       Package information                                                    #
 #==============================================================================#
-pkgname=('p11-kit')
+pkgbase='p11-kit'
+pkgname=('p11-kit' 'libp11-kit')
 pkgver=0.23.20
-pkgrel=2
+pkgrel=3
 pkgdesc='Provides a way to load and enumerate PKCS#11 modules'
 url='https://p11-glue.freedesktop.org'
 license=('BSD')
@@ -21,33 +22,19 @@ arch=('x86_64')
 #==============================================================================#
 #       Package dependencies                                                   #
 #==============================================================================#
-depends=(
-	'glibc'
-	'libffi'
-	'libtasn1'
-	#'nss'
-	'systemd-libs'
-)
 makedepends=(
 	'git'
 	'gtk-doc'
+	'libffi'
+	'libtasn1'
 	'meson'
+	'systemd'
 )
-
-#==============================================================================#
-#        Package relations                                                     #
-#==============================================================================#
-provides=('libp11-kit.so')
-
-#==============================================================================#
-#       Package miscellaneous options                                          #
-#==============================================================================#
-install='p11-kit.install'
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("git+https://github.com/p11-glue/p11-kit?signed#tag=$pkgver")
+source=("git+https://github.com/p11-glue/${pkgbase}?signed#tag=$pkgver")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -61,8 +48,8 @@ build() {
 	# Default configure options
 	config_opts=(
 		'-Dstrict=false'
-		'-Dgtk_doc=true'
 		'-Dman=true'
+		'-Dgtk_doc=true'
 		'-Dtrust_module=enabled'
 		'-Dmodule_path=/usr/lib/pkcs11'
 		'-Dtrust_paths=/etc/ca-certificates/trust-source:/usr/share/ca-certificates/trust-source'
@@ -88,9 +75,34 @@ build() {
 }
 
 #==============================================================================#
+#       Package self testing sequence                                          #
+#==============================================================================#
+check() {
+
+	# Change directory to source directory
+	cd $pkgname-stable
+
+	# Run internal tests
+	ninja -C build test
+}
+
+#==============================================================================#
 #       Package installation sequence                                          #
 #==============================================================================#
-package() {
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       P11-kit                                                                #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_p11-kit() {
+	pkgdesc='Loads and enumerates PKCS#11 modules'
+	depends=(
+		"libp11-kit=$pkgver-$pkgrel"
+		'glibc'
+		'libsystemd.so'
+		'libtasn1'
+		#'nss'
+	)
+	install='p11-kit.install'
 
 	# Change directory to source directory
 	cd $pkgname
@@ -103,6 +115,32 @@ package() {
 
 	# Set correct symlink for 'trust-extract-compat'
 	ln -srf $pkgdir/usr/bin/update-ca-trust $pkgdir/usr/lib/p11-kit/trust-extract-compat
+
+	# Change directory to target directory
+	cd $pkgdir
+
+	# Split 'libp11-kit' package
+	mkdir -p $srcdir/libp11-kit/usr/{lib,share}
+	mv usr/include $srcdir/libp11-kit/usr || true
+	mv usr/lib/{p11-kit-proxy.so,libp11-kit.*} $srcdir/libp11-kit/usr/lib || true
+	mv usr/lib/{pkcs11,pkgconfig} $srcdir/libp11-kit/usr/lib || true
+	mv usr/share/{locale,p11-kit} $srcdir/libp11-kit/usr/share || true
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#       Libp11-kit                                                             #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+package_libp11-kit() {
+	pkgdesc='Loads and enumerates PKCS#11 modules (library)'
+	depends=(
+		'glibc'
+		'libffi'
+		'libtasn1'
+	)
+	provides=('libp11-kit.so')
+
+	# Copy files
+	mv $srcdir/libp11-kit/* $pkgdir
 }
 
 ################################################################################
