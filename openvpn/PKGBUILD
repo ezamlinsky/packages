@@ -49,7 +49,7 @@ options=('emptydirs')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("git+https://github.com/OpenVPN/openvpn.git#tag=v${pkgver}?signed")
+source=("git+https://github.com/OpenVPN/$pkgname.git#tag=v${pkgver}?signed")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -90,6 +90,9 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-debug'
+		'--disable-werror'
+		'--disable-strict-options'
+		'--disable-async-push'
 		'--enable-crypto'
 		'--enable-server'
 		'--enable-management'
@@ -129,6 +132,7 @@ build() {
 	# 'pam' related options
 		'--enable-plugin-auth-pam'
 		#'--disable-plugin-auth-pam'
+		'--disable-pam-dlopen'
 
 	# 'pkcs11-helper' related options
 		'--enable-pkcs11'
