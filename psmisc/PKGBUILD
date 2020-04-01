@@ -31,7 +31,7 @@ depends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://downloads.sourceforge.net/psmisc/$pkgname-$pkgver.tar.xz")
+source=("http://downloads.sourceforge.net/$pkgname/$pkgname-$pkgver.tar.xz")
 sha256sums=('41750e1a5abf7ed2647b094f58127c73dbce6876f77ba4e0a7e0995ae5c7279a')
 
 #==============================================================================#
@@ -69,6 +69,7 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-ipv6'
+		'--enable-harden-flags'
 		'--enable-mountinfo-list'
 
 	# 'libselinux' related options
