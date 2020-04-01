@@ -35,7 +35,7 @@ makedepends=('git')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("git+https://github.com/pciutils/pciutils.git#tag=v$pkgver?signed")
+source=("git+https://github.com/$pkgname/$pkgname.git#tag=v$pkgver?signed")
 md5sums=('SKIP')
 
 #==============================================================================#
@@ -49,7 +49,6 @@ build() {
 	# Default configure options
 	config_opts=(
 		"OPT=$CFLAGS -fPIC -DPIC"
-		'SHARED=yes'
 		'DNS=yes'
 		'ZLIB=yes'
 
@@ -62,8 +61,12 @@ build() {
 		#'LIBKMOD=no'
 	)
 
+	# Build 'libpci'
+	make "${config_opts[@]}" SHARED=no lib/libpci.a
+	cp lib/libpci.a $srcdir/
+
 	# Build package
-	make "${config_opts[@]}"
+	make clean && make "${config_opts[@]}" SHARED=yes all
 }
 
 #==============================================================================#
@@ -75,7 +78,7 @@ package() {
 	cd $pkgname
 
 	# Install files
-	make PREFIX=/usr SBINDIR=/usr/bin DESTDIR=$pkgdir install install-lib
+	make PREFIX=/usr SBINDIR=/usr/bin DESTDIR=$pkgdir SHARED=yes install install-lib
 
 	# Install license file
 	install -Dm644 COPYING $pkgdir/usr/share/licenses/pciutils/LICENSE
