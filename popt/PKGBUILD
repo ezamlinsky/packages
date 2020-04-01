@@ -24,9 +24,14 @@ arch=('x86_64')
 depends=('glibc')
 
 #==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+options=('staticlibs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("ftp://anduin.linuxfromscratch.org/BLFS/popt/popt-$pkgver.tar.gz")
+source=("ftp://anduin.linuxfromscratch.org/BLFS/$pkgname/$pkgname-$pkgver.tar.gz")
 sha1sums=('cfe94a15a2404db85858a81ff8de27c8ff3e235e')
 
 #==============================================================================#
@@ -62,7 +67,7 @@ build() {
 		'--localstatedir=/var'
 		'--enable-silent-rules'
 		'--enable-shared'
-		'--disable-static'
+		'--enable-static'
 	)
 
 	# Run package configuration script
