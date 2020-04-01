@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('perl')
-pkgver=5.30.1
+pkgver=5.30.2
 pkgrel=1
 pkgdesc='A highly capable, feature-rich programming language'
 url='https://www.perl.org'
@@ -41,7 +41,7 @@ provides=(
 	'perl-base=2.27'
 	'perl-bignum=0.51'
 	'perl-carp=1.50'
-	'perl-compress-raw-bzip2=2.084'
+	'perl-compress-raw-bzip2=2.089'
 	'perl-compress-raw-zlib=2.084'
 	'perl-config-perl-v=0.32'
 	'perl-constant=1.33'
@@ -95,7 +95,7 @@ provides=(
 	'perl-math-complex=1.5901'
 	'perl-memoize=1.03_01'
 	'perl-mime-base64=3.15'
-	'perl-module-corelist=5.20191110'
+	'perl-module-corelist=5.20200314'
 	'perl-module-load-conditional=0.68'
 	'perl-module-load=0.34'
 	'perl-module-loaded=0.08'
@@ -164,7 +164,7 @@ source=(
 	'detect-old-perl-modules.hook'
 )
 sha512sums=(
-	'8f3339efdcd1bb58fa58a90042181bef86bb09e4598c737e446ed43b56d2ab23d67eced5e36fb08fc61e076acfdb572a12e46a1277f5299a3f412054df0b88bf'
+	'b945c95f44a58b9cc920c926e23017c4270c0dc8daf0bf8169cd7c8f6b8f980f1780bee4fbd525df518edc50f08364ba65988cb17e72a1667f50226459b65087'
 	'b7678078d64cc593a3503c45f023c49915d0d703f1cea8282f4191f1e3aa62764cc6cfcae3dc3828101415b8e15d5ed8b1b79d423ef387550ae33172b0de92bc'
 	'53eb0cddfd637014f3d3a101665db8dcafe5ac5bf3d319a259974334eb89c1c405097518ae96b6d18e520194633c7be57c9b2cd9ae6398443eb08f1a2008d112'
 	'881e2efe05ba818cd7300f126800b56bb0685cb5c9c5fb7e67ef6aaf5abd17d2391a979d5d16d109c5111f4b35504ba83d19b0e6eda4431e8421fcbea19d2f1a'
