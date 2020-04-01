@@ -34,8 +34,8 @@ makedepends=('gettext')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://ftp.gnu.org/pub/gnu/sed/$pkgname-$pkgver.tar.xz"
-	"https://ftp.gnu.org/pub/gnu/sed/$pkgname-$pkgver.tar.xz.sig"
+	"https://ftp.gnu.org/pub/gnu/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://ftp.gnu.org/pub/gnu/$pkgname/$pkgname-$pkgver.tar.xz.sig"
 )
 sha256sums=(
 	'f79b0cfea71b37a8eeec8490db6c5f7ae7719c35587f21edb0617f370eeff633'
@@ -77,7 +77,9 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-assert'
+		'--enable-i18n'
 		'--enable-threads=posix'
+		'--without-included-regex'
 
 	# 'acl' related options
 		'--enable-acl'
