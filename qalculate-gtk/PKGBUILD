@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('qalculate-gtk')
 pkgver=3.8.0
-pkgrel=1
+pkgrel=2
 pkgdesc='GTK frontend for libqalculate'
 url='https://qalculate.github.io/'
 license=('GPL')
@@ -31,16 +31,13 @@ depends=(
 	'libqalculate'
 	'pango'
 )
-makedepends=(
-	'intltool'
-	'rarian'
-)
+makedepends=('intltool')
 optdepends=('yelp: for displaying the help')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://github.com/Qalculate/qalculate-gtk/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz")
+source=("https://github.com/Qalculate/$pkgname/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz")
 sha256sums=('9a2abf5f5c06f6a3a58d41844de7a666d0304c0c261bc2acd1f64ed105a0cd5c')
 
 #==============================================================================#
