@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='poppler'
 pkgname=('poppler' 'poppler-glib' 'poppler-qt5')
-pkgver=0.86.1
+pkgver=0.87.0
 pkgrel=1
 url='https://poppler.freedesktop.org/'
 license=('GPL')
@@ -40,10 +40,10 @@ _commit='72bff390035819a4ccb54c767265aba2792eaf3b'
 source=(
 	"https://poppler.freedesktop.org/$pkgbase-$pkgver.tar.xz"
 	"https://poppler.freedesktop.org/$pkgbase-$pkgver.tar.xz.sig"
-	"test::git+https://anongit.freedesktop.org/git/poppler/test/#commit=$_commit"
+	"test::git+https://anongit.freedesktop.org/git/$pkgbase/test/#commit=$_commit"
 )
 sha256sums=(
-	'af630a277c8e194c31339c5446241834aed6ed3d4b4dc7080311e51c66257f6c'
+	'6f602b9c24c2d05780be93e7306201012e41459f289b8279a27a79431ad4150e'
 	'SKIP'
 	'SKIP'
 )
