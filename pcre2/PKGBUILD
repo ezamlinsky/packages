@@ -78,6 +78,7 @@ build() {
 		'--disable-static'
 		'--disable-static'
 		'--disable-debug'
+		'--enable-pcre2-8'
 		'--enable-pcre2-16'
 		'--enable-pcre2-32'
 		'--enable-unicode'
@@ -85,6 +86,7 @@ build() {
 		'--enable-pcre2grep-jit'
 		'--enable-pcre2grep-callout'
 		'--enable-pcre2grep-callout-fork'
+		'--enable-percent-zt'
 		'--enable-fuzz-support'
 
 	# 'bzip2' related options
