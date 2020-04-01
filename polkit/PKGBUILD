@@ -39,10 +39,16 @@ makedepends=(
 )
 
 #==============================================================================#
+#       Package miscellaneous options                                          #
+#==============================================================================#
+backup=('etc/pam.d/polkit-1')
+options=('emptydirs')
+
+#==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='941e9329f8d3d43ace8335d206365b212824e686'  # tags/0.116
-source=("git+https://gitlab.freedesktop.org/polkit/polkit.git#commit=$_commit")
+_commit='941e9329f8d3d43ace8335d206365b212824e686'
+source=("git+https://gitlab.freedesktop.org/$pkgname/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -128,7 +134,10 @@ package() {
 	cd $pkgname
 
 	# Install files
-	make DESTDIR=$pkgdir install
+	make DESTDIR=$pkgdir \
+		dbusconfdir=/usr/share/dbus-1/system.d \
+		rulesdir=/usr/share/polkit-1/rules.d \
+		install
 
 	# Create 'polkit.conf' file
 	mkdir -p $pkgdir/usr/lib/sysusers.d
