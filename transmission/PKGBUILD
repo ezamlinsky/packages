@@ -33,7 +33,7 @@ makedepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/transmission/transmission-releases/raw/master/transmission-$pkgver.tar.xz"
+	"https://github.com/$pkgbase/$pkgbase-releases/raw/master/$pkgbase-$pkgver.tar.xz"
 	'transmission-2.90-libsystemd.patch'
 	'transmission-cli.sysusers'
 	'transmission-cli.tmpfiles'
@@ -194,7 +194,7 @@ package_transmission-gtk() {
 		'zlib'
 	)
 	optdepends=(
-		'notification-daemon: Desktop notification support'
+		'libnotify: Desktop notification support'
 		'transmission-cli: daemon and web support'
 	)
 
