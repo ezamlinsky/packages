@@ -14,7 +14,7 @@ pkgname=('thunar-archive-plugin')
 pkgver=0.4.0
 pkgrel=2
 pkgdesc='Create and extract archives in Thunar'
-url='http://goodies.xfce.org/projects/thunar-plugins/thunar-archive-plugin'
+url='https://goodies.xfce.org/projects/thunar-plugins/thunar-archive-plugin'
 license=('GPL2')
 arch=('x86_64')
 groups=('xfce4-goodies')
@@ -74,7 +74,7 @@ build() {
 		'--bindir=/usr/bin'
 		'--sbindir=/usr/bin'
 		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib'
+		'--libexecdir=/usr/lib/xfce4'
 		'--sysconfdir=/etc'
 		'--localstatedir=/var'
 		'--enable-silent-rules'
@@ -82,6 +82,7 @@ build() {
 		'--disable-static'
 		'--disable-debug'
 		'--enable-debug=no'
+		'--enable-linker-opts'
 	)
 
 	# Run package configuration script
