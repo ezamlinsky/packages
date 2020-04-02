@@ -38,13 +38,14 @@ backup=(
 	'etc/conf.d/smartd'
 	'etc/smartd.conf'
 )
+options=('emptydirs')
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://downloads.sourceforge.net/sourceforge/smartmontools/smartmontools-$pkgver.tar.gz"
-	"https://downloads.sourceforge.net/sourceforge/smartmontools/smartmontools-$pkgver.tar.gz.asc"
+	"https://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.gz"
+	"https://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.gz.asc"
 	'smartd.conf'
 )
 sha256sums=(
@@ -88,14 +89,17 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--disable-sample'
+		'--enable-fast-lebe'
 		'--enable-scsi-cdb-check'
 		'--with-nvme-devicescan=yes'
 		'--with-update-smart-drivedb=yes'
-		'--with-drivedbdir=yes'
 		'--with-savestates=yes'
 		'--with-attributelog=yes'
-		'--with-systemdenvfile=yes'
-		'--with-systemdsystemunitdir=yes'
+		'--with-working-snprintf=yes'
+		'--with-signal-func=sigaction'
+		'--with-cxx11-option=auto'
+		'--with-cxx11-regex=no'
+		'--with-drivedbdir=yes'
 		'--with-initscriptdir=no'
 		'--with-smartdscriptdir=/usr/share/smartmontools'
 		'--with-smartdplugindir=/usr/share/smartmontools/smartd_warning.d'
@@ -115,6 +119,8 @@ build() {
 	# 'systemd-libs' related options
 		'--with-libsystemd=yes'
 		#'--with-libsystemd=no'
+		'--with-systemdenvfile=yes'
+		'--with-systemdsystemunitdir=yes'
 	)
 
 	# Run package configuration script
@@ -138,10 +144,9 @@ package() {
 	cd $pkgname-$pkgver
 
 	# Modify 'smartd.service' file
-	sed \
-	-e 's:/etc/default/smartmontools:/etc/conf.d/smartd:g' \
-	-e 's:smartd_opts:SMARTD_ARGS:g' \
-	-i smartd.service
+	sed	-e 's:/etc/default/smartmontools:/etc/conf.d/smartd:g' \
+		-e 's:smartd_opts:SMARTD_ARGS:g' \
+		-i smartd.service
 
 	# Install files
 	make DESTDIR=$pkgdir install
