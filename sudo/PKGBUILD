@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname='sudo'
-pkgver=1.8.31
+pkgver=1.8.31.p1
 pkgrel=1
 pkgdesc='Give certain users the ability to run some commands as root'
 url='https://www.sudo.ws/sudo/'
@@ -53,12 +53,13 @@ install='sudo.install'
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.sudo.ws/sudo/dist/sudo-$pkgver.tar.gz"
-	"https://www.sudo.ws/sudo/dist/sudo-$pkgver.tar.gz.sig"
+	"https://www.sudo.ws/$pkgname/dist/$pkgname-${pkgver/.p/p}.tar.gz"
+	"https://www.sudo.ws/$pkgname/dist/$pkgname-${pkgver/.p/p}.tar.gz.sig"
 	'sudo.pam'
 )
 sha256sums=(
-	'7ea8d97a3cee4c844e0887ea7a1bd80eb54cc98fd77966776cb1a80653ad454f'
+	'c73cfdfbc1c5cc259fcc3a355e1bacfed99c5580daeadec9704a24cd5e6d15d8'
+	#'7ea8d97a3cee4c844e0887ea7a1bd80eb54cc98fd77966776cb1a80653ad454f'
 	'SKIP'
 	'd1738818070684a5d2c9b26224906aad69a4fea77aabd960fc2675aee2df1fa2'
 )
@@ -69,7 +70,7 @@ sha256sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-${pkgver/.p/p}
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -83,7 +84,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-${pkgver/.p/p}
 
 	# Default configure options
 	config_opts=(
@@ -97,16 +98,68 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
-		'--enable-pie'
+		'--enable-authentication'
+		'--enable-root-mailer'
+		'--enable-root-sudo'
+		'--enable-setreuid'
+		'--enable-setresuid'
+		'--enable-shadow'
+		'--enable-log-host'
+		'--enable-shell-sets-home'
+		'--enable-path-info'
+		'--enable-hardening'
+		'--enable-poll'
 		'--enable-tmpfiles.d'
+		'--enable-shared-libutil'
+		'--disable-static-sudoers'
+		'--disable-noargs-shell'
+		'--disable-env-debug'
+		'--disable-env-reset'
+		'--disable-admin-flag'
+		'--disable-offensive-insults'
+		'--enable-pie'
 		'--with-man'
 		'--with-mdoc'
+		'--without-AFS'
+		'--without-DCE'
+		'--without-passwd'
+		'--without-aixauth'
+		'--without-fwtk'
+		'--without-opie'
+		'--without-skey'
+		'--without-SecurID'
+		'--with-tty-tickets'
+		'--with-interfaces'
+		'--with-fqdn'
+		'--with-ignore-dot'
+		'--with-logfac=auth'
+		'--with-goodpri=notice'
+		'--with-badpri=alert'
+		'--with-mailto=root'
+		'--with-mail-if-no-user'
+		'--with-mail-if-no-host'
+		'--with-mail-if-noperms'
+		'--with-runas-default=root'
+		'--with-timeout=5'
+		'--with-passwd-tries=3'
+		'--with-password-timeout=5'
+		'--with-sudoers-mode=0440'
+		'--with-sudoers-uid=0'
+		'--with-sudoers-gid=0'
+		'--with-umask=022'
+		'--with-editor=mcedit'
+		'--with-env-editor'
 		'--with-insults'
 		'--with-all-insults'
+		'--without-devel'
+		'--without-lecture'
+		'--without-long-otp-prompt'
+		'--without-umask-override'
+		'--without-secure-path'
+		'--without-sendmail'
 		'--with-rundir=/run/sudo'
 		'--with-vardir=/var/db/sudo'
 		'--with-logging=file'
-		'--without-lecture'
 
 	# 'audit' related options
 		#'--with-linux-audit'
@@ -171,7 +224,7 @@ build() {
 check() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-${pkgver/.p/p}
 
 	# Run internal checks
 	make -k check
@@ -183,7 +236,7 @@ check() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname-$pkgver
+	cd $pkgname-${pkgver/.p/p}
 
 	# Install files
 	make DESTDIR=$pkgdir install
