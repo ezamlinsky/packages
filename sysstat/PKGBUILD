@@ -46,7 +46,7 @@ options=('emptydirs')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://pagesperso-orange.fr/sebastien.godard/sysstat-$pkgver.tar.xz"
+	"http://pagesperso-orange.fr/sebastien.godard/$pkgname-$pkgver.tar.xz"
 	'lib64-fix.patch'
 )
 sha512sums=(
