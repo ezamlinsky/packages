@@ -26,14 +26,15 @@ depends=(
 	'libelf'
 	#'libunwind'
 	'perl'
+	'sh'
 )
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/strace/strace/releases/download/v$pkgver/strace-$pkgver.tar.xz"
-	"https://github.com/strace/strace/releases/download/v$pkgver/strace-$pkgver.tar.xz.asc"
+	"https://github.com/$pkgname/$pkgname/releases/download/v$pkgver/$pkgname-$pkgver.tar.xz"
+	"https://github.com/$pkgname/$pkgname/releases/download/v$pkgver/$pkgname-$pkgver.tar.xz.asc"
 )
 sha1sums=(
 	'ebacd8fb078aabc2e4a856657bac299589641d28'
