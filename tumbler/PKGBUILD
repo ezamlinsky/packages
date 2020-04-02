@@ -85,6 +85,7 @@ build() {
 		'--disable-gtk-doc'
 		'--disable-debug'
 		'--enable-debug=no'
+		'--enable-linker-opts'
 
 	# 'curl' related options
 		'--enable-cover-thumbnailer'
