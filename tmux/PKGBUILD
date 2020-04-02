@@ -33,7 +33,7 @@ depends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://github.com/tmux/tmux/releases/download/${pkgver/_/}/tmux-${pkgver/_/}.tar.gz"
+	"https://github.com/$pkgname/$pkgname/releases/download/${pkgver/_/}/$pkgname-${pkgver/_/}.tar.gz"
 	'LICENSE'
 )
 sha256sums=(
