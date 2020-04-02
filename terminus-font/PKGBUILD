@@ -38,7 +38,7 @@ optdepends=('xorg-fonts-alias')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"http://downloads.sourceforge.net/project/terminus-font/terminus-font-$pkgver/terminus-font-$pkgver.tar.gz"
+	"https://downloads.sourceforge.net/project/$pkgname/$pkgname-$pkgver/$pkgname-$pkgver.tar.gz"
 	'fix-75-yes-terminus.patch'
 )
 sha256sums=(
