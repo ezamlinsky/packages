@@ -35,7 +35,6 @@ depends=(
 makedepends=(
 	'docbook-xsl'
 	'git'
-	'gnome-doc-utils'
 	'libxslt'
 )
 
@@ -137,11 +136,14 @@ build() {
 		'--enable-utmpx'
 		'--enable-shadowgrp'
 		'--enable-subordinate-ids'
+		'--with-su'
 		'--with-nscd'
 		'--with-sssd'
 		'--with-btrfs'
+		'--with-bcrypt'
 		'--with-sha-crypt'
 		'--with-group-name-max-length=32'
+		'--without-fcaps'
 
 	# 'acl' related options
 		'--with-acl'
