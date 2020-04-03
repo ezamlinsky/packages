@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgname=('xf86-input-libinput')
 pkgver=0.29.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Generic input driver for the X.Org server based on libinput'
 url='http://xorg.freedesktop.org/'
 license=('custom')
@@ -30,9 +30,8 @@ makedepends=(
 	'X-ABI-XINPUT_VERSION=24.1'
 	'libx11'
 	'libxi'
-	'resourceproto'
-	'scrnsaverproto'
 	'xorg-server-devel'
+	'xorgproto'
 )
 
 #==============================================================================#
@@ -48,8 +47,8 @@ conflicts=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://xorg.freedesktop.org/releases/individual/driver/xf86-input-libinput-$pkgver.tar.bz2"
-	"https://xorg.freedesktop.org/releases/individual/driver/xf86-input-libinput-$pkgver.tar.bz2.sig"
+	"https://xorg.freedesktop.org/releases/individual/driver/$pkgname-$pkgver.tar.bz2"
+	"https://xorg.freedesktop.org/releases/individual/driver/$pkgname-$pkgver.tar.bz2.sig"
 )
 sha512sums=(
 	'f19ef2e9e0c1336d8e0b17853e1fe0c66ecf50e7b10b10b6c5cbafc99323694597821e15e8e358419ef3c68d1009967fd2ec3760800c85adbb71ac3ecc99954b'
