@@ -38,8 +38,8 @@ optdepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"https://www.kernel.org/pub/linux/utils/usb/usbutils/usbutils-$pkgver.tar.xz"
-	"https://www.kernel.org/pub/linux/utils/usb/usbutils/usbutils-$pkgver.tar.sign"
+	"https://www.kernel.org/pub/linux/utils/usb/$pkgname/$pkgname-$pkgver.tar.xz"
+	"https://www.kernel.org/pub/linux/utils/usb/$pkgname/$pkgname-$pkgver.tar.sign"
 )
 md5sums=(
 	'0da98eb80159071fdbb00905390509d9'
