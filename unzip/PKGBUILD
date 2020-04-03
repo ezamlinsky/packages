@@ -14,7 +14,7 @@ pkgname=('unzip')
 pkgver=6.0
 pkgrel=13
 pkgdesc='For extracting and viewing files in .zip archives'
-url='http://www.info-zip.org/UnZip.html'
+url='https://www.info-zip.org/UnZip.html'
 license=('custom')
 arch=('x86_64')
 
@@ -30,9 +30,8 @@ depends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_pkgver=${pkgver/./}
 source=(
-	"http://downloads.sourceforge.net/infozip/unzip$_pkgver.tar.gz"
+	"https://downloads.sourceforge.net/infozip/${pkgname}${pkgver/./}.tar.gz"
 	'overflow-fsize.patch'
 	'cve20149636.patch'
 	'test_compr_eb.patch'
@@ -60,7 +59,7 @@ sha1sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname$_pkgver
+	cd ${pkgname}${pkgver/./}
 
 	# Apply patches
 	patch -p1 -i $srcdir/overflow-fsize.patch
@@ -85,7 +84,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname$_pkgver
+	cd ${pkgname}${pkgver/./}
 
 	# Build package
 	make -f unix/Makefile generic_gcc
@@ -97,7 +96,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname$_pkgver
+	cd ${pkgname}${pkgver/./}
 
 	# Install files
 	make -f unix/Makefile prefix=$pkgdir/usr MANDIR=$pkgdir/usr/share/man/man1 install
