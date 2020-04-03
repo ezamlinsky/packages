@@ -22,7 +22,9 @@ arch=('any')
 #       Package dependencies                                                   #
 #==============================================================================#
 depends=(
+	'file'
 	'sh'
+	'which'
 	'xorg-xset'
 )
 makedepends=(
@@ -49,8 +51,8 @@ options=('emptydirs')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='0547886c0a7ae79145998495a6e3af6a1450d0c7' # master # 2019-04-19
-source=("git+https://gitlab.freedesktop.org/xdg/xdg-utils.git#commit=$_commit")
+_commit='9816ebb3e6fd9f23e993b8b7fcbd56f92d9c9197'
+source=("git+https://gitlab.freedesktop.org/xdg/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
