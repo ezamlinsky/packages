@@ -59,7 +59,7 @@ optdepends=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=(
-	"xarchiver-$pkgver.tar.gz::https://github.com/ib/xarchiver/archive/$pkgver.tar.gz"
+	"$pkgbase-$pkgver.tar.gz::https://github.com/ib/$pkgname/archive/$pkgver.tar.gz"
 	'xarchiver.appdata.xml'
 )
 sha256sums=(
@@ -95,7 +95,7 @@ build() {
 		'--bindir=/usr/bin'
 		'--sbindir=/usr/bin'
 		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib'
+		'--libexecdir=/usr/lib/xfce4'
 		'--sysconfdir=/etc'
 		'--localstatedir=/var'
 		'--enable-silent-rules'
