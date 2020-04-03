@@ -44,6 +44,7 @@ depends=(
 	'pixman'
 	'systemd-libs'
 	'xcb-util>=0.3.9'
+	'mesa'
 )
 makedepends=(
 	'X-ABI-VIDEODRV_VERSION=24.0'
@@ -81,15 +82,9 @@ install='xf86-video-intel.install'
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='6f4972d5c368c30e971a23c1dc370d3e43761282' # master
-source=(
-	"git+https://anongit.freedesktop.org/git/xorg/driver/xf86-video-intel#commit=$_commit"
-	'0001-SNA-fix-PRIME-output-support-since-xserver-1.20.patch'
-)
-sha256sums=(
-	'SKIP'
-	'7cdc310953379ede9693a387ecac6c803cc4c4461df5ad9ab875b35e90a552f5'
-)
+_commit='f66d39544bb8339130c96d282a80f87ca1606caf'
+source=("git+https://anongit.freedesktop.org/git/xorg/driver/${pkgname}#commit=$_commit")
+sha256sums=('SKIP')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -98,9 +93,6 @@ prepare() {
 
 	# Change directory to source directory
 	cd $pkgname
-
-	# Apply patches
-	patch -p1 -i $srcdir/0001-SNA-fix-PRIME-output-support-since-xserver-1.20.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -173,9 +165,10 @@ build() {
 	)
 
 	# Change compile flags
-	export CFLAGS='-march=native -O3 -pipe'
+	export CFLAGS+=' -fno-lto'
+	export CFLAGS="${CFLAGS/-fno-plt}"
 	export CXXFLAGS="${CFLAGS}"
-	unset LDFLAGS
+	export LDFLAGS="${LDFLAGS/,-z,now}"
 
 	# Run package configuration script
 	./configure "${config_opts[@]}"
