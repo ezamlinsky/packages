@@ -14,7 +14,7 @@ pkgname=('upower')
 pkgver=0.99.11
 pkgrel=1
 pkgdesc='Abstraction for enumerating power devices, listening to device events and querying history and statistics'
-url='http://upower.freedesktop.org'
+url='https://upower.freedesktop.org'
 license=('GPL')
 arch=('x86_64')
 
@@ -47,8 +47,8 @@ options=('emptydirs')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='e1548bba61206a05bbc318b3d49ae24571755ac6'  # tags/UPOWER_0_99_11^0
-source=("git+https://gitlab.freedesktop.org/upower/upower.git#commit=$_commit")
+_commit='e1548bba61206a05bbc318b3d49ae24571755ac6'
+source=("git+https://gitlab.freedesktop.org/$pkgname/$pkgname.git#commit=$_commit")
 md5sums=('SKIP')
 
 #==============================================================================#
@@ -85,6 +85,7 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--disable-deprecated'
 		'--disable-tests'
 		'--enable-man-pages'
 		'--enable-gtk-doc'
