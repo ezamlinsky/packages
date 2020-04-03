@@ -59,7 +59,7 @@ replaces=(
 #       Package sources and integrity                                          #
 #==============================================================================#
 _commit='1771b556ee45207f8711744ccbd5d42a3949b14c'
-source=("git+https://code.videolan.org/videolan/x264.git#commit=$_commit")
+source=("git+https://code.videolan.org/videolan/$pkgname.git#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
@@ -68,7 +68,7 @@ sha256sums=('SKIP')
 build() {
 
 	# Change directory to source directory
-	cd $pkgbase
+	cd $pkgname
 
 	# Default configure options
 	config_opts=(
@@ -134,7 +134,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgbase
+	cd $pkgname
 
 	# Install files
 	make DESTDIR=$pkgdir install-cli install-lib-shared
