@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='vte3'
 pkgname=('vte3' 'vte-common')
-pkgver=0.60.0
+pkgver=0.60.1
 pkgrel=1
 url='https://wiki.gnome.org/Apps/Terminal/VTE'
 license=('LGPL')
@@ -35,7 +35,7 @@ makedepends=(
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='bf56194f78fc13a99023358efb6f7af0f228240c'
+_commit='606a55cbe2f1aba42023f19f3b2d2ccf4c90573b'
 source=("git+https://gitlab.gnome.org/GNOME/vte.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -132,6 +132,7 @@ package_vte3() {
 		'vte-common'
 		'zlib'
 	)
+	provides=('libvte-2.91.so')
 
 	# Change directory to source directory
 	cd vte
@@ -154,7 +155,10 @@ package_vte3() {
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 package_vte-common() {
 	pkgdesc='Files shared by VTE libraries'
-	depends=('sh')
+	depends=(
+		'glibc'
+		'sh'
+	)
 
 	# Copy files
 	mv $srcdir/vte-common/* $pkgdir
