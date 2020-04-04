@@ -53,7 +53,7 @@ replaces=('xfce4-menueditor')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
+source=("https://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('a30534461fea907f969f608a11c84be0b1aaad687c591c32cd56a9d274ea3e74')
 
 #==============================================================================#
