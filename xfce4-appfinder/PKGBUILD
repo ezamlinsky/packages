@@ -14,7 +14,7 @@ pkgname=('xfce4-appfinder')
 pkgver=4.14.0
 pkgrel=1
 pkgdesc='An application finder for Xfce'
-url='http://www.xfce.org/'
+url='https://www.xfce.org/'
 license=('GPL2')
 arch=('x86_64')
 groups=('xfce4')
@@ -43,7 +43,7 @@ replaces=('xfce-utils')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://archive.xfce.org/src/xfce/xfce4-appfinder/${pkgver%.*}/xfce4-appfinder-$pkgver.tar.bz2")
+source=("https://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('7ec175d4954fceb2e76cbfbca76ac4a4f53fe799d097a14117e7de68e88a4d98')
 
 #==============================================================================#
@@ -82,9 +82,7 @@ build() {
 		'--disable-static'
 		'--disable-debug'
 		'--enable-debug=no'
-
-	# 'gtk3' related options
-		'--enable-gtk3'
+		'--enable-linker-opts'
 	)
 
 	# Run package configuration script
