@@ -14,7 +14,7 @@ pkgname=('xfwm4')
 pkgver=4.14.0
 pkgrel=1
 pkgdesc='Xfce window manager'
-url='http://www.xfce.org/'
+url='https://www.xfce.org/'
 license=('GPL2')
 arch=('x86_64')
 groups=('xfce4')
@@ -47,12 +47,15 @@ depends=(
 	'startup-notification'
 	'xfconf'
 )
-makedepends=('intltool' 'libdrm')
+makedepends=(
+	'intltool'
+	'libdrm'
+)
 
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://archive.xfce.org/src/xfce/xfwm4/${pkgver%.*}/xfwm4-$pkgver.tar.bz2")
+source=("http://archive.xfce.org/src/xfce/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('b4182bf8dc63d092f120a51fcae0eb54b9bd4aa4f8486f47e5a65a108322b615')
 
 #==============================================================================#
@@ -90,10 +93,15 @@ build() {
 		'--enable-shared'
 		'--disable-static'
 		'--enable-libdrm'
+		'--enable-xpresent'
 		'--enable-xsync'
 		'--disable-debug'
 		'--enable-debug=no'
 		'--with-x'
+
+	# 'libepoxy' related options
+		'--enable-epoxy'
+		#'--disable-epoxy'
 
 	# 'libxcomposite' related options
 		'--enable-compositor'
