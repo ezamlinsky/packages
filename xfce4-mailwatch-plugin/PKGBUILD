@@ -14,7 +14,7 @@ pkgname=('xfce4-mailwatch-plugin')
 pkgver=1.2.0
 pkgrel=8
 pkgdesc='Multi-protocol, multi-mailbox mail watcher for the Xfce4 panel'
-url='http://goodies.xfce.org/projects/panel-plugins/xfce4-mailwatch-plugin'
+url='https://goodies.xfce.org/projects/panel-plugins/xfce4-mailwatch-plugin'
 license=('GPL2')
 arch=('x86_64')
 groups=('xfce4-goodies')
@@ -40,7 +40,7 @@ makedepends=('intltool')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://archive.xfce.org/src/panel-plugins/xfce4-mailwatch-plugin/${pkgver%.*}/xfce4-mailwatch-plugin-$pkgver.tar.bz2")
+source=("http://archive.xfce.org/src/panel-plugins/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('624acc8229a8593c0dfeb28f883f4958119a715cc81cecdbaf29efc8ab1edcad')
 
 #==============================================================================#
