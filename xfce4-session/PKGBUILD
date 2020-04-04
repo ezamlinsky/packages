@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-session')
-pkgver=4.14.1
+pkgver=4.14.2
 pkgrel=1
 pkgdesc='A session manager for Xfce'
 url='https://www.xfce.org/'
@@ -73,7 +73,7 @@ source=(
 	'xfce-polkit-gnome-authentication-agent-1.desktop'
 )
 sha256sums=(
-	'dc1c90da56b2d8df18fec6c0c30d6bed4e7646d8c8214fc931c952ba86c3b77b'
+	'fbe3a4a60c91589a2024ce12b2d2667625a8fedcbc90ef031831f56319f597af'
 	'6f14d529e4c4f30cd547110bd444cee8dc70c90511a397de18acb6c1fd63ea3e'
 	'74c94c5f7893d714e04ec7d8b8520c978a5748757a0cdcf5128492f09f31b643'
 )
@@ -87,7 +87,7 @@ prepare() {
 	cd $pkgname-$pkgver
 
 	# Apply patches
-	patch -Np1 -i ../source-system-xinitrc-scripts.patch
+	patch -Np1 -i $srcdir/source-system-xinitrc-scripts.patch
 
 	# Run autogen script if exists
 	if [ -x autogen.sh ]; then
@@ -118,6 +118,7 @@ build() {
 		'--disable-legacy-sm'
 		'--disable-debug'
 		'--enable-debug=no'
+		'--enable-linker-opts'
 		'--with-backend=linux'
 		'--with-x'
 
