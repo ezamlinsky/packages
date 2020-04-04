@@ -36,7 +36,7 @@ makedepends=('intltool')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("https://archive.xfce.org/src/panel-plugins/xfce4-cpugraph-plugin/${pkgver%.*}/xfce4-cpugraph-plugin-$pkgver.tar.bz2")
+source=("https://archive.xfce.org/src/panel-plugins/$pkgnamen/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('3ece0a24e55827e0d9b6314129906da60513acdc1748d9dece9f50526e906ba4')
 
 #==============================================================================#
