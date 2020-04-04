@@ -47,8 +47,8 @@ optdepends=('pavucontrol: default pulseaudio mixer')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-_commit='b7a76fa7d7176c4cad4dd432a9629f3fa78ed708'  # tags/xfce4-pulseaudio-plugin-0.4.2^0
-source=("git+https://git.xfce.org/panel-plugins/xfce4-pulseaudio-plugin/#commit=$_commit")
+_commit='b7a76fa7d7176c4cad4dd432a9629f3fa78ed708'
+source=("git+https://git.xfce.org/panel-plugins/$pkgname/#commit=$_commit")
 sha256sums=('SKIP')
 
 #==============================================================================#
