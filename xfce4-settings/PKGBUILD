@@ -111,6 +111,7 @@ build() {
 		'--enable-pluggable-dialogs'
 		'--disable-debug'
 		'--enable-debug=no'
+		'--enable-linker-opts'
 
 	# 'colord' related options
 		#'--enable-colord'
