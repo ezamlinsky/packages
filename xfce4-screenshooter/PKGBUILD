@@ -53,7 +53,7 @@ replaces=('xfce4-screenshooter-plugin')
 #==============================================================================#
 #       Package sources and integrity                                          #
 #==============================================================================#
-source=("http://archive.xfce.org/src/apps/xfce4-screenshooter/${pkgver%.*}/xfce4-screenshooter-$pkgver.tar.bz2")
+source=("http://archive.xfce.org/src/apps/$pkgname/${pkgver%.*}/$pkgname-$pkgver.tar.bz2")
 sha256sums=('0f7161053a23a6413376f4d17db6b774d4849384a9b1ffe01fdb2b0035a070d1')
 
 #==============================================================================#
