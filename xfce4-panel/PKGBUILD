@@ -96,7 +96,9 @@ build() {
 		'--disable-gtk-doc'
 		'--disable-debug'
 		'--enable-debug=no'
-		'--enable-introspection=no'	#Enable introspection for this build
+		'--enable-introspection=no'
+		'--enable-visibility'
+		'--enable-linker-opts'
 		'--with-x'
 
 	# 'gtk2' related options
