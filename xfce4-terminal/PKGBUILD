@@ -11,7 +11,7 @@
 #       Package information                                                    #
 #==============================================================================#
 pkgname=('xfce4-terminal')
-pkgver=0.8.9.1
+pkgver=0.8.9.2
 pkgrel=1
 pkgdesc='A modern terminal emulator primarily for the Xfce desktop environment'
 url='https://www.xfce.org/'
@@ -49,7 +49,7 @@ replaces=('terminal')
 #       Package sources and integrity                                          #
 #==============================================================================#
 source=("https://archive.xfce.org/src/apps/$pkgname/0.8/$pkgname-$pkgver.tar.bz2")
-sha256sums=('0deb0d06e50a8a41fb00e2c3773f0793882cb9f073ae16ead887bb9681c514cd')
+sha256sums=('9ba23bf86d350ef8a95d2dfb50bbd1bbb2144d82985a779ec28caf47faaeeeeb')
 
 #==============================================================================#
 #       Package preparation sequence                                           #
@@ -87,6 +87,7 @@ build() {
 		'--disable-static'
 		'--disable-gen-doc'
 		'--disable-debug'
+		'--enable-linker-opts'
 		'--enable-debug=no'
 
 	# 'libutempter' related options
