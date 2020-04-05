@@ -17,10 +17,7 @@ pkgdesc='User preference utility for X'
 url='https://xorg.freedesktop.org/'
 license=('custom')
 arch=('x86_64')
-groups=(
-	'xorg-apps'
-	'xorg'
-)
+groups=('xorg-apps' 'xorg')
 
 #==============================================================================#
 #       Package dependencies                                                   #
