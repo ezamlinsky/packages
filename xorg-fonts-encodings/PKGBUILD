@@ -74,6 +74,8 @@ build() {
 		'--enable-silent-rules'
 		'--enable-shared'
 		'--disable-static'
+		'--enable-gzip-small-encodings'
+		'--enable-gzip-large-encodings'
 	)
 
 	# Run package configuration script
