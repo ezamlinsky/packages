@@ -31,7 +31,7 @@ depends=(
 #==============================================================================#
 _pkgver=${pkgver/./}
 source=(
-	"http://downloads.sourceforge.net/infozip/zip$_pkgver.tar.gz"
+	"https://downloads.sourceforge.net/infozip/${pkgname}${pkgver/./}.tar.gz"
 	'zipnote.patch'
 )
 sha256sums=(
@@ -45,7 +45,7 @@ sha256sums=(
 prepare() {
 
 	# Change directory to source directory
-	cd $pkgname$_pkgver
+	cd ${pkgname}${pkgver/./}
 
 	# Apply patches
 	patch -p1 -i $srcdir/zipnote.patch
@@ -63,7 +63,7 @@ prepare() {
 build() {
 
 	# Change directory to source directory
-	cd $pkgname$_pkgver
+	cd ${pkgname}${pkgver/./}
 
 	# Build package
 	make -f unix/Makefile generic_gcc
@@ -75,7 +75,7 @@ build() {
 package() {
 
 	# Change directory to source directory
-	cd $pkgname$_pkgver
+	cd ${pkgname}${pkgver/./}
 
 	# Install files
 	make -f unix/Makefile prefix=$pkgdir/usr MANDIR=$pkgdir/usr/share/man/man1 install
