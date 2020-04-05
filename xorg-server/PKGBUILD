@@ -12,7 +12,7 @@
 #==============================================================================#
 pkgbase='xorg-server'
 pkgname=('xorg-server' 'xorg-server-common' 'xorg-server-devel' 'xorg-server-xephyr' 'xorg-server-xnest' 'xorg-server-xvfb' 'xorg-server-xwayland')
-pkgver=1.20.7
+pkgver=1.20.8
 pkgrel=1
 url='https://xorg.freedesktop.org'
 license=('custom')
@@ -23,30 +23,21 @@ groups=('xorg')
 #       Package dependencies                                                   #
 #==============================================================================#
 makedepends=(
-	'compositeproto'
+	'bash'
 	'dbus'
-	'dri2proto'
-	'dri3proto'
 	'egl-wayland'
-	'fontsproto'
 	'glibc'
 	'libdrm'
 	'libepoxy'
-	#'libgcrypt'
 	'libgl'
-	#'libmd'
 	'libpciaccess'
-	#'libselinux'
-	#'libsha1'
-	'libudev.so'
-	#'libunwind'
+	#'libtirpc'
 	'libx11'
 	'libxau'
 	'libxaw'
 	'libxcb'
 	'libxdmcp'
 	'libxext'
-	'libxfixes'
 	'libxfont2'
 	'libxi'
 	'libxkbfile'
@@ -54,20 +45,13 @@ makedepends=(
 	'libxrender'
 	'libxres'
 	'libxshmfence'
-	'libxt'
 	'libxtst'
 	'libxv'
 	'mesa'
-	'mesa-libgl'
-	#'nettle'
-	'openssl'
+	'meson'
+	'nettle'
 	'pixman'
-	'presentproto'
-	'recordproto'
-	'resourceproto'
-	'scrnsaverproto'
 	'systemd-libs'
-	'videoproto'
 	'wayland'
 	'wayland-protocols'
 	'which'
@@ -77,13 +61,8 @@ makedepends=(
 	'xcb-util-renderutil'
 	'xcb-util-wm'
 	'xf86-input-libinput'
-	'xf86dgaproto'
-	'xf86driproto'
-	'xf86vidmodeproto'
-	'xineramaproto'
 	'xkeyboard-config'
 	'xorg-font-util'
-	'xorg-server-common'
 	'xorg-setxkbmap'
 	'xorg-util-macros'
 	'xorg-xauth'
@@ -110,7 +89,7 @@ source=(
 	'xvfb-run.1'
 )
 sha512sums=(
-	'c67612e379111c28c68941c0a660abf72be7669591b41ccaa3b3474c4540a03822a28d892831b12ce08bac6e5e7e33504c2d19ef2a0c2298f83bd083459f96f5'
+	'ab0ec0fcbf490c61558b9297f61b58fd2dedb676c78bef6431dc9166054743b43a0091b88a8b3f4e81d1f539909440ee7e188a298cefabe13ea89159639cd805'
 	'SKIP'
 	'd84f4d63a502b7af76ea49944d1b21e2030dfd250ac1e82878935cf631973310ac9ba1f0dfedf10980ec6c7431d61b7daa4b7bbaae9ee477b2c19812c1661a22'
 	'74e1aa0c101e42f0f25349d305641873b3a79ab3b9bb2d4ed68ba8e392b4db2701fcbc35826531ee2667d3ee55673e4b4fecc2a9f088141af29ceb400f72f363'
@@ -131,11 +110,6 @@ prepare() {
 	patch -Np1 -i $srcdir/xserver-autobind-hotplug.patch
 	patch -Np1 -i $srcdir/0001-v2-FS-58644.patch
 	patch -Np1 -i $srcdir/0002-fix-libshadow-2.patch
-
-	# Run autogen script if exists
-	if [ -x autogen.sh ]; then
-		NOCONFIGURE=1 ./autogen.sh
-	fi
 }
 
 #==============================================================================#
@@ -148,194 +122,91 @@ build() {
 
 	# Default configure options
 	config_opts=(
-		'--prefix=/usr'
-		'--bindir=/usr/bin'
-		'--sbindir=/usr/bin'
-		'--libdir=/usr/lib'
-		'--libexecdir=/usr/lib/xorg-server'
-		'--sysconfdir=/etc'
-		'--localstatedir=/var'
-		'--enable-silent-rules'
-		'--enable-shared'
-		'--disable-static'
-		'--disable-debug'
-		'--enable-docs'
-		'--enable-devel-docs'
-		'--disable-unit-tests'
-		'--disable-ipv6'
-		'--disable-tcp-transport'
-		'--disable-listen-tcp'
-		'--enable-unix-transport'
-		'--enable-listen-unix'
-		'--enable-input-thread'
-		'--enable-xtrans-send-fds'
-		'--enable-mitshm'
-		'--enable-xvmc'
-		'--enable-xace'
-		'--enable-xcsecurity'
-		'--enable-dbe'
-		'--enable-dpms'
-		'--enable-xfree86-utils'
-		'--enable-vgahw'
-		'--enable-vbe'
-		'--enable-int10-module'
-		'--enable-clientids'
-		'--enable-linux-acpi'
-		'--enable-linux-apm'
-		'--enable-suid-wrapper'
-		'--disable-install-setuid'
-		'--enable-xorg'
-		'--enable-xvfb'
-		'--enable-xnest'
-		'--enable-xephyr'
-		'--disable-xfbdev'
-		'--enable-kdrive'
-		'--enable-kdrive-kbd'
-		'--enable-kdrive-mouse'
-		'--enable-kdrive-evdev'
-		'--with-fontrootdir=/usr/share/fonts'
-		'--with-xkb-path=/usr/share/X11/xkb'
-		'--with-xkb-output=/var/lib/xkb'
-
-	# 'compositeproto' related options
-		'--enable-composite'
-		#'--disable-composite'
+		'-Dos_vendor="Arch Linux"'
+		'-Dhal=false'
+		'-Ddmx=false'
+		'-Dipv6=false'
+		'-Dlisten_tcp=false'
+		'-Dlisten_unix=true'
+		'-Dlisten_local=true'
+		'-Dmitshm=true'
+		'-Dxvmc=true'
+		'-Dxace=true'
+		'-Dxcsecurity=true'
+		'-Ddpms=true'
+		'-Dvgahw=true'
+		'-Dvbe=true'
+		'-Dint10=x86emu'
+		'-Dlinux_apm=true'
+		'-Dlinux_acpi=true'
+		'-Dsuid_wrapper=true'
+		'-Dxorg=true'
+		'-Dxvfb=true'
+		'-Dxnest=true'
+		'-Dxephyr=true'
+		'-Ddri1=true'
+		'-Ddri2=true'
+		'-Ddri3=true'
+		'-Dxv=true'
+		'-Ddga=true'
+		'-Dxres=true'
+		'-Dxinerama=true'
+		'-Dscreensaver=true'
+		'-Dxf86bigfont=true'
+		'-Dxkb_default_rules=evdev'
+		'-Dxkb_default_model=pc105'
+		'-Dxkb_default_layout=us'
+		'-Dxkb_default_options=grp:lwin_toggle,grp_led:scroll,caps:capslock,altwin:meta_alt,terminate:ctrl_alt_bksp'
+		'-Dxkb_dir=/usr/share/X11/xkb'
+		'-Dxkb_output_dir=/var/lib/xkb'
 
 	# 'dbus & libudev.so' related options
-		'--enable-systemd-logind'
-		#'--disable-systemd-logind'
-
-	# 'dri2proto' related options
-		'--enable-dri2'
-		#'--disable-dri2'
-
-	# 'dri3proto' related options
-		'--enable-dri3'
-		#'--disable-dri3'
-
-	# 'fontsproto' related options
-		'--enable-xf86bigfont'
-		#'--disable-xf86bigfont'
-
-	# 'libdrm' related options
-		'--enable-libdrm'
-		#'--disable-libdrm'
+		'-Dsystemd_logind=true'
+		#'-Dsystemd_logind=false'
 
 	# 'libepoxy & mesa-libgl' related options
-		'--enable-glamor'
-		#'--disable-glamor'
-
-	# 'libgcrypt' related options
-		#'--with-sha1=libgcrypt'
+		'-Dglamor=true'
+		#'-Dglamor=false'
 
 	# 'libgl' related options
-		'--enable-glx'
-		#'--disable-glx'
-
-	# 'libmd' related options
-		#'--with-sha1=libmd'
+		'-Dglx=true'
+		#'-Dglx=false'
 
 	# 'libpciaccess' related options
-		'--enable-pciaccess'
-		#'--disable-pciaccess'
+		'-Dpciaccess=true'
+		#'-Dpciaccess=false'
 
-	# 'libselinux' related options
-		#'--enable-xselinux'
-		'--disable-xselinux'
-
-	# 'libsha1' related options
-		#'--with-sha1=libsha1'
-
-	# 'systemd-libs' related options
-		'--with-systemd-daemon'
-		#'--without-systemd-daemon'
+	# 'libtirpc' related options
+		#'-Dsecure-rpc=true'
+		'-Dsecure-rpc=false'
 
 	# 'libudev.so' related options
-		'--enable-config-udev'
-		#'--disable-config-udev'
-		'--enable-config-udev-kms'
-		#'--disable-config-udev-kms'
-
-	# 'libunwind' related options
-		#'--enable-libunwind'
-		'--disable-libunwind'
+		'-Dudev=true'
+		#'-Dudev=false'
 
 	# 'libxdmcp' related options
-		'--enable-xdmcp'
-		#'--disable-xdmcp'
-		'--enable-xdm-auth-1'
-		#'--disable-xdm-auth-1'
-
-	# 'libxshmfence' related options
-		'--enable-xshmfence'
-		#'--disable-xshmfence'
-
-	# 'nettle' related options
-		#'--with-sha1=libnettle'
-
-	# 'openssl' related options
-		'--with-sha1=libcrypto'
-
-	# 'presentproto' related options
-		'--enable-present'
-		#'--disable-present'
-
-	# 'recordproto' related options
-		'--enable-record'
-		#'--disable-record'
-
-	# 'resourceproto' related options
-		'--enable-xres'
-		#'--disable-xres'
-
-	# 'scrnsaverproto' related options
-		'--enable-screensaver'
-		#'--disable-screensaver'
-
-	# 'videoproto' related options
-		'--enable-xv'
-		#'--disable-xv'
+		'-Dxdmcp=true'
+		#'-Dxdmcp=false'
+		'-Dxdm-auth-1=true'
+		#'-Dxdm-auth-1=false'
 
 	# 'wayland' related options
-		'--enable-xwayland'
-		#'--disable-xwayland'
-		'--enable-xwayland-eglstream'
-		#'--disable-xwayland-eglstream'
-
-	# 'xf86dgaproto' related options
-		'--enable-dga'
-		#'--disable-dga'
-
-	# 'xf86driproto' related options
-		'--enable-dri'
-		#'--disable-dri'
-
-	# 'xf86vidmodeproto' related options
-		'--enable-xf86vidmode'
-		#'--disable-xf86vidmode'
-
-	# 'xineramaproto' related options
-		'--enable-xinerama'
-		#'--disable-xinerama'
+		'-Dxwayland=true'
+		#'-Dxwayland=false'
+		'-Dxwayland_eglstream=true'
+		#'-Dxwayland_eglstream=false'
 	)
 
 	# Change compile flags
-	export CFLAGS=${CFLAGS/-fno-plt}
-	export CXXFLAGS=${CXXFLAGS/-fno-plt}
-	export LDFLAGS=${LDFLAGS/,-z,now}
-	export CFLAGS+=' -fno-lto'
-	export CXXFLAGS="${CFLAGS}"
+	export CFLAGS="${CFLAGS/-fno-plt}"
+	export CXXFLAGS="${CXXFLAGS/-fno-plt}"
+	export LDFLAGS="${LDFLAGS/,-z,now}"
 
 	# Run package configuration script
-	./configure "${config_opts[@]}"
-
-	# Set correct LDFLAGS to build a shared archive
-	if [ -f libtool ]; then
-		sed -e "s/ -shared / $LDFLAGS\0/g" -i libtool
-	fi
+	arch-meson build "${config_opts[@]}"
 
 	# Build package
-	make
+	ninja -C build
 }
 
 #==============================================================================#
@@ -353,20 +224,15 @@ package_xorg-server() {
 		'glibc'
 		'libdrm'
 		'libepoxy'
-		#'libgcrypt'
 		'libgl'
-		#'libmd'
 		'libpciaccess'
-		#'libselinux'
-		#'libsha1'
-		#'libunwind'
+		#'libtirpc'
 		'libxau'
 		'libxdmcp'
 		'libxfont2'
 		'libxshmfence'
 		'mesa-libgl'
-		#'nettle'
-		'openssl'
+		'nettle'
 		'pixman'
 		'systemd-libs'
 		'xf86-input-libinput'
@@ -393,10 +259,13 @@ package_xorg-server() {
 	cd $pkgbase-$pkgver
 
 	# Install files
-	make DESTDIR=$pkgdir install
+	DESTDIR=$pkgdir ninja -C build install
 
 	# Install license file
 	install -Dm644 COPYING $pkgdir/usr/share/licenses/xorg-server/COPYING
+
+	# Set legacy soft link to Xorg
+	ln -s /usr/bin/Xorg $pkgdir/usr/bin/X
 
 	# Change directory to target directory
 	cd $pkgdir
@@ -405,7 +274,7 @@ package_xorg-server() {
 	mkdir -p etc/X11/xorg.conf.d
 
 	# Split 'xorg-server-common' package
-	mkdir -p $srcdir/xorg-server-common/usr/{lib/xorg,share/man/man1}
+	mkdir -p $srcdir/xorg-server-common/{usr/{lib/xorg,share/man/man1},var/lib/xkb}
 	mv usr/lib/xorg/protocol.txt \
 	$srcdir/xorg-server-common/usr/lib/xorg || true
 	mv usr/share/man/man1/Xserver.1 \
@@ -467,18 +336,14 @@ package_xorg-server-xephyr() {
 	depends=(
 		'glibc'
 		'libepoxy'
-		#'libgcrypt'
 		'libgl'
-		#'libmd'
-		#'libunwind'
 		'libx11'
 		'libxau'
 		'libxcb'
 		'libxdmcp'
 		'libxfont2'
 		'libxshmfence'
-		#'nettle'
-		'openssl'
+		'nettle'
 		'pixman'
 		'systemd-libs'
 		'xcb-util'
@@ -502,16 +367,13 @@ package_xorg-server-xephyr() {
 package_xorg-server-xvfb() {
 	pkgdesc='Virtual framebuffer X server'
 	depends=(
+		'bash'
 		'glibc'
-		#'libgcrypt'
 		'libgl'
-		#'libmd'
-		#'libunwind'
 		'libxau'
 		'libxdmcp'
 		'libxfont2'
-		#'nettle'
-		'openssl'
+		'nettle'
 		'pixman'
 		'systemd-libs'
 		'which'
@@ -539,16 +401,12 @@ package_xorg-server-xnest() {
 	pkgdesc='A nested X server that runs as an X application'
 	depends=(
 		'glibc'
-		#'libgcrypt'
-		#'libmd'
-		#'libunwind'
 		'libx11'
 		'libxau'
 		'libxdmcp'
 		'libxext'
 		'libxfont2'
-		#'nettle'
-		'openssl'
+		'nettle'
 		'pixman'
 		'systemd-libs'
 		'xorg-server-common'
@@ -570,17 +428,13 @@ package_xorg-server-xwayland() {
 		'glibc'
 		'libdrm'
 		'libepoxy'
-		#'libgcrypt'
 		'libgl'
-		#'libmd'
-		#'libunwind'
 		'libxau'
 		'libxdmcp'
 		'libxfont2'
 		'libxshmfence'
 		'mesa-libgl'
-		#'nettle'
-		'openssl'
+		'nettle'
 		'pixman'
 		'systemd-libs'
 		'wayland'
